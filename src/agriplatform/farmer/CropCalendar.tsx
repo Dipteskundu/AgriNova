@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { tr } from "@/agriplatform/lib/localize";
 import {
   Calendar as CalendarIcon,
   Plus,
@@ -17,9 +18,11 @@ import { Skeleton } from '@/components/shared/Skeleton';
 import { useToast } from '@/components/shared/Toast';
 import { getCalendarTasks, getCropBatches, toggleCalendarTask, addCalendarTask } from '@/agriplatform/lib/farmerApi';
 import { CalendarTask, CropBatch } from '@/agriplatform/types';
+import { useLanguage } from '@/agriplatform/lib/LanguageContext';
 
 export const CropCalendar: React.FC = () => {
   const { showToast } = useToast();
+  const { language } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [tasks, setTasks] = useState<CalendarTask[]>([]);
   const [cropBatches, setCropBatches] = useState<CropBatch[]>([]);
@@ -50,7 +53,7 @@ export const CropCalendar: React.FC = () => {
           }
         }
       } catch {
-        showToast('error', 'Failed to load agricultural calendar tasks');
+        showToast('error', tr('Failed to load agricultural calendar tasks'));
       } finally {
         setLoading(false);
       }
@@ -65,10 +68,10 @@ export const CropCalendar: React.FC = () => {
         setTasks((prev) =>
           prev.map((t) => (t.id === id ? { ...t, isCompleted: !t.isCompleted } : t))
         );
-        showToast('success', 'Task status updated');
+        showToast('success', tr('Task status updated'));
       }
     } catch {
-      showToast('error', 'Could not update task');
+      showToast('error', tr('Could not update task'));
     }
   };
 
@@ -97,10 +100,10 @@ export const CropCalendar: React.FC = () => {
           priority: 'medium',
           notes: '',
         });
-        showToast('success', 'New calendar event added');
+        showToast('success', tr('New calendar event added'));
       }
     } catch {
-      showToast('error', 'Failed to add calendar task');
+      showToast('error', tr('Failed to add calendar task'));
     }
   };
 
@@ -127,9 +130,13 @@ export const CropCalendar: React.FC = () => {
       {/* Top Banner */}
       <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-lg font-bold text-slate-900">Agricultural Crop Calendar</h2>
+          <h2 className="text-lg font-bold text-slate-900">
+            {language === 'bn' ? 'ফসলের সময়সূচি ও কাজের ক্যালেন্ডার' : 'Agricultural Crop Calendar'}
+          </h2>
           <p className="text-xs text-slate-500 mt-0.5">
-            Sowing, fertilizer top-dressing, irrigation windows, pest control sprays, and harvest schedules.
+            {language === 'bn'
+              ? 'সার প্রয়োগ, সেচ প্রদান, কীটনাশক স্প্রে ও ফসল কাটার সঠিক সময়সূচি ও পরিকল্পনা।'
+              : 'Sowing, fertilizer top-dressing, irrigation windows, pest control sprays, and harvest schedules.'}
           </p>
         </div>
 
@@ -139,12 +146,12 @@ export const CropCalendar: React.FC = () => {
             onChange={(e) => setFilterType(e.target.value)}
             className="px-3 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded-lg text-slate-800 focus:outline-none"
           >
-            <option value="All">All Events ({tasks.length})</option>
-            <option value="Pending">Pending Only</option>
-            <option value="Completed">Completed Only</option>
-            <option value="Irrigation">Irrigation</option>
-            <option value="Fertilization">Fertilization</option>
-            <option value="Harvest">Harvest Windows</option>
+            <option value="All">{language === 'bn' ? `সকল কাজ (${tasks.length})` : `All Events (${tasks.length})`}</option>
+            <option value="Pending">{language === 'bn' ? 'বাকি কাজ' : 'Pending Only'}</option>
+            <option value="Completed">{language === 'bn' ? 'সম্পন্ন কাজ' : 'Completed Only'}</option>
+            <option value="Irrigation">{language === 'bn' ? 'সেচ প্রদান' : 'Irrigation'}</option>
+            <option value="Fertilization">{language === 'bn' ? 'সার প্রয়োগ' : 'Fertilization'}</option>
+            <option value="Harvest">{language === 'bn' ? 'ফসল তোলা' : 'Harvest Windows'}</option>
           </select>
 
           <Button
@@ -153,7 +160,7 @@ export const CropCalendar: React.FC = () => {
             icon={Plus}
             onClick={() => setIsAddModalOpen(true)}
           >
-            Schedule Event
+            {language === 'bn' ? '+ নতুন কাজ যোগ করুন' : 'Schedule Event'}
           </Button>
         </div>
       </div>
@@ -177,7 +184,7 @@ export const CropCalendar: React.FC = () => {
                     ? 'bg-emerald-600 border-emerald-600 text-white'
                     : 'border-slate-300 text-transparent hover:border-emerald-500'
                 }`}
-                aria-label="Toggle task"
+                aria-label={tr('Toggle task')}
               >
                 <CheckCircle2 className="w-4 h-4" />
               </button>
@@ -195,7 +202,15 @@ export const CropCalendar: React.FC = () => {
                         : 'bg-slate-100 text-slate-700 border-slate-200'
                     }`}
                   >
-                    {task.taskType}
+                    {language === 'bn'
+                      ? task.taskType === 'Irrigation' ? 'সেচ'
+                        : task.taskType === 'Fertilization' ? 'সার প্রয়োগ'
+                        : task.taskType === 'Pest Control' ? 'কীটনাশক'
+                        : task.taskType === 'Scouting' ? 'পরিদর্শন'
+                        : task.taskType === 'Sowing' ? 'রোপণ'
+                        : task.taskType === 'Harvest' ? 'ফসল কর্তন'
+                        : task.taskType
+                      : task.taskType}
                   </span>
                   <span className="text-[11px] font-medium text-slate-500">{task.scheduledDate}</span>
                 </div>
@@ -209,7 +224,7 @@ export const CropCalendar: React.FC = () => {
                 </h4>
 
                 <p className="text-xs text-slate-500 mt-1">
-                  {task.cropName} • <span className="text-slate-700">{task.fieldName}</span>
+                  {task.cropName}{tr('•')}<span className="text-slate-700">{task.fieldName}</span>
                 </p>
 
                 {task.notes && (
@@ -230,7 +245,12 @@ export const CropCalendar: React.FC = () => {
                     : 'bg-slate-100 text-slate-600'
                 }`}
               >
-                {task.priority}
+                {language === 'bn'
+                  ? task.priority === 'urgent' ? 'জরুরি'
+                    : task.priority === 'high' ? 'উচ্চ অগ্রাধিকার'
+                    : task.priority === 'medium' ? 'সাধারণ'
+                    : 'নিম্ন'
+                  : task.priority}
               </span>
             </div>
           </div>
@@ -241,14 +261,14 @@ export const CropCalendar: React.FC = () => {
       <Modal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        title="Schedule Agricultural Event / Task"
-        subtitle="Add a target operation to the crop calendar"
+        title={language === 'bn' ? 'নতুন কৃষি কাজের সময়সূচি তৈরি' : 'Schedule Agricultural Event / Task'}
+        subtitle={language === 'bn' ? 'ফসলের ক্যালেন্ডারে নির্দিষ্ট কাজের তারিখ যুক্ত করুন' : 'Add a target operation to the crop calendar'}
         maxWidth="lg"
       >
         <form onSubmit={handleAddTask} className="space-y-4">
           <FormSelect
             id="batchTarget"
-            label="Target Crop Batch"
+            label={language === 'bn' ? 'নির্দিষ্ট ফসল ও জমি' : 'Target Crop Batch'}
             value={newTask.cropBatchId}
             onChange={(e) => setNewTask({ ...newTask, cropBatchId: e.target.value })}
             options={cropBatches.map((b) => ({
@@ -259,8 +279,8 @@ export const CropCalendar: React.FC = () => {
 
           <FormInput
             id="taskTitle"
-            label="Event / Task Title"
-            placeholder="e.g. Third Urea Top-Dress & Soil Mound Reshaping"
+            label={language === 'bn' ? 'কাজের শিরোনাম / বিবরণ' : 'Event / Task Title'}
+            placeholder={language === 'bn' ? 'যেমন: দ্বিতীয় দফায় ইউরিয়া সার প্রয়োগ ও সেচ' : 'e.g. Third Urea Top-Dress & Soil Mound Reshaping'}
             value={newTask.taskTitle}
             onChange={(e) => setNewTask({ ...newTask, taskTitle: e.target.value })}
             required
@@ -269,40 +289,40 @@ export const CropCalendar: React.FC = () => {
           <div className="grid grid-cols-2 gap-3">
             <FormSelect
               id="taskType"
-              label="Operation Type"
+              label={language === 'bn' ? 'কাজের ধরন' : 'Operation Type'}
               value={newTask.taskType}
               onChange={(e) =>
                 setNewTask({ ...newTask, taskType: e.target.value as CalendarTask['taskType'] })
               }
               options={[
-                { value: 'Irrigation', label: 'Irrigation' },
-                { value: 'Fertilization', label: 'Fertilization' },
-                { value: 'Pest Control', label: 'Pest Control / Spray' },
-                { value: 'Scouting', label: 'Field Scouting / Monitoring' },
-                { value: 'Sowing', label: 'Sowing / Seedling Transplant' },
-                { value: 'Harvest', label: 'Harvest Window' },
+                { value: 'Irrigation', label: language === 'bn' ? 'সেচ প্রদান' : 'Irrigation' },
+                { value: 'Fertilization', label: language === 'bn' ? 'সার প্রয়োগ' : 'Fertilization' },
+                { value: 'Pest Control', label: language === 'bn' ? 'কীটনাশক / ছত্রাকনাশক স্প্রে' : 'Pest Control / Spray' },
+                { value: 'Scouting', label: language === 'bn' ? 'ক্ষেত পরিদর্শন ও পর্যবেক্ষণ' : 'Field Scouting / Monitoring' },
+                { value: 'Sowing', label: language === 'bn' ? 'চারা রোপণ / বীজ বপন' : 'Sowing / Seedling Transplant' },
+                { value: 'Harvest', label: language === 'bn' ? 'ফসল কর্তন ও মাড়াই' : 'Harvest Window' },
               ]}
             />
 
             <FormSelect
               id="priority"
-              label="Priority Level"
+              label={language === 'bn' ? 'গুরুত্ব / অগ্রাধিকার' : 'Priority Level'}
               value={newTask.priority}
               onChange={(e) =>
                 setNewTask({ ...newTask, priority: e.target.value as CalendarTask['priority'] })
               }
               options={[
-                { value: 'low', label: 'Low' },
-                { value: 'medium', label: 'Medium' },
-                { value: 'high', label: 'High' },
-                { value: 'urgent', label: 'Urgent' },
+                { value: 'low', label: language === 'bn' ? 'নিম্ন' : 'Low' },
+                { value: 'medium', label: language === 'bn' ? 'সাধারণ' : 'Medium' },
+                { value: 'high', label: language === 'bn' ? 'উচ্চ' : 'High' },
+                { value: 'urgent', label: language === 'bn' ? 'জরুরি' : 'Urgent' },
               ]}
             />
           </div>
 
           <FormInput
             id="scheduledDate"
-            label="Scheduled Date"
+            label={language === 'bn' ? 'নির্ধারিত তারিখ' : 'Scheduled Date'}
             type="date"
             value={newTask.scheduledDate}
             onChange={(e) => setNewTask({ ...newTask, scheduledDate: e.target.value })}
@@ -311,8 +331,8 @@ export const CropCalendar: React.FC = () => {
 
           <FormTextarea
             id="notes"
-            label="Field Notes & Preparations"
-            placeholder="e.g. Ensure spray nozzles are cleaned; test moisture beforehand"
+            label={language === 'bn' ? 'বিশেষ সতর্কতা বা নোট' : 'Field Notes & Preparations'}
+            placeholder={language === 'bn' ? 'যেমন: স্প্রে করার আগে নোজল পরিষ্কার করুন; সকালে রোদ ওঠার আগে দিন' : 'e.g. Ensure spray nozzles are cleaned; test moisture beforehand'}
             value={newTask.notes}
             onChange={(e) => setNewTask({ ...newTask, notes: e.target.value })}
             rows={2}
@@ -325,10 +345,10 @@ export const CropCalendar: React.FC = () => {
               size="sm"
               onClick={() => setIsAddModalOpen(false)}
             >
-              Cancel
+              {language === 'bn' ? 'বাতিল' : 'Cancel'}
             </Button>
             <Button type="submit" variant="primary" size="sm">
-              Schedule Task
+              {language === 'bn' ? 'ক্যালেন্ডারে সংরক্ষণ করুন' : 'Schedule Task'}
             </Button>
           </div>
         </form>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { tr } from "@/agriplatform/lib/localize";
 import {
   CreditCard,
   Search,
@@ -40,7 +41,7 @@ export const PaymentsManagement: React.FC = () => {
         setPayments(res.data);
       }
     } catch {
-      showToast('error', 'Failed to load platform payment disbursement records');
+      showToast('error', tr('Failed to load platform payment disbursement records'));
     } finally {
       setLoading(false);
     }
@@ -55,7 +56,7 @@ export const PaymentsManagement: React.FC = () => {
         showToast('success', `Payment ${res.data.transactionRef} approved and disbursed`);
       }
     } catch {
-      showToast('error', 'Failed to authorize payout disbursement');
+      showToast('error', tr('Failed to authorize payout disbursement'));
     } finally {
       setApprovingId(null);
     }
@@ -95,10 +96,8 @@ export const PaymentsManagement: React.FC = () => {
       {/* Top Banner */}
       <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-lg font-bold text-slate-900">National Settlement, Escrow & Payment Gateway</h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Audit digital payouts to farmers, freight carriers, and testing labs via BEFTN, bKash, and Nagad channels.
-          </p>
+          <h2 className="text-lg font-bold text-slate-900">{tr('National Settlement, Escrow & Payment Gateway')}</h2>
+          <p className="text-xs text-slate-500 mt-0.5">{tr('Audit digital payouts to farmers, freight carriers, and testing labs via BEFTN, bKash, and Nagad channels.')}</p>
         </div>
 
         <div className="flex items-center gap-2">
@@ -106,34 +105,32 @@ export const PaymentsManagement: React.FC = () => {
             variant="outline"
             size="sm"
             icon={Download}
-            onClick={() => showToast('info', 'Payment settlement batch exported to CSV')}
-          >
-            Export Ledger
-          </Button>
+            onClick={() => showToast('info', tr('Payment settlement batch exported to CSV'))}
+          >{tr('Export Ledger')}</Button>
         </div>
       </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="p-3 bg-white rounded-xl border border-slate-200">
-          <span className="text-[10px] text-slate-400 block uppercase font-bold">Total Settled Volume</span>
-          <span className="text-lg font-black text-emerald-700">৳{(totalDisbursed / 100000).toFixed(2)} Lakh</span>
-          <span className="text-[10px] text-slate-500 block">All bank & mobile channels</span>
+          <span className="text-[10px] text-slate-400 block uppercase font-bold">{tr('Total Settled Volume')}</span>
+          <span className="text-lg font-black text-emerald-700">৳{(totalDisbursed / 100000).toFixed(2)}{tr('Lakh')}</span>
+          <span className="text-[10px] text-slate-500 block">{tr('All bank & mobile channels')}</span>
         </div>
         <div className="p-3 bg-white rounded-xl border border-slate-200">
-          <span className="text-[10px] text-slate-400 block uppercase font-bold">Awaiting Authorization</span>
+          <span className="text-[10px] text-slate-400 block uppercase font-bold">{tr('Awaiting Authorization')}</span>
           <span className="text-lg font-black text-amber-600">৳{pendingDisbursement.toLocaleString()}</span>
-          <span className="text-[10px] text-slate-500 block">Pending Admin Dual-Sign</span>
+          <span className="text-[10px] text-slate-500 block">{tr('Pending Admin Dual-Sign')}</span>
         </div>
         <div className="p-3 bg-white rounded-xl border border-slate-200">
-          <span className="text-[10px] text-slate-400 block uppercase font-bold">Direct Channels</span>
-          <span className="text-lg font-black text-slate-900">4 Active</span>
-          <span className="text-[10px] text-slate-500 block">bKash, BEFTN, Nagad, Rocket</span>
+          <span className="text-[10px] text-slate-400 block uppercase font-bold">{tr('Direct Channels')}</span>
+          <span className="text-lg font-black text-slate-900">{tr('4 Active')}</span>
+          <span className="text-[10px] text-slate-500 block">{tr('bKash, BEFTN, Nagad, Rocket')}</span>
         </div>
         <div className="p-3 bg-white rounded-xl border border-slate-200">
-          <span className="text-[10px] text-slate-400 block uppercase font-bold">Failed Reversals</span>
+          <span className="text-[10px] text-slate-400 block uppercase font-bold">{tr('Failed Reversals')}</span>
           <span className="text-lg font-black text-slate-900">0</span>
-          <span className="text-[10px] text-emerald-600 block">100% gateway uptime</span>
+          <span className="text-[10px] text-emerald-600 block">{tr('100% gateway uptime')}</span>
         </div>
       </div>
 
@@ -143,7 +140,7 @@ export const PaymentsManagement: React.FC = () => {
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="Search txn ref, recipient, channel or purpose..."
+            placeholder={tr('Search txn ref, recipient, channel or purpose...')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-9 pr-4 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-900"
@@ -155,11 +152,11 @@ export const PaymentsManagement: React.FC = () => {
           onChange={(e) => setStatusFilter(e.target.value)}
           className="px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-800"
         >
-          <option value="All">All Payout Statuses</option>
-          <option value="Completed">Completed</option>
-          <option value="Pending Approval">Pending Approval</option>
-          <option value="Processing">Processing</option>
-          <option value="Failed">Failed</option>
+          <option value="All">{tr('All Payout Statuses')}</option>
+          <option value="Completed">{tr('Completed')}</option>
+          <option value="Pending Approval">{tr('Pending Approval')}</option>
+          <option value="Processing">{tr('Processing')}</option>
+          <option value="Failed">{tr('Failed')}</option>
         </select>
       </div>
 
@@ -169,14 +166,14 @@ export const PaymentsManagement: React.FC = () => {
           <table className="w-full text-left text-xs border-collapse">
             <thead>
               <tr className="border-b border-slate-200 bg-slate-50/80">
-                <th className="p-4 font-bold text-slate-600 uppercase">Transaction Ref</th>
-                <th className="p-4 font-bold text-slate-600 uppercase">Recipient & Role</th>
-                <th className="p-4 font-bold text-slate-600 uppercase">Purpose</th>
-                <th className="p-4 font-bold text-slate-600 uppercase">Disbursement Amount</th>
-                <th className="p-4 font-bold text-slate-600 uppercase">Payment Channel</th>
-                <th className="p-4 font-bold text-slate-600 uppercase">Status</th>
-                <th className="p-4 font-bold text-slate-600 uppercase">Audit Timestamp</th>
-                <th className="p-4 font-bold text-slate-600 uppercase text-right">Action</th>
+                <th className="p-4 font-bold text-slate-600 uppercase">{tr('Transaction Ref')}</th>
+                <th className="p-4 font-bold text-slate-600 uppercase">{tr('Recipient & Role')}</th>
+                <th className="p-4 font-bold text-slate-600 uppercase">{tr('Purpose')}</th>
+                <th className="p-4 font-bold text-slate-600 uppercase">{tr('Disbursement Amount')}</th>
+                <th className="p-4 font-bold text-slate-600 uppercase">{tr('Payment Channel')}</th>
+                <th className="p-4 font-bold text-slate-600 uppercase">{tr('Status')}</th>
+                <th className="p-4 font-bold text-slate-600 uppercase">{tr('Audit Timestamp')}</th>
+                <th className="p-4 font-bold text-slate-600 uppercase text-right">{tr('Action')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -212,7 +209,7 @@ export const PaymentsManagement: React.FC = () => {
                   <td className="p-4 text-slate-500 text-[11px]">
                     <div>{pay.initiatedAt}</div>
                     {pay.approvedBy && (
-                      <div className="text-[10px] text-slate-400 font-mono">By: {pay.approvedBy}</div>
+                      <div className="text-[10px] text-slate-400 font-mono">{tr('By:')}{pay.approvedBy}</div>
                     )}
                   </td>
                   <td className="p-4 text-right">
@@ -227,7 +224,7 @@ export const PaymentsManagement: React.FC = () => {
                         {approvingId === pay.id ? 'Authorizing...' : 'Authorize'}
                       </Button>
                     ) : (
-                      <span className="text-[11px] text-emerald-700 font-semibold">Settled ✓</span>
+                      <span className="text-[11px] text-emerald-700 font-semibold">{tr('Settled ✓')}</span>
                     )}
                   </td>
                 </tr>

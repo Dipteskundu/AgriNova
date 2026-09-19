@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { tr } from "@/agriplatform/lib/localize";
 import {
   PackageCheck,
   Plus,
@@ -17,9 +18,11 @@ import { Skeleton } from '@/components/shared/Skeleton';
 import { useToast } from '@/components/shared/Toast';
 import { getHarvestRecords, getCropBatches, createHarvestRecord } from '@/agriplatform/lib/farmerApi';
 import { HarvestRecord, CropBatch } from '@/agriplatform/types';
+import { useLanguage } from '@/agriplatform/lib/LanguageContext';
 
 export const HarvestManagement: React.FC = () => {
   const { showToast } = useToast();
+  const { language } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [harvestRecords, setHarvestRecords] = useState<HarvestRecord[]>([]);
   const [cropBatches, setCropBatches] = useState<CropBatch[]>([]);
@@ -52,7 +55,7 @@ export const HarvestManagement: React.FC = () => {
           }
         }
       } catch {
-        showToast('error', 'Failed to load harvest records');
+        showToast('error', tr('Failed to load harvest records'));
       } finally {
         setLoading(false);
       }
@@ -81,10 +84,10 @@ export const HarvestManagement: React.FC = () => {
       if (res.success) {
         setHarvestRecords([res.data, ...harvestRecords]);
         setIsAddModalOpen(false);
-        showToast('success', 'Harvest lot recorded in warehouse registry');
+        showToast('success', tr('Harvest lot recorded in warehouse registry'));
       }
     } catch {
-      showToast('error', 'Failed to record harvest lot');
+      showToast('error', tr('Failed to record harvest lot'));
     }
   };
 
@@ -107,10 +110,15 @@ export const HarvestManagement: React.FC = () => {
       {/* Top Banner */}
       <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-lg font-bold text-slate-900">Harvest Records & Warehouse Storage</h2>
+          <h2 className="text-lg font-bold text-slate-900">
+            {language === 'bn' ? 'ফসল তোলা ও গুদামজাতকরণ রেকর্ড' : 'Harvest Records & Warehouse Storage'}
+          </h2>
           <p className="text-xs text-slate-500 mt-0.5">
-            Total Harvested: <span className="font-bold text-slate-800">{(totalKg / 1000).toFixed(1)} Metric Tons</span> •
-            Estimated Valuation: <span className="font-bold text-emerald-700">৳{totalValuation.toLocaleString()}</span>.
+            {language === 'bn' ? 'মোট তোলাকৃত ফসল: ' : 'Total Harvested: '}
+            <span className="font-bold text-slate-800">
+              {(totalKg / 1000).toFixed(1)} {language === 'bn' ? 'মেট্রিক টন' : 'Metric Tons'}
+            </span>{tr('•')}{language === 'bn' ? 'আনুমানিক বাজারমূল্য: ' : 'Estimated Valuation: '}
+            <span className="font-bold text-emerald-700">৳{totalValuation.toLocaleString()}</span>.
           </p>
         </div>
 
@@ -120,7 +128,7 @@ export const HarvestManagement: React.FC = () => {
           icon={Plus}
           onClick={() => setIsAddModalOpen(true)}
         >
-          Record New Harvest Lot
+          {language === 'bn' ? '+ নতুন ফসল তোলার হিসাব যোগ করুন' : 'Record New Harvest Lot'}
         </Button>
       </div>
 
@@ -136,7 +144,7 @@ export const HarvestManagement: React.FC = () => {
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-slate-900">{lot.cropName}</h3>
-                    <p className="text-[11px] text-slate-400">{lot.variety} • {lot.fieldName}</p>
+                    <p className="text-[11px] text-slate-400">{lot.variety}{tr('•')}{lot.fieldName}</p>
                   </div>
                 </div>
 
@@ -149,24 +157,37 @@ export const HarvestManagement: React.FC = () => {
                       : 'neutral'
                   }
                 >
-                  {lot.qualityGrade}
+                  {language === 'bn'
+                    ? lot.qualityGrade === 'Grade A' ? 'গ্রেড ক (সেরা মান)'
+                      : lot.qualityGrade === 'Grade B' ? 'গ্রেড খ (সাধারণ মান)'
+                      : lot.qualityGrade === 'Grade C' ? 'গ্রেড গ'
+                      : 'বাতিল'
+                    : lot.qualityGrade}
                 </Badge>
               </div>
 
               {/* Yield & Moisture Highlights */}
               <div className="grid grid-cols-2 gap-2 p-3 bg-slate-50 rounded-xl border border-slate-100 text-xs mt-3">
                 <div>
-                  <span className="text-[10px] text-slate-400 block uppercase">Net Yield</span>
-                  <span className="font-extrabold text-sm text-slate-900">
-                    {lot.quantityKg.toLocaleString()} kg
+                  <span className="text-[10px] text-slate-400 block uppercase">
+                    {language === 'bn' ? 'মোট ফলন' : 'Net Yield'}
                   </span>
-                  <span className="text-[10px] text-slate-400 block">({(lot.quantityKg / 40).toFixed(0)} Maunds)</span>
+                  <span className="font-extrabold text-sm text-slate-900">
+                    {lot.quantityKg.toLocaleString()} {language === 'bn' ? 'কেজি' : 'kg'}
+                  </span>
+                  <span className="text-[10px] text-slate-400 block">
+                    ({(lot.quantityKg / 40).toFixed(0)} {language === 'bn' ? 'মণ' : 'Maunds'})
+                  </span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-400 block uppercase">Moisture Level</span>
+                  <span className="text-[10px] text-slate-400 block uppercase">
+                    {language === 'bn' ? 'আর্দ্রতার মাত্রা' : 'Moisture Level'}
+                  </span>
                   <span className="font-bold text-blue-700">{lot.moisturePercentage}%</span>
                   <span className="text-[10px] text-slate-400 block">
-                    {lot.moisturePercentage <= 14 ? 'Safe storage' : 'Needs drying'}
+                    {lot.moisturePercentage <= 14
+                      ? (language === 'bn' ? 'সংরক্ষণ উপযোগী' : 'Safe storage')
+                      : (language === 'bn' ? 'শুকানো প্রয়োজন' : 'Needs drying')}
                   </span>
                 </div>
               </div>
@@ -175,13 +196,13 @@ export const HarvestManagement: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <span className="text-slate-500 flex items-center gap-1.5">
                     <Warehouse className="w-3.5 h-3.5 text-slate-400" />
-                    Storage Site
+                    {language === 'bn' ? 'সংরক্ষণাগার / সাইট' : 'Storage Site'}
                   </span>
                   <span className="font-medium text-slate-800 truncate max-w-[150px]">{lot.storageLocation}</span>
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-500">Market Readiness</span>
+                  <span className="text-slate-500">{language === 'bn' ? 'বাজারজাতকরণের অবস্থা' : 'Market Readiness'}</span>
                   <Badge
                     variant={
                       lot.marketReadiness === 'Sold'
@@ -191,20 +212,24 @@ export const HarvestManagement: React.FC = () => {
                         : 'warning'
                     }
                   >
-                    {lot.marketReadiness}
+                    {language === 'bn'
+                      ? lot.marketReadiness === 'Sold' ? 'বিক্রিত'
+                        : lot.marketReadiness === 'Ready for Sale' ? 'বিক্রির জন্য প্রস্তুত'
+                        : 'গুদামজাত'
+                      : lot.marketReadiness}
                   </Badge>
                 </div>
 
                 <div className="flex items-center justify-between pt-2 border-t border-slate-100">
-                  <span className="text-slate-500 font-semibold">Estimated Valuation</span>
+                  <span className="text-slate-500 font-semibold">{language === 'bn' ? 'আনুমানিক মূল্য' : 'Estimated Valuation'}</span>
                   <span className="font-extrabold text-emerald-700 text-sm">৳{lot.estimatedValuationBdt.toLocaleString()}</span>
                 </div>
               </div>
             </div>
 
             <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
-              <span>Harvested: {lot.harvestDate}</span>
-              <span className="font-mono">Code: {lot.batchCode}</span>
+              <span>{language === 'bn' ? 'কর্তন তারিখ: ' : 'Harvested: '}{lot.harvestDate}</span>
+              <span className="font-mono">{language === 'bn' ? 'ব্যাচ কোড: ' : 'Code: '}{lot.batchCode}</span>
             </div>
           </Card>
         ))}
@@ -214,14 +239,14 @@ export const HarvestManagement: React.FC = () => {
       <Modal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        title="Record Harvest Batch & Post-Harvest Lot"
-        subtitle="Specify harvest quantity, moisture content, and warehouse assignment"
+        title={language === 'bn' ? 'ফসল তোলার নতুন হিসাব লিপিবদ্ধ করুন' : 'Record Harvest Batch & Post-Harvest Lot'}
+        subtitle={language === 'bn' ? 'ফলনের পরিমাণ, আর্দ্রতা ও গুদামের তথ্য প্রদান করুন' : 'Specify harvest quantity, moisture content, and warehouse assignment'}
         maxWidth="lg"
       >
         <form onSubmit={handleRecordHarvest} className="space-y-4">
           <FormSelect
             id="cropBatchId"
-            label="Harvested Crop Batch"
+            label={language === 'bn' ? 'ফসল ও জমির প্লট নির্বাচন করুন' : 'Harvested Crop Batch'}
             value={newLot.cropBatchId}
             onChange={(e) => setNewLot({ ...newLot, cropBatchId: e.target.value })}
             options={cropBatches.map((b) => ({
@@ -233,7 +258,7 @@ export const HarvestManagement: React.FC = () => {
           <div className="grid grid-cols-2 gap-3">
             <FormInput
               id="quantityKg"
-              label="Net Quantity (kg)"
+              label={language === 'bn' ? 'মোট ফলন (কেজি)' : 'Net Quantity (kg)'}
               type="number"
               value={newLot.quantityKg}
               onChange={(e) => setNewLot({ ...newLot, quantityKg: Number(e.target.value) })}
@@ -241,7 +266,7 @@ export const HarvestManagement: React.FC = () => {
             />
             <FormInput
               id="moisturePercentage"
-              label="Moisture Content (%)"
+              label={language === 'bn' ? 'আর্দ্রতার পরিমাণ (%)' : 'Moisture Content (%)'}
               type="number"
               step="0.1"
               value={newLot.moisturePercentage}
@@ -255,7 +280,7 @@ export const HarvestManagement: React.FC = () => {
           <div className="grid grid-cols-2 gap-3">
             <FormSelect
               id="qualityGrade"
-              label="Quality Grade"
+              label={language === 'bn' ? 'মানের গ্রেড' : 'Quality Grade'}
               value={newLot.qualityGrade}
               onChange={(e) =>
                 setNewLot({
@@ -264,15 +289,15 @@ export const HarvestManagement: React.FC = () => {
                 })
               }
               options={[
-                { value: 'Grade A', label: 'Grade A (Export / Prime)' },
-                { value: 'Grade B', label: 'Grade B (Standard Market)' },
-                { value: 'Grade C', label: 'Grade C (Secondary Processing)' },
-                { value: 'Rejected', label: 'Rejected' },
+                { value: 'Grade A', label: language === 'bn' ? 'গ্রেড ক (উচ্চ মান সম্পন্ন)' : 'Grade A (Export / Prime)' },
+                { value: 'Grade B', label: language === 'bn' ? 'গ্রেড খ (সাধারণ মান)' : 'Grade B (Standard Market)' },
+                { value: 'Grade C', label: language === 'bn' ? 'গ্রেড গ (প্রক্রিয়াকরণ উপযোগী)' : 'Grade C (Secondary Processing)' },
+                { value: 'Rejected', label: language === 'bn' ? 'বাতিল' : 'Rejected' },
               ]}
             />
             <FormSelect
               id="storageCondition"
-              label="Storage Facility"
+              label={language === 'bn' ? 'গুদামের ধরন' : 'Storage Facility'}
               value={newLot.storageCondition}
               onChange={(e) =>
                 setNewLot({
@@ -281,10 +306,10 @@ export const HarvestManagement: React.FC = () => {
                 })
               }
               options={[
-                { value: 'Silo', label: 'Aerated Grain Silo' },
-                { value: 'Cold Storage', label: 'Cold Storage Facility' },
-                { value: 'Ambient Warehouse', label: 'Standard Warehouse' },
-                { value: 'Farm Shed', label: 'Farm Shed Storage' },
+                { value: 'Silo', label: language === 'bn' ? 'বায়ুচলাচলযুক্ত শস্য সাইলো' : 'Aerated Grain Silo' },
+                { value: 'Cold Storage', label: language === 'bn' ? 'হিমাগার (কোল্ড স্টোরেজ)' : 'Cold Storage Facility' },
+                { value: 'Ambient Warehouse', label: language === 'bn' ? 'সাধারণ খাদ্য গুদাম' : 'Standard Warehouse' },
+                { value: 'Farm Shed', label: language === 'bn' ? 'খামারের নিজস্ব ছাউনি' : 'Farm Shed Storage' },
               ]}
             />
           </div>
@@ -292,14 +317,14 @@ export const HarvestManagement: React.FC = () => {
           <div className="grid grid-cols-2 gap-3">
             <FormInput
               id="storageLocation"
-              label="Storage Location / Warehouse"
+              label={language === 'bn' ? 'গুদামের নাম / অবস্থান' : 'Storage Location / Warehouse'}
               value={newLot.storageLocation}
               onChange={(e) => setNewLot({ ...newLot, storageLocation: e.target.value })}
               required
             />
             <FormInput
               id="estimatedValuationBdt"
-              label="Estimated Market Value (BDT)"
+              label={language === 'bn' ? 'আনুমানিক বাজারমূল্য (টাকা)' : 'Estimated Market Value (BDT)'}
               type="number"
               value={newLot.estimatedValuationBdt}
               onChange={(e) =>
@@ -316,10 +341,10 @@ export const HarvestManagement: React.FC = () => {
               size="sm"
               onClick={() => setIsAddModalOpen(false)}
             >
-              Cancel
+              {language === 'bn' ? 'বাতিল' : 'Cancel'}
             </Button>
             <Button type="submit" variant="primary" size="sm">
-              Save Harvest Lot
+              {language === 'bn' ? 'সংরক্ষণ করুন' : 'Save Harvest Lot'}
             </Button>
           </div>
         </form>

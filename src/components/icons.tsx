@@ -4,6 +4,7 @@ export type IconName =
   | "Activity"
   | "AlertCircle"
   | "AlertTriangle"
+  | "ArrowLeft"
   | "ArrowRight"
   | "ArrowUpRight"
   | "Award"
@@ -44,6 +45,7 @@ export type IconName =
   | "Gavel"
   | "GitCompare"
   | "Globe"
+  | "Grid"
   | "GraduationCap"
   | "Grid3X3"
   | "HeartPulse"
@@ -61,6 +63,7 @@ export type IconName =
   | "PackageCheck"
   | "PackageOpen"
   | "Phone"
+  | "PhoneCall"
   | "PieChart"
   | "PlayCircle"
   | "Plus"
@@ -73,6 +76,7 @@ export type IconName =
   | "Send"
   | "ShieldAlert"
   | "ShieldCheck"
+  | "SlidersHorizontal"
   | "ShoppingCart"
   | "Sparkles"
   | "Sprout"
@@ -101,6 +105,7 @@ const ICON_DEFS: Record<string, string> = {
   "Activity": "<path d=\"M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2\" />",
   "AlertCircle": "<circle cx=\"12\" cy=\"12\" r=\"10\" /> <line x1=\"12\" x2=\"12\" y1=\"8\" y2=\"12\" /> <line x1=\"12\" x2=\"12.01\" y1=\"16\" y2=\"16\" />",
   "AlertTriangle": "<path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\" /> <path d=\"M12 9v4\" /> <path d=\"M12 17h.01\" />",
+  "ArrowLeft": "<path d=\"m12 19-7-7 7-7\" /> <path d=\"M19 12H5\" />",
   "ArrowRight": "<path d=\"M5 12h14\" /> <path d=\"m12 5 7 7-7 7\" />",
   "ArrowUpRight": "<path d=\"M7 7h10v10\" /> <path d=\"M7 17 17 7\" />",
   "Award": "<path d=\"m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526\" /> <circle cx=\"12\" cy=\"8\" r=\"6\" />",
@@ -141,6 +146,7 @@ const ICON_DEFS: Record<string, string> = {
   "Gavel": "<path d=\"m14 13-8.381 8.38a1 1 0 0 1-3.001-3l8.384-8.381\" /> <path d=\"m16 16 6-6\" /> <path d=\"m21.5 10.5-8-8\" /> <path d=\"m8 8 6-6\" /> <path d=\"m8.5 7.5 8 8\" />",
   "GitCompare": "<circle cx=\"18\" cy=\"18\" r=\"3\" /> <circle cx=\"6\" cy=\"6\" r=\"3\" /> <path d=\"M13 6h3a2 2 0 0 1 2 2v7\" /> <path d=\"M11 18H8a2 2 0 0 1-2-2V9\" />",
   "Globe": "<circle cx=\"12\" cy=\"12\" r=\"10\" /> <path d=\"M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20\" /> <path d=\"M2 12h20\" />",
+  "Grid": "<rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\" /> <path d=\"M3 9h18\" /> <path d=\"M3 15h18\" /> <path d=\"M9 3v18\" /> <path d=\"M15 3v18\" />",
   "GraduationCap": "<path d=\"M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z\" /> <path d=\"M22 10v6\" /> <path d=\"M6 12.5V16a6 3 0 0 0 12 0v-3.5\" />",
   "Grid3X3": "<rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\" /> <path d=\"M3 9h18\" /> <path d=\"M3 15h18\" /> <path d=\"M9 3v18\" /> <path d=\"M15 3v18\" />",
   "HeartPulse": "<path d=\"M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5\" /> <path d=\"M3.22 13H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27\" />",
@@ -158,6 +164,7 @@ const ICON_DEFS: Record<string, string> = {
   "PackageCheck": "<path d=\"M12 22V12\" /> <path d=\"m16 17 2 2 4-4\" /> <path d=\"M21 11.127V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.729l7 4a2 2 0 0 0 2 .001l1.32-.753\" /> <path d=\"M3.29 7 12 12l8.71-5\" /> <path d=\"m7.5 4.27 8.997 5.148\" />",
   "PackageOpen": "<path d=\"M12 22v-9\" /> <path d=\"M15.17 2.21a1.67 1.67 0 0 1 1.63 0L21 4.57a1.93 1.93 0 0 1 0 3.36L8.82 14.79a1.655 1.655 0 0 1-1.64 0L3 12.43a1.93 1.93 0 0 1 0-3.36z\" /> <path d=\"M20 13v3.87a2.06 2.06 0 0 1-1.11 1.83l-6 3.08a1.93 1.93 0 0 1-1.78 0l-6-3.08A2.06 2.06 0 0 1 4 16.87V13\" /> <path d=\"M21 12.43a1.93 1.93 0 0 0 0-3.36L8.83 2.2a1.64 1.64 0 0 0-1.63 0L3 4.57a1.93 1.93 0 0 0 0 3.36l12.18 6.86a1.636 1.636 0 0 0 1.63 0z\" />",
   "Phone": "<path d=\"M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384\" />",
+  "PhoneCall": "<path d=\"M22 16.92v3a2 2 0 0 1-2.185 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z\" /> <path d=\"M15.05 5A5 5 0 0 1 19 8.95\" /> <path d=\"M15.05 1A9 9 0 0 1 23 8.94\" />",
   "PieChart": "<path d=\"M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z\" /> <path d=\"M21.21 15.89A10 10 0 1 1 8 2.83\" />",
   "PlayCircle": "<path d=\"M9 9.003a1 1 0 0 1 1.517-.859l4.997 2.997a1 1 0 0 1 0 1.718l-4.997 2.997A1 1 0 0 1 9 14.996z\" /> <circle cx=\"12\" cy=\"12\" r=\"10\" />",
   "Plus": "<path d=\"M5 12h14\" /> <path d=\"M12 5v14\" />",
@@ -170,6 +177,7 @@ const ICON_DEFS: Record<string, string> = {
   "Send": "<path d=\"M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z\" /> <path d=\"m21.854 2.147-10.94 10.939\" />",
   "ShieldAlert": "<path d=\"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z\" /> <path d=\"M12 8v4\" /> <path d=\"M12 16h.01\" />",
   "ShieldCheck": "<path d=\"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z\" /> <path d=\"m9 12 2 2 4-4\" />",
+  "SlidersHorizontal": "<line x1=\"21\" x2=\"14\" y1=\"4\" y2=\"4\" /> <line x1=\"10\" x2=\"3\" y1=\"4\" y2=\"4\" /> <line x1=\"21\" x2=\"12\" y1=\"12\" y2=\"12\" /> <line x1=\"8\" x2=\"3\" y1=\"12\" y2=\"12\" /> <line x1=\"21\" x2=\"16\" y1=\"20\" y2=\"20\" /> <line x1=\"12\" x2=\"3\" y1=\"20\" y2=\"20\" /> <line x1=\"14\" x2=\"14\" y1=\"2\" y2=\"6\" /> <line x1=\"8\" x2=\"8\" y1=\"10\" y2=\"14\" /> <line x1=\"16\" x2=\"16\" y1=\"18\" y2=\"22\" />",
   "ShoppingCart": "<path d=\"m2.05 2.05 1.099-.028a1 1 0 0 1 1.008.815l2.69 14.347A1 1 0 0 0 7.83 18H18\" /> <path d=\"M4.563 5h16.435a1 1 0 0 1 .981 1.204l-1.026 6.226A2 2 0 0 1 18.962 14H6.25\" /> <circle cx=\"18\" cy=\"20\" r=\"2\" /> <circle cx=\"8\" cy=\"20\" r=\"2\" />",
   "Sparkles": "<path d=\"M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z\" /> <path d=\"M20 2v4\" /> <path d=\"M22 4h-4\" /> <circle cx=\"4\" cy=\"20\" r=\"2\" />",
   "Sprout": "<path d=\"M14 9.536V7a4 4 0 0 1 4-4h1.5a.5.5 0 0 1 .5.5V5a4 4 0 0 1-4 4 4 4 0 0 0-4 4c0 2 1 3 1 5a5 5 0 0 1-1 3\" /> <path d=\"M4 9a5 5 0 0 1 8 4 5 5 0 0 1-8-4\" /> <path d=\"M5 21h14\" />",
@@ -231,6 +239,7 @@ export function withIcon(name: IconName) {
 export const Activity = withIcon("Activity");
 export const AlertCircle = withIcon("AlertCircle");
 export const AlertTriangle = withIcon("AlertTriangle");
+export const ArrowLeft = withIcon("ArrowLeft");
 export const ArrowRight = withIcon("ArrowRight");
 export const ArrowUpRight = withIcon("ArrowUpRight");
 export const Award = withIcon("Award");
@@ -271,6 +280,7 @@ export const Gauge = withIcon("Gauge");
 export const Gavel = withIcon("Gavel");
 export const GitCompare = withIcon("GitCompare");
 export const Globe = withIcon("Globe");
+export const Grid = withIcon("Grid");
 export const GraduationCap = withIcon("GraduationCap");
 export const Grid3X3 = withIcon("Grid3X3");
 export const HeartPulse = withIcon("HeartPulse");
@@ -288,6 +298,7 @@ export const Minus = withIcon("Minus");
 export const PackageCheck = withIcon("PackageCheck");
 export const PackageOpen = withIcon("PackageOpen");
 export const Phone = withIcon("Phone");
+export const PhoneCall = withIcon("PhoneCall");
 export const PieChart = withIcon("PieChart");
 export const PlayCircle = withIcon("PlayCircle");
 export const Plus = withIcon("Plus");
@@ -300,6 +311,7 @@ export const Search = withIcon("Search");
 export const Send = withIcon("Send");
 export const ShieldAlert = withIcon("ShieldAlert");
 export const ShieldCheck = withIcon("ShieldCheck");
+export const SlidersHorizontal = withIcon("SlidersHorizontal");
 export const ShoppingCart = withIcon("ShoppingCart");
 export const Sparkles = withIcon("Sparkles");
 export const Sprout = withIcon("Sprout");

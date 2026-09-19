@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { tr } from "@/agriplatform/lib/localize";
 import {
   CheckCircle2,
   AlertTriangle,
@@ -37,7 +38,7 @@ export const QualityManagement: React.FC = () => {
           setReports(res.data);
         }
       } catch {
-        showToast('error', 'Failed to load laboratory quality inspection certificates');
+        showToast('error', tr('Failed to load laboratory quality inspection certificates'));
       } finally {
         setLoading(false);
       }
@@ -75,10 +76,8 @@ export const QualityManagement: React.FC = () => {
       {/* Top Banner */}
       <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-lg font-bold text-slate-900">Post-Harvest Grain & Produce Quality Assurance</h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            DAE certified laboratory testing records: Moisture threshold compliance, foreign matter, and aflatoxin safety.
-          </p>
+          <h2 className="text-lg font-bold text-slate-900">{tr('Post-Harvest Grain & Produce Quality Assurance')}</h2>
+          <p className="text-xs text-slate-500 mt-0.5">{tr('DAE certified laboratory testing records: Moisture threshold compliance, foreign matter, and aflatoxin safety.')}</p>
         </div>
 
         <div className="flex items-center gap-2">
@@ -86,34 +85,32 @@ export const QualityManagement: React.FC = () => {
             variant="outline"
             size="sm"
             icon={Download}
-            onClick={() => showToast('success', 'Lab Quality Batch Reports exported as PDF')}
-          >
-            Export Lab Certificates
-          </Button>
+            onClick={() => showToast('success', tr('Lab Quality Batch Reports exported as PDF'))}
+          >{tr('Export Lab Certificates')}</Button>
         </div>
       </div>
 
       {/* KPI Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="p-3 bg-white rounded-xl border border-slate-200">
-          <span className="text-[10px] text-slate-400 block uppercase font-bold">Total Lots Tested</span>
-          <span className="text-xl font-black text-slate-900">{reports.length} Lots</span>
-          <span className="text-[10px] text-slate-500 block">Regional moisture labs</span>
+          <span className="text-[10px] text-slate-400 block uppercase font-bold">{tr('Total Lots Tested')}</span>
+          <span className="text-xl font-black text-slate-900">{reports.length}{tr('Lots')}</span>
+          <span className="text-[10px] text-slate-500 block">{tr('Regional moisture labs')}</span>
         </div>
         <div className="p-3 bg-white rounded-xl border border-slate-200">
-          <span className="text-[10px] text-slate-400 block uppercase font-bold">Grade A Passed</span>
+          <span className="text-[10px] text-slate-400 block uppercase font-bold">{tr('Grade A Passed')}</span>
           <span className="text-xl font-black text-emerald-700">{passedCount}</span>
-          <span className="text-[10px] text-emerald-600 block">Moisture &lt;14.0%</span>
+          <span className="text-[10px] text-emerald-600 block">{tr('Moisture <14.0%')}</span>
         </div>
         <div className="p-3 bg-white rounded-xl border border-slate-200">
-          <span className="text-[10px] text-slate-400 block uppercase font-bold">Conditional Pass</span>
+          <span className="text-[10px] text-slate-400 block uppercase font-bold">{tr('Conditional Pass')}</span>
           <span className="text-xl font-black text-amber-600">{conditionalCount}</span>
-          <span className="text-[10px] text-slate-500 block">Re-drying recommended</span>
+          <span className="text-[10px] text-slate-500 block">{tr('Re-drying recommended')}</span>
         </div>
         <div className="p-3 bg-white rounded-xl border border-slate-200">
-          <span className="text-[10px] text-slate-400 block uppercase font-bold">Rejected Lots</span>
+          <span className="text-[10px] text-slate-400 block uppercase font-bold">{tr('Rejected Lots')}</span>
           <span className="text-xl font-black text-red-600">{rejectedCount}</span>
-          <span className="text-[10px] text-slate-500 block">Blight or excessive moisture</span>
+          <span className="text-[10px] text-slate-500 block">{tr('Blight or excessive moisture')}</span>
         </div>
       </div>
 
@@ -123,7 +120,7 @@ export const QualityManagement: React.FC = () => {
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="Search batch code, farmer, lab, or certificate..."
+            placeholder={tr('Search batch code, farmer, lab, or certificate...')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-9 pr-4 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-900"
@@ -135,10 +132,10 @@ export const QualityManagement: React.FC = () => {
           onChange={(e) => setVerdictFilter(e.target.value)}
           className="px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-800"
         >
-          <option value="All">All Compliance Verdicts</option>
-          <option value="Passed">Passed (Grade A/B)</option>
-          <option value="Conditional Pass">Conditional Pass</option>
-          <option value="Rejected">Rejected</option>
+          <option value="All">{tr('All Compliance Verdicts')}</option>
+          <option value="Passed">{tr('Passed (Grade A/B)')}</option>
+          <option value="Conditional Pass">{tr('Conditional Pass')}</option>
+          <option value="Rejected">{tr('Rejected')}</option>
         </select>
       </div>
 
@@ -163,7 +160,7 @@ export const QualityManagement: React.FC = () => {
                       {rpt.assignedGrade}
                     </Badge>
                   </div>
-                  <span className="text-[11px] font-mono text-slate-400">Batch: {rpt.batchCode}</span>
+                  <span className="text-[11px] font-mono text-slate-400">{tr('Batch:')}{rpt.batchCode}</span>
                 </div>
                 <Badge variant="neutral">{rpt.complianceVerdict}</Badge>
               </div>
@@ -171,7 +168,7 @@ export const QualityManagement: React.FC = () => {
               <div className="p-3 bg-slate-50 rounded-xl my-2 space-y-2 text-xs">
                 <div>
                   <div className="flex justify-between text-slate-600 mb-1">
-                    <span>Moisture Content:</span>
+                    <span>{tr('Moisture Content:')}</span>
                     <strong
                       className={
                         rpt.moistureContentPercent <= rpt.moistureStandardThreshold
@@ -179,7 +176,7 @@ export const QualityManagement: React.FC = () => {
                           : 'text-red-600'
                       }
                     >
-                      {rpt.moistureContentPercent}% (Max {rpt.moistureStandardThreshold}%)
+                      {rpt.moistureContentPercent}{tr('% (Max')}{rpt.moistureStandardThreshold}%)
                     </strong>
                   </div>
                   <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
@@ -196,24 +193,22 @@ export const QualityManagement: React.FC = () => {
 
                 <div className="grid grid-cols-2 gap-2 pt-1 text-[11px] text-slate-600">
                   <div>
-                    <span className="text-slate-400 block">Foreign Matter</span>
+                    <span className="text-slate-400 block">{tr('Foreign Matter')}</span>
                     <strong>{rpt.foreignMatterPercent}%</strong>
                   </div>
                   <div>
-                    <span className="text-slate-400 block">Aflatoxin (Safety)</span>
+                    <span className="text-slate-400 block">{tr('Aflatoxin (Safety)')}</span>
                     <strong className={rpt.aflatoxinPpm > 10 ? 'text-red-600' : 'text-emerald-700'}>
-                      {rpt.aflatoxinPpm} ppm
-                    </strong>
+                      {rpt.aflatoxinPpm}{tr('ppm')}</strong>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-0.5 text-xs text-slate-600">
-                <p>
-                  Farmer: <strong className="text-slate-800">{rpt.farmerName}</strong>
+                <p>{tr('Farmer:')}<strong className="text-slate-800">{rpt.farmerName}</strong>
                 </p>
-                <p className="text-[11px] text-slate-500">Lab: {rpt.testingLabLocation}</p>
-                <p className="text-[11px] text-slate-400 font-mono">Cert: {rpt.certificateNumber}</p>
+                <p className="text-[11px] text-slate-500">{tr('Lab:')}{rpt.testingLabLocation}</p>
+                <p className="text-[11px] text-slate-400 font-mono">{tr('Cert:')}{rpt.certificateNumber}</p>
               </div>
             </div>
 
@@ -224,9 +219,7 @@ export const QualityManagement: React.FC = () => {
                 variant="outline"
                 icon={Eye}
                 onClick={() => setSelectedReport(rpt)}
-              >
-                Inspect Cert
-              </Button>
+              >{tr('Inspect Cert')}</Button>
             </div>
           </Card>
         ))}
@@ -244,39 +237,37 @@ export const QualityManagement: React.FC = () => {
           <div className="space-y-4 text-xs">
             <div className="p-3 bg-slate-50 rounded-xl space-y-2">
               <div className="flex justify-between">
-                <span className="text-slate-500">Assigned Grade:</span>
+                <span className="text-slate-500">{tr('Assigned Grade:')}</span>
                 <span className="font-bold text-slate-900">{selectedReport.assignedGrade}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Compliance Verdict:</span>
+                <span className="text-slate-500">{tr('Compliance Verdict:')}</span>
                 <span className="font-bold text-emerald-700">{selectedReport.complianceVerdict}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Moisture Content:</span>
+                <span className="text-slate-500">{tr('Moisture Content:')}</span>
                 <span className="font-bold text-slate-900">{selectedReport.moistureContentPercent}%</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Foreign Matter & Chaff:</span>
+                <span className="text-slate-500">{tr('Foreign Matter & Chaff:')}</span>
                 <span className="font-bold text-slate-900">{selectedReport.foreignMatterPercent}%</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Aflatoxin Mycotoxin Level:</span>
-                <span className="font-bold text-slate-900">{selectedReport.aflatoxinPpm} ppm (Safe &lt;20 ppm)</span>
+                <span className="text-slate-500">{tr('Aflatoxin Mycotoxin Level:')}</span>
+                <span className="font-bold text-slate-900">{selectedReport.aflatoxinPpm}{tr('ppm (Safe <20 ppm)')}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Certifying Lab:</span>
+                <span className="text-slate-500">{tr('Certifying Lab:')}</span>
                 <span className="font-bold text-slate-900">{selectedReport.testingLabLocation}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Inspector in Charge:</span>
+                <span className="text-slate-500">{tr('Inspector in Charge:')}</span>
                 <span className="font-bold text-slate-900">{selectedReport.inspectorName}</span>
               </div>
             </div>
 
             <div className="flex justify-end gap-2 pt-2">
-              <Button variant="outline" size="sm" onClick={() => setSelectedReport(null)}>
-                Close
-              </Button>
+              <Button variant="outline" size="sm" onClick={() => setSelectedReport(null)}>{tr('Close')}</Button>
               <Button
                 variant="primary"
                 size="sm"
@@ -285,9 +276,7 @@ export const QualityManagement: React.FC = () => {
                   showToast('success', `Certificate ${selectedReport.certificateNumber} downloaded`);
                   setSelectedReport(null);
                 }}
-              >
-                Download PDF
-              </Button>
+              >{tr('Download PDF')}</Button>
             </div>
           </div>
         </Modal>

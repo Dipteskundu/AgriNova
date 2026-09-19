@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { tr } from "@/agriplatform/lib/localize";
 import {
   ShieldAlert,
   Search,
@@ -35,7 +36,7 @@ export const SystemAuditLogs: React.FC = () => {
           setLogs(res.data);
         }
       } catch {
-        showToast('error', 'Failed to retrieve immutable security logs');
+        showToast('error', tr('Failed to retrieve immutable security logs'));
       } finally {
         setLoading(false);
       }
@@ -62,7 +63,7 @@ export const SystemAuditLogs: React.FC = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    showToast('success', 'Security audit log exported as CSV');
+    showToast('success', tr('Security audit log exported as CSV'));
   };
 
   const filteredLogs = logs.filter((log) => {
@@ -92,10 +93,8 @@ export const SystemAuditLogs: React.FC = () => {
       {/* Top Banner */}
       <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-lg font-bold text-slate-900">Immutable System & Security Audit Ledger</h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Cryptographically sealed timeline of administrative approvals, credential changes, and broadcast events.
-          </p>
+          <h2 className="text-lg font-bold text-slate-900">{tr('Immutable System & Security Audit Ledger')}</h2>
+          <p className="text-xs text-slate-500 mt-0.5">{tr('Cryptographically sealed timeline of administrative approvals, credential changes, and broadcast events.')}</p>
         </div>
 
         <Button
@@ -103,9 +102,7 @@ export const SystemAuditLogs: React.FC = () => {
           size="sm"
           icon={Download}
           onClick={handleExport}
-        >
-          Export Compliance Audit CSV
-        </Button>
+        >{tr('Export Compliance Audit CSV')}</Button>
       </div>
 
       {/* Filter Bar */}
@@ -114,7 +111,7 @@ export const SystemAuditLogs: React.FC = () => {
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="Search by action, actor, IP or detail..."
+            placeholder={tr('Search by action, actor, IP or detail...')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-9 pr-4 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-900"
@@ -126,10 +123,10 @@ export const SystemAuditLogs: React.FC = () => {
           onChange={(e) => setStatusFilter(e.target.value)}
           className="px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-800"
         >
-          <option value="All">All Statuses</option>
-          <option value="success">Success</option>
-          <option value="warning">Warning</option>
-          <option value="failure">Failure</option>
+          <option value="All">{tr('All Statuses')}</option>
+          <option value="success">{tr('Success')}</option>
+          <option value="warning">{tr('Warning')}</option>
+          <option value="failure">{tr('Failure')}</option>
         </select>
       </div>
 
@@ -139,13 +136,13 @@ export const SystemAuditLogs: React.FC = () => {
           <table className="w-full text-left text-xs border-collapse">
             <thead>
               <tr className="border-b border-slate-200 bg-slate-50/80">
-                <th className="p-4 font-bold text-slate-600 uppercase">Timestamp</th>
-                <th className="p-4 font-bold text-slate-600 uppercase">Actor & Role</th>
-                <th className="p-4 font-bold text-slate-600 uppercase">Action Type</th>
-                <th className="p-4 font-bold text-slate-600 uppercase">Target Entity</th>
-                <th className="p-4 font-bold text-slate-600 uppercase">IP Address</th>
-                <th className="p-4 font-bold text-slate-600 uppercase">Status</th>
-                <th className="p-4 font-bold text-slate-600 uppercase">Event Details</th>
+                <th className="p-4 font-bold text-slate-600 uppercase">{tr('Timestamp')}</th>
+                <th className="p-4 font-bold text-slate-600 uppercase">{tr('Actor & Role')}</th>
+                <th className="p-4 font-bold text-slate-600 uppercase">{tr('Action Type')}</th>
+                <th className="p-4 font-bold text-slate-600 uppercase">{tr('Target Entity')}</th>
+                <th className="p-4 font-bold text-slate-600 uppercase">{tr('IP Address')}</th>
+                <th className="p-4 font-bold text-slate-600 uppercase">{tr('Status')}</th>
+                <th className="p-4 font-bold text-slate-600 uppercase">{tr('Event Details')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-mono text-[11px]">

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
+import { tr } from "@/agriplatform/lib/localize";
 import {
   LayoutDashboard,
   User,
@@ -28,17 +29,19 @@ import {
   Scale,
   Menu,
   X,
-  SunMedium,
-  Check,
   Radio,
   Terminal,
   DollarSign,
   FileCheck,
   Send,
   LogOut,
+  ArrowLeft,
+  Grid,
 } from '@/components/icons';
 import { PortalType, FarmerNotification } from '@/agriplatform/types';
 import { AuthUser } from '@/agriplatform/auth/AuthScreen';
+import { useLanguage } from '@/agriplatform/lib/LanguageContext';
+import { LanguageSwitcher } from '@/components/shared/LanguageSwitcher';
 
 export type FarmerModuleKey =
   | 'dashboard'
@@ -105,87 +108,82 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const { language, t } = useLanguage();
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   const farmerNavGroups = [
     {
-      group: 'Overview & Profile',
+      group: t('navCore'),
       items: [
-        { key: 'dashboard' as FarmerModuleKey, label: '1. Farmer Dashboard', icon: LayoutDashboard },
-        { key: 'profile' as FarmerModuleKey, label: '2. Profile', icon: User },
+        { key: 'dashboard' as FarmerModuleKey, label: t('modDashboard'), icon: LayoutDashboard },
+        { key: 'profile' as FarmerModuleKey, label: t('modProfile'), icon: User },
+        { key: 'notifications' as FarmerModuleKey, label: t('modNotifications'), icon: Bell, badge: unreadCount },
       ],
     },
     {
-      group: 'Farm & Field Infrastructure',
+      group: t('navFarmCrop'),
       items: [
-        { key: 'farms' as FarmerModuleKey, label: '3. Farm Management', icon: Trees },
-        { key: 'fields' as FarmerModuleKey, label: '4. Field Management', icon: Grid3X3 },
+        { key: 'farms' as FarmerModuleKey, label: t('modFarms'), icon: Trees },
+        { key: 'fields' as FarmerModuleKey, label: t('modFields'), icon: Grid3X3 },
+        { key: 'crops' as FarmerModuleKey, label: t('modCrops'), icon: Sprout },
+        { key: 'logs' as FarmerModuleKey, label: t('modLogs'), icon: ClipboardList },
+        { key: 'calendar' as FarmerModuleKey, label: t('modCalendar'), icon: Calendar },
+        { key: 'harvest' as FarmerModuleKey, label: t('modHarvest'), icon: PackageCheck },
       ],
     },
     {
-      group: 'Crop Planning & Comparison',
+      group: t('navAdvisory'),
       items: [
-        { key: 'recommendation' as FarmerModuleKey, label: '5. Crop Recommendation', icon: Sparkles },
-        { key: 'comparison' as FarmerModuleKey, label: '6. Crop Comparison', icon: GitCompare },
+        { key: 'recommendation' as FarmerModuleKey, label: t('modRecommendation'), icon: Sparkles },
+        { key: 'comparison' as FarmerModuleKey, label: t('modComparison'), icon: GitCompare },
+        { key: 'weather' as FarmerModuleKey, label: t('modWeather'), icon: CloudSun },
+        { key: 'training' as FarmerModuleKey, label: t('modTraining'), icon: GraduationCap },
+        { key: 'ai_result' as FarmerModuleKey, label: t('modAiResult'), icon: BrainCircuit },
       ],
     },
     {
-      group: 'Crop Operations & Lifecycle',
+      group: t('navFinancials'),
       items: [
-        { key: 'crops' as FarmerModuleKey, label: '7. Crop Management', icon: Sprout },
-        { key: 'logs' as FarmerModuleKey, label: '8. Crop Logs', icon: ClipboardList },
-        { key: 'calendar' as FarmerModuleKey, label: '9. Crop Calendar', icon: Calendar },
-        { key: 'harvest' as FarmerModuleKey, label: '10. Harvest Management', icon: PackageCheck },
-      ],
-    },
-    {
-      group: 'Farm Financials',
-      items: [
-        { key: 'expenses' as FarmerModuleKey, label: '11. Farm Expenses', icon: Receipt },
-        { key: 'profitability' as FarmerModuleKey, label: '12. Profitability', icon: TrendingUp },
-      ],
-    },
-    {
-      group: 'Agritech Intelligence & Training',
-      items: [
-        { key: 'weather' as FarmerModuleKey, label: '13. Weather & Alerts', icon: CloudSun },
-        { key: 'training' as FarmerModuleKey, label: '14. Agricultural Training', icon: GraduationCap },
-        { key: 'ai_result' as FarmerModuleKey, label: '15. AI Recommendation UI', icon: BrainCircuit },
-        { key: 'notifications' as FarmerModuleKey, label: '16. Farmer Notifications', icon: Bell, badge: unreadCount },
+        { key: 'expenses' as FarmerModuleKey, label: t('modExpenses'), icon: Receipt },
+        { key: 'profitability' as FarmerModuleKey, label: t('modProfitability'), icon: TrendingUp },
       ],
     },
   ];
 
   const adminNavGroups = [
     {
-      group: 'Admin Core Portal (10 Modules)',
+      group: t('navAdminCore'),
       items: [
-        { key: 'admin_dashboard' as AdminModuleKey, label: '1. Admin Dashboard', icon: ShieldCheck },
-        { key: 'user_management' as AdminModuleKey, label: '2. User Management', icon: Users },
-        { key: 'marketplace' as AdminModuleKey, label: '3. Marketplace Management', icon: Store },
-        { key: 'orders' as AdminModuleKey, label: '4. Orders', icon: ShoppingCart },
-        { key: 'payments' as AdminModuleKey, label: '5. Payments', icon: CreditCard },
-        { key: 'quality' as AdminModuleKey, label: '6. Quality Management', icon: CheckCircle },
-        { key: 'logistics' as AdminModuleKey, label: '7. Logistics', icon: Truck },
-        { key: 'training_management' as AdminModuleKey, label: '8. Training Management', icon: BookOpen },
-        { key: 'reports' as AdminModuleKey, label: '9. Reports', icon: FileBarChart },
-        { key: 'disputes' as AdminModuleKey, label: '10. Disputes', icon: Scale },
+        { key: 'admin_dashboard' as AdminModuleKey, label: t('modAdminDashboard'), icon: ShieldCheck },
+        { key: 'user_management' as AdminModuleKey, label: t('modUserManagement'), icon: Users },
+        { key: 'marketplace' as AdminModuleKey, label: t('modMarketplace'), icon: Store },
+        { key: 'orders' as AdminModuleKey, label: t('modOrders'), icon: ShoppingCart },
+        { key: 'payments' as AdminModuleKey, label: t('modPayments'), icon: CreditCard },
+        { key: 'quality' as AdminModuleKey, label: t('modQuality'), icon: CheckCircle },
+        { key: 'logistics' as AdminModuleKey, label: t('modLogistics'), icon: Truck },
+        { key: 'training_management' as AdminModuleKey, label: t('modTrainingManagement'), icon: BookOpen },
+        { key: 'reports' as AdminModuleKey, label: t('modReports'), icon: FileBarChart },
+        { key: 'disputes' as AdminModuleKey, label: t('modDisputes'), icon: Scale },
       ],
     },
     {
-      group: 'DAE Cadastre & Regulatory Tools',
+      group: t('navAdminRegulatory'),
       items: [
-        { key: 'farm_verification' as AdminModuleKey, label: '11. Farm Verification', icon: FileCheck },
-        { key: 'crop_catalog' as AdminModuleKey, label: '12. Master Crop Catalog', icon: Sprout },
-        { key: 'advisory_management' as AdminModuleKey, label: '13. Agronomic Advisory', icon: Send },
-        { key: 'market_prices' as AdminModuleKey, label: '14. Market Price Command', icon: DollarSign },
-        { key: 'weather_broadcast' as AdminModuleKey, label: '15. Weather Broadcast', icon: Radio },
-        { key: 'platform_analytics' as AdminModuleKey, label: '16. Platform Macro Analytics', icon: FileBarChart },
-        { key: 'system_audit' as AdminModuleKey, label: '17. Security & System Audit', icon: Terminal },
+        { key: 'farm_verification' as AdminModuleKey, label: t('modFarmVerification'), icon: FileCheck },
+        { key: 'crop_catalog' as AdminModuleKey, label: t('modCropCatalog'), icon: Sprout },
+        { key: 'advisory_management' as AdminModuleKey, label: t('modAdvisoryManagement'), icon: Send },
+        { key: 'market_prices' as AdminModuleKey, label: t('modMarketPrices'), icon: DollarSign },
+        { key: 'weather_broadcast' as AdminModuleKey, label: t('modWeatherBroadcast'), icon: Radio },
+        { key: 'platform_analytics' as AdminModuleKey, label: t('modPlatformAnalytics'), icon: FileBarChart },
+        { key: 'system_audit' as AdminModuleKey, label: t('modSystemAudit'), icon: Terminal },
       ],
     },
   ];
+
+  const isFarmerHomePage = portal === 'farmer' && activeFarmerModule === 'dashboard';
+  const isAdminHomePage = portal === 'admin' && activeAdminModule === 'admin_dashboard';
+  const isHomePage = isFarmerHomePage || isAdminHomePage;
 
   const activeTitle =
     portal === 'farmer'
@@ -194,93 +192,80 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col antialiased text-slate-900">
-      {/* Top Header Bar */}
-      <header className="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-2xs">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 flex items-center justify-between h-16">
-          {/* Brand & Mobile Hamburger */}
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+      {/* Ultra-Minimalist Top Header Bar */}
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-2xs">
+        <div className="max-w-screen-2xl mx-auto px-3 sm:px-6 flex items-center justify-between h-14">
+          {/* Brand & Left Navigation */}
+          <div className="flex items-center gap-2.5 sm:gap-4 min-w-0">
             <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-1.5 sm:p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 shrink-0 cursor-pointer"
-              aria-label="Toggle Navigation Menu"
+              onClick={() => {
+                if (portal === 'farmer') setActiveFarmerModule('dashboard');
+                else setActiveAdminModule('admin_dashboard');
+              }}
+              className="flex items-center gap-2 cursor-pointer focus:outline-none shrink-0"
+              title="à¦¹à§‹à¦® à¦ªà§‡à¦œ / Home"
             >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              <div className="w-8 h-8 rounded-xl bg-emerald-700 flex items-center justify-center text-white font-bold shadow-xs shrink-0">
+                <Sprout className="w-4 h-4" />
+              </div>
+              <span className="font-black text-slate-900 tracking-tight text-sm sm:text-base">{tr('AgriPlatform')}</span>
             </button>
 
-            <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
-              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-emerald-700 flex items-center justify-center text-white font-bold shadow-xs shrink-0">
-                <Sprout className="w-4 h-4 sm:w-5 sm:h-5" />
-              </div>
-              <div className="min-w-0">
-                <div className="flex items-center gap-1.5 sm:gap-2">
-                  <span className="font-bold text-slate-900 tracking-tight text-sm sm:text-base truncate">AgriPlatform</span>
-                  <span
-                    className={`text-[9px] sm:text-[10px] font-bold uppercase tracking-wider px-1.5 sm:px-2 py-0.5 rounded-full border shrink-0 ${
-                      portal === 'farmer'
-                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                        : 'bg-indigo-50 text-indigo-700 border-indigo-200'
-                    }`}
-                  >
-                    {portal === 'farmer' ? 'Farmer' : 'Admin'}
-                  </span>
-                </div>
-                <p className="text-[11px] text-slate-500 hidden md:block truncate">
-                  Mohiuddin Khan Agricultural Ecosystem
-                </p>
-              </div>
-            </div>
+            {/* If NOT on home page: clean Back to Home button */}
+            {!isHomePage && (
+              <button
+                onClick={() => {
+                  if (portal === 'farmer') setActiveFarmerModule('dashboard');
+                  else setActiveAdminModule('admin_dashboard');
+                }}
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-emerald-50 hover:text-emerald-800 text-xs font-bold text-slate-700 transition-colors cursor-pointer shrink-0"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>{language === 'bn' ? 'à¦¹à§‹à¦®' : 'Home'}</span>
+              </button>
+            )}
+
+            {!isHomePage && (
+              <span className="hidden md:inline-block text-xs font-semibold text-slate-500 border-l border-slate-200 pl-3 truncate max-w-xs">
+                {activeTitle}
+              </span>
+            )}
           </div>
 
-          {/* Center Weather snippet */}
-          <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-emerald-50/70 border border-emerald-100 rounded-lg text-xs text-emerald-900">
-            <SunMedium className="w-4 h-4 text-amber-500 shrink-0" />
-            <span className="font-semibold">Sherpur, Bogura:</span>
-            <span>30.5°C • 74% Humidity • Microclimate Advisory Active</span>
-          </div>
 
-          {/* Right Action: Role Badge, Notifications, Persona profile & Logout */}
-          <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
-            {/* Active Portal Badge (Determined by Login) */}
-            <div
-              className={`hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border ${
-                portal === 'farmer'
-                  ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                  : 'bg-indigo-50 text-indigo-900 border-indigo-200'
-              }`}
+          {/* Right Action: Language Switcher, Services Drawer, Notifications & User */}
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            {/* Minimal Language Switcher */}
+            <LanguageSwitcher />
+
+            {/* All Services Drawer Trigger */}
+            <button
+              onClick={() => setMobileMenuOpen(true)}
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer border border-slate-200/80"
+              title={language === 'bn' ? 'à¦¸à¦•à¦² à¦¸à§‡à¦¬à¦¾ à¦¦à§‡à¦–à§à¦¨' : 'All Services'}
             >
-              {portal === 'farmer' ? (
-                <>
-                  <Sprout className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Farmer Portal</span>
-                </>
-              ) : (
-                <>
-                  <ShieldCheck className="w-3.5 h-3.5 text-indigo-600" />
-                  <span>Admin Command</span>
-                </>
-              )}
-            </div>
+              <Grid className="w-3.5 h-3.5 text-emerald-700" />
+              <span className="hidden sm:inline">{language === 'bn' ? 'à¦¸à¦•à¦² à¦¸à§‡à¦¬à¦¾' : 'Services'}</span>
+            </button>
 
             {/* Notifications Popover Trigger */}
             <div className="relative">
               <button
                 onClick={() => setNotificationsOpen(!notificationsOpen)}
-                className="p-1.5 sm:p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl relative transition-colors cursor-pointer"
-                aria-label="View notifications"
+                className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg relative transition-colors cursor-pointer"
+                aria-label={tr('View notifications')}
               >
-                <Bell className="w-5 h-5" />
+                <Bell className="w-4 h-4" />
                 {unreadCount > 0 && (
-                  <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center">
-                    {unreadCount}
-                  </span>
+                  <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-white" />
                 )}
               </button>
 
               {notificationsOpen && (
-                <div className="absolute right-0 sm:right-0 mt-2 w-[calc(100vw-2rem)] sm:w-96 max-w-sm bg-white rounded-2xl border border-slate-200 shadow-xl z-50 p-4">
-                  <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
+                <div className="absolute right-0 mt-2 w-80 max-w-[calc(100vw-2rem)] bg-white rounded-2xl border border-slate-200 shadow-xl z-50 p-4">
+                  <div className="flex items-center justify-between pb-2.5 border-b border-slate-100 mb-2.5">
                     <h4 className="text-xs font-bold uppercase tracking-wider text-slate-800">
-                      Notifications ({unreadCount} Unread)
+                      {language === 'bn' ? `à¦¬à¦¿à¦œà§à¦žà¦ªà§à¦¤à¦¿ (${unreadCount} à¦Ÿà¦¿ à¦¨à¦¤à§à¦¨)` : `Notifications (${unreadCount})`}
                     </h4>
                     <button
                       onClick={() => {
@@ -289,10 +274,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                       }}
                       className="text-xs text-emerald-700 hover:underline font-semibold cursor-pointer"
                     >
-                      View All
+                      {language === 'bn' ? 'à¦¸à¦¬ à¦¦à§‡à¦–à§à¦¨' : 'View All'}
                     </button>
                   </div>
-                  <div className="space-y-2 max-h-72 overflow-y-auto">
+                  <div className="space-y-1.5 max-h-72 overflow-y-auto">
                     {notifications.slice(0, 4).map((notif) => (
                       <div
                         key={notif.id}
@@ -303,7 +288,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                           }
                           setNotificationsOpen(false);
                         }}
-                        className={`p-2.5 rounded-lg border text-xs cursor-pointer transition-colors ${
+                        className={`p-2 rounded-lg border text-xs cursor-pointer transition-colors ${
                           notif.isRead
                             ? 'bg-white border-slate-100 text-slate-600'
                             : 'bg-emerald-50/50 border-emerald-100 text-slate-800 font-medium'
@@ -311,12 +296,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                       >
                         <div className="flex items-center justify-between">
                           <span className="font-semibold text-slate-900">{notif.title}</span>
-                          {!notif.isRead && (
-                            <span className="w-2 h-2 rounded-full bg-emerald-600" />
-                          )}
+                          {!notif.isRead && <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />}
                         </div>
-                        <p className="text-[11px] text-slate-500 mt-1 line-clamp-2">{notif.message}</p>
-                        <span className="text-[10px] text-slate-400 mt-1 block">{notif.timestamp}</span>
+                        <p className="text-[11px] text-slate-500 mt-0.5 line-clamp-2">{notif.message}</p>
                       </div>
                     ))}
                   </div>
@@ -324,29 +306,31 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               )}
             </div>
 
-            {/* Profile Avatar / User Badge & Logout */}
-            <div className="flex items-center gap-2 pl-2 border-l border-slate-200">
-              <div className="w-8 h-8 rounded-full bg-slate-200 border border-slate-300 overflow-hidden flex items-center justify-center font-bold text-xs text-slate-700">
-                {currentUser ? currentUser.avatarInitials : portal === 'farmer' ? 'MK' : 'TI'}
-              </div>
-              <div className="hidden sm:block text-left text-xs">
-                <p className="font-semibold text-slate-800 leading-tight">
-                  {currentUser ? currentUser.name : portal === 'farmer' ? 'Mohiuddin Khan' : 'Tariqul Islam'}
-                </p>
-                <p className="text-[10px] text-slate-500">
-                  {currentUser ? `${currentUser.role} (${currentUser.location.split(',')[0]})` : portal === 'farmer' ? 'Lead Farmer (Bogura)' : 'Platform Admin HQ'}
-                </p>
-              </div>
+            {/* Profile Avatar & Logout */}
+            <div className="flex items-center gap-1.5 pl-2 border-l border-slate-200">
+              <button
+                onClick={() => {
+                  if (portal === 'farmer') setActiveFarmerModule('profile');
+                }}
+                className="flex items-center gap-1.5 cursor-pointer hover:opacity-80 transition-opacity"
+                title="à¦ªà§à¦°à§‹à¦«à¦¾à¦‡à¦² / Profile"
+              >
+                <div className="w-7 h-7 rounded-full bg-emerald-100 border border-emerald-300 text-emerald-800 flex items-center justify-center font-bold text-[11px]">
+                  {currentUser ? currentUser.avatarInitials : portal === 'farmer' ? 'MK' : 'TI'}
+                </div>
+                <span className="hidden sm:inline text-xs font-bold text-slate-800">
+                  {currentUser ? currentUser.name.split(' ')[0] : 'à¦®à¦¹à¦¿à¦‰à¦¦à§à¦¦à§€à¦¨'}
+                </span>
+              </button>
 
               {onLogout && (
                 <button
                   onClick={onLogout}
-                  title="Sign out of account"
-                  className="p-1.5 ml-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer flex items-center gap-1 text-xs font-semibold"
-                  aria-label="Sign out"
+                  title={tr('Sign out of account')}
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                  aria-label={tr('Sign out')}
                 >
                   <LogOut className="w-4 h-4" />
-                  <span className="hidden md:inline">Sign Out</span>
                 </button>
               )}
             </div>
@@ -354,98 +338,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         </div>
       </header>
 
-      {/* Main App Container with Sidebar & Content */}
-      <div className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 flex gap-6">
-        {/* Left Sidebar Navigation (Desktop) */}
-        <aside className="hidden lg:block w-72 shrink-0">
-          <div className="sticky top-24 bg-white rounded-2xl border border-slate-200/80 shadow-xs p-3.5 max-h-[calc(100vh-8rem)] overflow-y-auto">
-            <div className="px-3 py-2.5 mb-2 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-                {portal === 'farmer' ? 'Farmer Modules (16)' : 'Admin Modules (10)'}
-              </span>
-              <span className="text-[10px] font-semibold text-slate-500 bg-white px-2 py-0.5 rounded-full border border-slate-200">
-                {currentUser?.role || (portal === 'farmer' ? 'Farmer' : 'Admin')}
-              </span>
-            </div>
-
-            <nav className="space-y-4">
-              {portal === 'farmer' ? (
-                farmerNavGroups.map((group) => (
-                  <div key={group.group}>
-                    <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
-                      {group.group}
-                    </p>
-                    <div className="space-y-0.5">
-                      {group.items.map((item) => {
-                        const Icon = item.icon;
-                        const isActive = activeFarmerModule === item.key;
-                        return (
-                          <button
-                            key={item.key}
-                            onClick={() => setActiveFarmerModule(item.key)}
-                            className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-all text-left cursor-pointer ${
-                              isActive
-                                ? 'bg-emerald-700 text-white font-semibold shadow-xs'
-                                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                            }`}
-                          >
-                            <div className="flex items-center gap-2.5 truncate">
-                              <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-                              <span className="truncate">{item.label}</span>
-                            </div>
-                            {item.badge !== undefined && item.badge > 0 && (
-                              <span
-                                className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
-                                  isActive ? 'bg-white text-emerald-800' : 'bg-rose-100 text-rose-700'
-                                }`}
-                              >
-                                {item.badge}
-                              </span>
-                            )}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                ))
-              ) : (
-                adminNavGroups.map((group) => (
-                  <div key={group.group}>
-                    <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
-                      {group.group}
-                    </p>
-                    <div className="space-y-0.5">
-                      {group.items.map((item) => {
-                        const Icon = item.icon;
-                        const isActive = activeAdminModule === item.key;
-                        return (
-                          <button
-                            key={item.key}
-                            onClick={() => setActiveAdminModule(item.key)}
-                            className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-all text-left cursor-pointer ${
-                              isActive
-                                ? 'bg-indigo-700 text-white font-semibold shadow-xs'
-                                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                            }`}
-                          >
-                            <div className="flex items-center gap-2.5 truncate">
-                              <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-                              <span className="truncate">{item.label}</span>
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                ))
-              )}
-            </nav>
-          </div>
-        </aside>
-
-        {/* Mobile Navigation Drawer */}
+      {/* Main App Container */}
+      <div className="flex-1 max-w-screen-2xl w-full mx-auto px-3 sm:px-6 py-5">
+        {/* All Services Drawer */}
         {mobileMenuOpen && (
-          <div className="fixed inset-0 z-50 lg:hidden flex">
+          <div className="fixed inset-0 z-50 flex">
             {/* Backdrop */}
             <div
               className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs transition-opacity"
@@ -460,7 +357,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     <Sprout className="w-4 h-4" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-slate-900 text-sm leading-tight">AgriPlatform</h3>
+                    <h3 className="font-bold text-slate-900 text-sm leading-tight">{tr('AgriPlatform')}</h3>
                     <p className="text-[10px] text-slate-500">
                       {portal === 'farmer' ? 'Farmer Suite (16 Modules)' : 'Admin Oversight (10 Modules)'}
                     </p>
@@ -469,7 +366,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 <button
                   onClick={() => setMobileMenuOpen(false)}
                   className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
-                  aria-label="Close drawer"
+                  aria-label={tr('Close drawer')}
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -484,7 +381,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     </div>
                     <div className="min-w-0">
                       <p className="text-xs font-bold text-slate-900 truncate">{currentUser.name}</p>
-                      <p className="text-[10px] text-slate-500 truncate">{currentUser.role} • {currentUser.location.split(',')[0]}</p>
+                      <p className="text-[10px] text-slate-500 truncate">{currentUser.role} {tr('â€¢')} {currentUser.location.split(',')[0]}</p>
                     </div>
                   </div>
                   {onLogout && (
@@ -494,7 +391,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         onLogout();
                       }}
                       className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer shrink-0"
-                      title="Sign Out"
+                      title={tr('Sign Out')}
                     >
                       <LogOut className="w-4 h-4" />
                     </button>
@@ -593,7 +490,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     className="w-full py-2.5 px-3 rounded-xl border border-rose-200 bg-rose-50/50 hover:bg-rose-100 text-rose-700 text-xs font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer"
                   >
                     <LogOut className="w-4 h-4" />
-                    <span>Sign Out of Account</span>
+                    <span>{t('logout')}</span>
                   </button>
                 </div>
               )}
@@ -602,27 +499,28 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         )}
 
         {/* Center Main Stage Content */}
-        <main className="flex-1 min-w-0 pb-24 lg:pb-8">
-          <div className="mb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div>
-              <div className="flex items-center gap-2 text-xs text-slate-400 mb-1">
-                <span>{portal === 'farmer' ? 'Farmer Portal' : 'Admin Portal'}</span>
-                <span>/</span>
-                <span className="text-slate-700 font-medium">{activeTitle}</span>
+        <main className="w-full pb-20 sm:pb-8">
+          {!isHomePage && (
+            <div className="mb-4 flex items-center justify-between gap-2 border-b border-slate-200/60 pb-3">
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    if (portal === 'farmer') setActiveFarmerModule('dashboard');
+                    else setActiveAdminModule('admin_dashboard');
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-xs font-bold text-slate-700 transition-colors cursor-pointer border border-slate-200/60"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span>{language === 'bn' ? 'à¦¹à§‹à¦® à¦ªà§‡à¦œ' : 'Home'}</span>
+                </button>
+                <span className="text-slate-300">/</span>
+                <span className="text-xs font-bold text-slate-800">{activeTitle}</span>
               </div>
-              <h1 className="text-xl font-bold text-slate-900 tracking-tight">{activeTitle}</h1>
             </div>
-
-            <div className="flex items-center gap-2 text-xs">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200 font-medium">
-                <Check className="w-3 h-3" />
-                Backend Sync: Simulated Live
-              </span>
-            </div>
-          </div>
+          )}
 
           {/* Module Content */}
-          <div className="space-y-6">{children}</div>
+          <div key={language} className="space-y-5">{children}</div>
         </main>
       </div>
 
@@ -637,7 +535,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               }`}
             >
               <LayoutDashboard className="w-5 h-5 mb-0.5" />
-              <span>ড্যাশবোর্ড</span>
+              <span>{language === 'bn' ? 'à¦¡à§à¦¯à¦¾à¦¶à¦¬à§‹à¦°à§à¦¡' : 'Dashboard'}</span>
             </button>
             <button
               onClick={() => setActiveFarmerModule('farms')}
@@ -646,7 +544,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               }`}
             >
               <Trees className="w-5 h-5 mb-0.5" />
-              <span>খামার</span>
+              <span>{language === 'bn' ? 'à¦–à¦¾à¦®à¦¾à¦°' : 'Farms'}</span>
             </button>
             <button
               onClick={() => setActiveFarmerModule('recommendation')}
@@ -655,7 +553,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               }`}
             >
               <Sparkles className="w-5 h-5 mb-0.5 text-amber-600" />
-              <span>AI ফসল</span>
+              <span>{language === 'bn' ? 'AI à¦«à¦¸à¦²' : 'AI Crop'}</span>
             </button>
             <button
               onClick={() => setActiveFarmerModule('harvest')}
@@ -664,7 +562,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               }`}
             >
               <PackageCheck className="w-5 h-5 mb-0.5" />
-              <span>হার্ভেস্ট</span>
+              <span>{language === 'bn' ? 'à¦¹à¦¾à¦°à§à¦­à§‡à¦¸à§à¦Ÿ' : 'Harvest'}</span>
             </button>
             <button
               onClick={() => setMobileMenuOpen(true)}
@@ -674,7 +572,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 <Menu className="w-5 h-5 mb-0.5" />
                 <span className="absolute -top-1 -right-2 bg-emerald-600 text-white text-[9px] px-1 rounded-full font-bold">16</span>
               </div>
-              <span>সব মেনু</span>
+              <span>{language === 'bn' ? 'à¦¸à¦¬ à¦®à§‡à¦¨à§' : 'All Menu'}</span>
             </button>
           </>
         ) : (
@@ -686,7 +584,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               }`}
             >
               <LayoutDashboard className="w-5 h-5 mb-0.5" />
-              <span>কমান্ড</span>
+              <span>{language === 'bn' ? 'à¦•à¦®à¦¾à¦¨à§à¦¡' : 'Command'}</span>
             </button>
             <button
               onClick={() => setActiveAdminModule('marketplace')}
@@ -695,7 +593,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               }`}
             >
               <Store className="w-5 h-5 mb-0.5" />
-              <span>মার্কেট</span>
+              <span>{language === 'bn' ? 'à¦®à¦¾à¦°à§à¦•à§‡à¦Ÿ' : 'Market'}</span>
             </button>
             <button
               onClick={() => setActiveAdminModule('orders')}
@@ -704,7 +602,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               }`}
             >
               <ShoppingCart className="w-5 h-5 mb-0.5" />
-              <span>অর্ডার</span>
+              <span>{language === 'bn' ? 'à¦…à¦°à§à¦¡à¦¾à¦°' : 'Orders'}</span>
             </button>
             <button
               onClick={() => setActiveAdminModule('payments')}
@@ -713,7 +611,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               }`}
             >
               <CreditCard className="w-5 h-5 mb-0.5" />
-              <span>পেমেন্ট</span>
+              <span>{language === 'bn' ? 'à¦ªà§‡à¦®à§‡à¦¨à§à¦Ÿ' : 'Payments'}</span>
             </button>
             <button
               onClick={() => setMobileMenuOpen(true)}
@@ -723,7 +621,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 <Menu className="w-5 h-5 mb-0.5" />
                 <span className="absolute -top-1 -right-2 bg-indigo-600 text-white text-[9px] px-1 rounded-full font-bold">10</span>
               </div>
-              <span>সব মেনু</span>
+              <span>{language === 'bn' ? 'à¦¸à¦¬ à¦®à§‡à¦¨à§' : 'All Menu'}</span>
             </button>
           </>
         )}

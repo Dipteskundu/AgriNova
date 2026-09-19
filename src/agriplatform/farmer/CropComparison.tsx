@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { tr } from "@/agriplatform/lib/localize";
 import {
   GitCompare,
   Droplets,
@@ -16,9 +17,11 @@ import { Skeleton } from '@/components/shared/Skeleton';
 import { useToast } from '@/components/shared/Toast';
 import { getCropComparisonProfiles } from '@/agriplatform/lib/farmerApi';
 import { CropComparisonProfile } from '@/agriplatform/types';
+import { useLanguage } from '@/agriplatform/lib/LanguageContext';
 
 export const CropComparison: React.FC = () => {
   const { showToast } = useToast();
+  const { language } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [profiles, setProfiles] = useState<CropComparisonProfile[]>([]);
   const [selectedCropIds, setSelectedCropIds] = useState<string[]>([]);
@@ -34,7 +37,7 @@ export const CropComparison: React.FC = () => {
           setSelectedCropIds(res.data.slice(0, 3).map((c) => c.id));
         }
       } catch {
-        showToast('error', 'Failed to load comparison data');
+        showToast('error', tr('Failed to load comparison data'));
       } finally {
         setLoading(false);
       }
@@ -45,13 +48,13 @@ export const CropComparison: React.FC = () => {
   const toggleSelectCrop = (id: string) => {
     if (selectedCropIds.includes(id)) {
       if (selectedCropIds.length <= 2) {
-        showToast('warning', 'Please keep at least 2 crops selected for meaningful comparison');
+        showToast('warning', tr('Please keep at least 2 crops selected for meaningful comparison'));
         return;
       }
       setSelectedCropIds(selectedCropIds.filter((cid) => cid !== id));
     } else {
       if (selectedCropIds.length >= 4) {
-        showToast('warning', 'You can compare up to 4 crops simultaneously');
+        showToast('warning', tr('You can compare up to 4 crops simultaneously'));
         return;
       }
       setSelectedCropIds([...selectedCropIds, id]);
@@ -77,13 +80,17 @@ export const CropComparison: React.FC = () => {
       <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
           <div>
-            <h2 className="text-lg font-bold text-slate-900">Side-by-Side Crop Comparison Matrix</h2>
+            <h2 className="text-lg font-bold text-slate-900">
+              {language === 'bn' ? 'পাশাপাশি ফসলের তুলনামূলক মূল্যায়ন' : 'Side-by-Side Crop Comparison Matrix'}
+            </h2>
             <p className="text-xs text-slate-500">
-              Evaluate economic profitability, water footprint, labor demand, and risk profiles.
+              {language === 'bn'
+                ? 'লাভজনকতা, পানির প্রয়োজনীয়তা, শ্রম ব্যয় ও ঝুঁকি বিবেচনা করে সেরা ফসল নির্বাচন করুন।'
+                : 'Evaluate economic profitability, water footprint, labor demand, and risk profiles.'}
             </p>
           </div>
           <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700">
-            {selectedCropIds.length} Selected (Max 4)
+            {language === 'bn' ? `${selectedCropIds.length} টি নির্বাচিত (সর্বোচ্চ ৪ টি)` : `${selectedCropIds.length} Selected (Max 4)`}
           </span>
         </div>
 
@@ -117,7 +124,7 @@ export const CropComparison: React.FC = () => {
             <thead>
               <tr className="border-b border-slate-200 bg-slate-50/80">
                 <th className="p-4 font-bold text-slate-600 uppercase tracking-wider w-56">
-                  Agronomic Parameter
+                  {language === 'bn' ? 'কৃষি ও অর্থনৈতিক সূচক' : 'Agronomic Parameter'}
                 </th>
                 {comparedCrops.map((crop) => (
                   <th key={crop.id} className="p-4 text-slate-900 min-w-[200px] border-l border-slate-200">
@@ -135,17 +142,17 @@ export const CropComparison: React.FC = () => {
               <tr className="hover:bg-slate-50/50">
                 <td className="p-4 font-semibold text-slate-700 flex items-center gap-2">
                   <Droplets className="w-4 h-4 text-blue-500" />
-                  Water Need (Liters / kg)
+                  {language === 'bn' ? 'পানির চাহিদা (লিটার / কেজি)' : 'Water Need (Liters / kg)'}
                 </td>
                 {comparedCrops.map((crop) => (
                   <td key={crop.id} className="p-4 border-l border-slate-200">
                     <span className="font-bold text-slate-900">
-                      {crop.waterRequirementLitersPerKg.toLocaleString()} L
+                      {crop.waterRequirementLitersPerKg.toLocaleString()} {language === 'bn' ? 'লিটার' : 'L'}
                     </span>
                     <p className="text-[10px] text-slate-400 mt-0.5">
                       {crop.waterRequirementLitersPerKg > 2000
-                        ? 'High flood water requirement'
-                        : 'Water conserving'}
+                        ? (language === 'bn' ? 'অতিরিক্ত সেচের প্রয়োজন' : 'High flood water requirement')
+                        : (language === 'bn' ? 'কম পানি সাশ্রয়ী ফসল' : 'Water conserving')}
                     </p>
                   </td>
                 ))}
@@ -155,12 +162,14 @@ export const CropComparison: React.FC = () => {
               <tr className="hover:bg-slate-50/50">
                 <td className="p-4 font-semibold text-slate-700 flex items-center gap-2">
                   <Coins className="w-4 h-4 text-amber-500" />
-                  Total Input Cost / Acre
+                  {language === 'bn' ? 'মোট উৎপাদন খরচ (প্রতি একর)' : 'Total Input Cost / Acre'}
                 </td>
                 {comparedCrops.map((crop) => (
                   <td key={crop.id} className="p-4 border-l border-slate-200">
                     <span className="font-bold text-slate-900">৳{crop.totalInputCostPerAcre.toLocaleString()}</span>
-                    <p className="text-[10px] text-slate-400 mt-0.5">Seed cost: ৳{crop.seedCostPerAcre}</p>
+                    <p className="text-[10px] text-slate-400 mt-0.5">
+                      {language === 'bn' ? 'বীজ খরচ: ৳' : 'Seed cost: ৳'}{crop.seedCostPerAcre}
+                    </p>
                   </td>
                 ))}
               </tr>
@@ -169,12 +178,16 @@ export const CropComparison: React.FC = () => {
               <tr className="hover:bg-slate-50/50">
                 <td className="p-4 font-semibold text-slate-700 flex items-center gap-2">
                   <TrendingUp className="w-4 h-4 text-emerald-500" />
-                  Expected Yield / Acre
+                  {language === 'bn' ? 'সম্ভাব্য ফলন (প্রতি একর)' : 'Expected Yield / Acre'}
                 </td>
                 {comparedCrops.map((crop) => (
                   <td key={crop.id} className="p-4 border-l border-slate-200">
-                    <span className="font-bold text-emerald-700">{crop.yieldKgPerAcre.toLocaleString()} kg</span>
-                    <p className="text-[10px] text-slate-400 mt-0.5">Market rate: ৳{crop.marketPricePerKg}/kg</p>
+                    <span className="font-bold text-emerald-700">
+                      {crop.yieldKgPerAcre.toLocaleString()} {language === 'bn' ? 'কেজি' : 'kg'}
+                    </span>
+                    <p className="text-[10px] text-slate-400 mt-0.5">
+                      {language === 'bn' ? 'বাজার দর: ৳' : 'Market rate: ৳'}{crop.marketPricePerKg}{tr('/')}{language === 'bn' ? 'কেজি' : 'kg'}
+                    </p>
                   </td>
                 ))}
               </tr>
@@ -183,7 +196,7 @@ export const CropComparison: React.FC = () => {
               <tr className="hover:bg-slate-50/50 bg-emerald-50/20">
                 <td className="p-4 font-bold text-slate-900 flex items-center gap-2">
                   <TrendingUp className="w-4 h-4 text-emerald-700" />
-                  Net Profit Margin %
+                  {language === 'bn' ? 'নিট মুনাফার হার (%)' : 'Net Profit Margin %'}
                 </td>
                 {comparedCrops.map((crop) => (
                   <td key={crop.id} className="p-4 border-l border-slate-200">
@@ -198,13 +211,17 @@ export const CropComparison: React.FC = () => {
               <tr className="hover:bg-slate-50/50">
                 <td className="p-4 font-semibold text-slate-700 flex items-center gap-2">
                   <Clock className="w-4 h-4 text-purple-500" />
-                  Maturity Duration (Days)
+                  {language === 'bn' ? 'পরিপক্বতার সময়কাল (দিন)' : 'Maturity Duration (Days)'}
                 </td>
                 {comparedCrops.map((crop) => (
                   <td key={crop.id} className="p-4 border-l border-slate-200">
-                    <span className="font-semibold text-slate-800">{crop.maturityDays} Days</span>
+                    <span className="font-semibold text-slate-800">
+                      {crop.maturityDays} {language === 'bn' ? 'দিন' : 'Days'}
+                    </span>
                     <p className="text-[10px] text-slate-400 mt-0.5">
-                      {crop.maturityDays <= 90 ? 'Short window booster' : 'Standard seasonal cycle'}
+                      {crop.maturityDays <= 90
+                        ? (language === 'bn' ? 'স্বল্পমেয়াদী ফসল' : 'Short window booster')
+                        : (language === 'bn' ? 'মৌসুমি দীর্ঘমেয়াদী ফসল' : 'Standard seasonal cycle')}
                     </p>
                   </td>
                 ))}
@@ -214,7 +231,7 @@ export const CropComparison: React.FC = () => {
               <tr className="hover:bg-slate-50/50">
                 <td className="p-4 font-semibold text-slate-700 flex items-center gap-2">
                   <ShieldAlert className="w-4 h-4 text-rose-500" />
-                  Pest & Disease Vulnerability
+                  {language === 'bn' ? 'রোগবালাই ও পোকার ঝুঁকি' : 'Pest & Disease Vulnerability'}
                 </td>
                 {comparedCrops.map((crop) => (
                   <td key={crop.id} className="p-4 border-l border-slate-200">
@@ -227,7 +244,11 @@ export const CropComparison: React.FC = () => {
                           : 'danger'
                       }
                     >
-                      {crop.pestVulnerability}
+                      {language === 'bn'
+                        ? crop.pestVulnerability === 'Low' ? 'কম ঝুঁকি'
+                          : crop.pestVulnerability === 'Moderate' ? 'মাঝারি'
+                          : 'বেশি ঝুঁকি'
+                        : crop.pestVulnerability}
                     </Badge>
                   </td>
                 ))}
@@ -237,37 +258,45 @@ export const CropComparison: React.FC = () => {
               <tr className="hover:bg-slate-50/50">
                 <td className="p-4 font-semibold text-slate-700 flex items-center gap-2">
                   <Users className="w-4 h-4 text-slate-500" />
-                  Labor Intensity
+                  {language === 'bn' ? 'শ্রমিক প্রয়োজন (ম্যান-ডে)' : 'Labor Intensity'}
                 </td>
                 {comparedCrops.map((crop) => (
                   <td key={crop.id} className="p-4 border-l border-slate-200">
-                    <span className="font-semibold text-slate-800">{crop.laborIntensityDays} Man-Days</span>
+                    <span className="font-semibold text-slate-800">
+                      {crop.laborIntensityDays} {language === 'bn' ? 'দিন' : 'Man-Days'}
+                    </span>
                   </td>
                 ))}
               </tr>
 
               {/* Row 8: Shelf Life */}
               <tr className="hover:bg-slate-50/50">
-                <td className="p-4 font-semibold text-slate-700">Storage Shelf Life</td>
+                <td className="p-4 font-semibold text-slate-700">
+                  {language === 'bn' ? 'সংরক্ষণ স্থায়িত্ব' : 'Storage Shelf Life'}
+                </td>
                 {comparedCrops.map((crop) => (
                   <td key={crop.id} className="p-4 border-l border-slate-200">
-                    <span className="font-semibold text-slate-800">{crop.shelfLifeDays} Days</span>
+                    <span className="font-semibold text-slate-800">
+                      {crop.shelfLifeDays} {language === 'bn' ? 'দিন' : 'Days'}
+                    </span>
                   </td>
                 ))}
               </tr>
 
               {/* Row 9: Govt Subsidy Eligibility */}
               <tr className="hover:bg-slate-50/50">
-                <td className="p-4 font-semibold text-slate-700">Govt Subsidy Eligible</td>
+                <td className="p-4 font-semibold text-slate-700">
+                  {language === 'bn' ? 'সরকারি প্রণোদনা / ভর্তুকি' : 'Govt Subsidy Eligible'}
+                </td>
                 {comparedCrops.map((crop) => (
                   <td key={crop.id} className="p-4 border-l border-slate-200">
                     {crop.governmentSubsidiesEligible ? (
                       <span className="inline-flex items-center gap-1 text-emerald-700 font-semibold">
                         <Check className="w-3.5 h-3.5" />
-                        Eligible for Fertilizer Subsidies
+                        {language === 'bn' ? 'সার ও বীজ ভর্তুকি প্রযোজ্য' : 'Eligible for Fertilizer Subsidies'}
                       </span>
                     ) : (
-                      <span className="text-slate-400">None</span>
+                      <span className="text-slate-400">{language === 'bn' ? 'প্রযোজ্য নয়' : 'None'}</span>
                     )}
                   </td>
                 ))}

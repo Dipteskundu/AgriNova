@@ -1,4 +1,5 @@
 import React from "react";
+import { tr } from "@/agriplatform/lib/localize";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   id: string;
@@ -19,7 +20,7 @@ export const FormInput: React.FC<InputProps> = ({
     <div className="flex flex-col gap-1.5 w-full">
       {label && (
         <label htmlFor={id} className="text-xs font-semibold text-slate-700">
-          {label} {props.required && <span className="text-rose-500">*</span>}
+          {label} {props.required && <span className="text-rose-500">{tr('*')}</span>}
         </label>
       )}
       <input
@@ -54,7 +55,7 @@ export const FormSelect: React.FC<SelectProps> = ({
     <div className="flex flex-col gap-1.5 w-full">
       {label && (
         <label htmlFor={id} className="text-xs font-semibold text-slate-700">
-          {label} {props.required && <span className="text-rose-500">*</span>}
+          {label} {props.required && <span className="text-rose-500">{tr('*')}</span>}
         </label>
       )}
       <select
@@ -93,7 +94,7 @@ export const FormTextarea: React.FC<TextareaProps> = ({
     <div className="flex flex-col gap-1.5 w-full">
       {label && (
         <label htmlFor={id} className="text-xs font-semibold text-slate-700">
-          {label} {props.required && <span className="text-rose-500">*</span>}
+          {label} {props.required && <span className="text-rose-500">{tr('*')}</span>}
         </label>
       )}
       <textarea

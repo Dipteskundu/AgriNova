@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { tr } from "@/agriplatform/lib/localize";
 import {
   Truck,
   Thermometer,
@@ -40,7 +41,7 @@ export const LogisticsManagement: React.FC = () => {
         setFleet(res.data);
       }
     } catch {
-      showToast('error', 'Failed to load cold chain logistics telemetry');
+      showToast('error', tr('Failed to load cold chain logistics telemetry'));
     } finally {
       setLoading(false);
     }
@@ -77,40 +78,36 @@ export const LogisticsManagement: React.FC = () => {
       {/* Top Banner */}
       <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-lg font-bold text-slate-900">National Agro-Freight & Cold Chain Logistics Fleet</h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Real-time IoT reefer telemetry, temperature logger compliance, and inter-district freight dispatch monitoring.
-          </p>
+          <h2 className="text-lg font-bold text-slate-900">{tr('National Agro-Freight & Cold Chain Logistics Fleet')}</h2>
+          <p className="text-xs text-slate-500 mt-0.5">{tr('Real-time IoT reefer telemetry, temperature logger compliance, and inter-district freight dispatch monitoring.')}</p>
         </div>
 
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" icon={RefreshCw} onClick={loadFleet}>
-            Ping GPS Sensors
-          </Button>
+          <Button variant="outline" size="sm" icon={RefreshCw} onClick={loadFleet}>{tr('Ping GPS Sensors')}</Button>
         </div>
       </div>
 
       {/* KPI Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="p-3 bg-white rounded-xl border border-slate-200">
-          <span className="text-[10px] text-slate-400 block uppercase font-bold">Active Cargo Volume</span>
-          <span className="text-lg font-black text-slate-900">{totalCargoTons.toFixed(1)} Metric Tons</span>
-          <span className="text-[10px] text-slate-500 block">Across scheduled freights</span>
+          <span className="text-[10px] text-slate-400 block uppercase font-bold">{tr('Active Cargo Volume')}</span>
+          <span className="text-lg font-black text-slate-900">{totalCargoTons.toFixed(1)}{tr('Metric Tons')}</span>
+          <span className="text-[10px] text-slate-500 block">{tr('Across scheduled freights')}</span>
         </div>
         <div className="p-3 bg-white rounded-xl border border-slate-200">
-          <span className="text-[10px] text-slate-400 block uppercase font-bold">Fleet In Transit</span>
-          <span className="text-lg font-black text-blue-600">{inTransitCount} En Route</span>
-          <span className="text-[10px] text-slate-500 block">Active highway dispatches</span>
+          <span className="text-[10px] text-slate-400 block uppercase font-bold">{tr('Fleet In Transit')}</span>
+          <span className="text-lg font-black text-blue-600">{inTransitCount}{tr('En Route')}</span>
+          <span className="text-[10px] text-slate-500 block">{tr('Active highway dispatches')}</span>
         </div>
         <div className="p-3 bg-white rounded-xl border border-slate-200">
-          <span className="text-[10px] text-slate-400 block uppercase font-bold">Cold Chain Integrity</span>
+          <span className="text-[10px] text-slate-400 block uppercase font-bold">{tr('Cold Chain Integrity')}</span>
           <span className="text-lg font-black text-emerald-700">96.8%</span>
-          <span className="text-[10px] text-emerald-600 block">Temperature within band</span>
+          <span className="text-[10px] text-emerald-600 block">{tr('Temperature within band')}</span>
         </div>
         <div className="p-3 bg-white rounded-xl border border-slate-200">
-          <span className="text-[10px] text-slate-400 block uppercase font-bold">Traffic / Weather Delays</span>
+          <span className="text-[10px] text-slate-400 block uppercase font-bold">{tr('Traffic / Weather Delays')}</span>
           <span className="text-lg font-black text-amber-600">{delayedCount}</span>
-          <span className="text-[10px] text-slate-500 block">Escrow hold adjusted</span>
+          <span className="text-[10px] text-slate-500 block">{tr('Escrow hold adjusted')}</span>
         </div>
       </div>
 
@@ -120,7 +117,7 @@ export const LogisticsManagement: React.FC = () => {
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="Search consignment, origin, destination, driver..."
+            placeholder={tr('Search consignment, origin, destination, driver...')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-9 pr-4 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-900"
@@ -132,11 +129,11 @@ export const LogisticsManagement: React.FC = () => {
           onChange={(e) => setStatusFilter(e.target.value)}
           className="px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-800"
         >
-          <option value="All">All Transit Statuses</option>
-          <option value="On Route">On Route</option>
-          <option value="Dispatched">Dispatched</option>
-          <option value="Delayed">Delayed</option>
-          <option value="Delivered">Delivered</option>
+          <option value="All">{tr('All Transit Statuses')}</option>
+          <option value="On Route">{tr('On Route')}</option>
+          <option value="Dispatched">{tr('Dispatched')}</option>
+          <option value="Delayed">{tr('Delayed')}</option>
+          <option value="Delivered">{tr('Delivered')}</option>
         </select>
       </div>
 
@@ -183,7 +180,7 @@ export const LogisticsManagement: React.FC = () => {
                   <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                   <span className="truncate">{item.originHub}</span>
                 </div>
-                <div className="pl-5 text-slate-400 text-[10px]">↓ Dedicated Highway Transit Corridor</div>
+                <div className="pl-5 text-slate-400 text-[10px]">{tr('↓ Dedicated Highway Transit Corridor')}</div>
                 <div className="flex items-center gap-2 text-slate-800 font-medium">
                   <MapPin className="w-3.5 h-3.5 text-blue-600 shrink-0" />
                   <span className="truncate">{item.destinationDepot}</span>
@@ -193,25 +190,23 @@ export const LogisticsManagement: React.FC = () => {
               {/* Live IoT Sensor Stats */}
               <div className="grid grid-cols-2 gap-2 p-2.5 bg-slate-50 rounded-xl mb-3 text-xs">
                 <div>
-                  <span className="text-[10px] text-slate-400 block uppercase font-semibold">Live Cargo Temp</span>
+                  <span className="text-[10px] text-slate-400 block uppercase font-semibold">{tr('Live Cargo Temp')}</span>
                   <div className="flex items-center gap-1 font-mono font-bold text-slate-900">
                     <Thermometer className="w-3.5 h-3.5 text-emerald-600" />
-                    {item.temperatureCelsius}°C
-                  </div>
+                    {item.temperatureCelsius}{tr('°C')}</div>
                   <span className="text-[10px] text-slate-500">{item.targetTempRange}</span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-400 block uppercase font-semibold">Cargo Weight</span>
+                  <span className="text-[10px] text-slate-400 block uppercase font-semibold">{tr('Cargo Weight')}</span>
                   <div className="font-mono font-bold text-slate-900">
-                    {(item.cargoWeightKg / 1000).toFixed(1)} Tons
-                  </div>
+                    {(item.cargoWeightKg / 1000).toFixed(1)}{tr('Tons')}</div>
                   <span className="text-[10px] text-slate-500">{item.cargoDescription}</span>
                 </div>
               </div>
 
               <div className="text-xs text-slate-600 space-y-1">
                 <div className="flex items-center justify-between">
-                  <span>Driver: <strong>{item.driverName}</strong></span>
+                  <span>{tr('Driver:')}<strong>{item.driverName}</strong></span>
                   <span className="font-mono text-slate-500">{item.driverPhone}</span>
                 </div>
               </div>
@@ -219,16 +214,13 @@ export const LogisticsManagement: React.FC = () => {
 
             <div className="pt-3 border-t border-slate-100 flex items-center justify-between mt-3 text-[11px] text-slate-400">
               <span className="flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5" />
-                ETA: {item.estimatedArrival}
+                <Clock className="w-3.5 h-3.5" />{tr('ETA:')}{item.estimatedArrival}
               </span>
               <Button
                 size="sm"
                 variant="outline"
                 onClick={() => showToast('info', `Pinged driver ${item.driverName} - GPS signal updated`)}
-              >
-                Track Unit
-              </Button>
+              >{tr('Track Unit')}</Button>
             </div>
           </Card>
         ))}

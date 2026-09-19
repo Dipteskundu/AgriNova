@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { tr } from "@/agriplatform/lib/localize";
 import {
   GraduationCap,
   PlayCircle,
@@ -35,7 +36,7 @@ export const AgriculturalTraining: React.FC = () => {
           setCourses(res.data);
         }
       } catch {
-        showToast('error', 'Failed to load agricultural training catalog');
+        showToast('error', tr('Failed to load agricultural training catalog'));
       } finally {
         setLoading(false);
       }
@@ -62,7 +63,7 @@ export const AgriculturalTraining: React.FC = () => {
     setCourses((prev) =>
       prev.map((c) => (c.id === updatedCourse.id ? updatedCourse : c))
     );
-    showToast('success', 'Lesson progress recorded! Knowledge badge updated.');
+    showToast('success', tr('Lesson progress recorded! Knowledge badge updated.'));
   };
 
   const filteredCourses =
@@ -86,10 +87,8 @@ export const AgriculturalTraining: React.FC = () => {
       {/* Top Banner */}
       <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-lg font-bold text-slate-900">Agricultural Extension & Farmer Academy</h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            DAE-certified agronomic masterclasses, soil nutrition guides, and high-efficiency water conservation techniques.
-          </p>
+          <h2 className="text-lg font-bold text-slate-900">{tr('Agricultural Extension & Farmer Academy')}</h2>
+          <p className="text-xs text-slate-500 mt-0.5">{tr('DAE-certified agronomic masterclasses, soil nutrition guides, and high-efficiency water conservation techniques.')}</p>
         </div>
 
         {/* Category Filter */}
@@ -98,13 +97,13 @@ export const AgriculturalTraining: React.FC = () => {
           onChange={(e) => setFilterCategory(e.target.value)}
           className="px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-800 focus:outline-none"
         >
-          <option value="All">All Categories ({courses.length})</option>
-          <option value="Agronomy">Agronomy</option>
-          <option value="Irrigation & Water">Irrigation & Water</option>
-          <option value="Pest Management">Pest Management</option>
-          <option value="Soil Health">Soil Health</option>
-          <option value="Post-Harvest">Post-Harvest</option>
-          <option value="Agribusiness">Agribusiness</option>
+          <option value="All">{tr('All Categories (')}{courses.length})</option>
+          <option value="Agronomy">{tr('Agronomy')}</option>
+          <option value="Irrigation & Water">{tr('Irrigation & Water')}</option>
+          <option value="Pest Management">{tr('Pest Management')}</option>
+          <option value="Soil Health">{tr('Soil Health')}</option>
+          <option value="Post-Harvest">{tr('Post-Harvest')}</option>
+          <option value="Agribusiness">{tr('Agribusiness')}</option>
         </select>
       </div>
 
@@ -136,19 +135,17 @@ export const AgriculturalTraining: React.FC = () => {
                 <div className="flex items-center gap-3 text-xs text-slate-400 mb-4">
                   <span className="flex items-center gap-1">
                     <Clock className="w-3.5 h-3.5" />
-                    {course.durationMinutes} mins
-                  </span>
+                    {course.durationMinutes}{tr('mins')}</span>
                   <span className="flex items-center gap-1">
                     <BookOpen className="w-3.5 h-3.5" />
-                    {course.lessonsCount} lessons
-                  </span>
+                    {course.lessonsCount}{tr('lessons')}</span>
                   <Badge variant="neutral">{course.difficulty}</Badge>
                 </div>
 
                 {/* Progress bar */}
                 <div className="space-y-1.5 p-3 bg-slate-50 rounded-xl border border-slate-100">
                   <div className="flex justify-between text-xs">
-                    <span className="text-slate-500 font-medium">Completion Progress</span>
+                    <span className="text-slate-500 font-medium">{tr('Completion Progress')}</span>
                     <span className="font-bold text-slate-800">{progressPercent}%</span>
                   </div>
                   <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
@@ -158,8 +155,7 @@ export const AgriculturalTraining: React.FC = () => {
                     />
                   </div>
                   <span className="text-[11px] text-slate-400 block">
-                    {course.completedLessonsCount} of {course.lessonsCount} modules finished
-                  </span>
+                    {course.completedLessonsCount}{tr('of')}{course.lessonsCount}{tr('modules finished')}</span>
                 </div>
               </div>
 
@@ -196,7 +192,7 @@ export const AgriculturalTraining: React.FC = () => {
             <p className="text-slate-600 leading-relaxed">{selectedCourse.description}</p>
 
             <div className="space-y-2">
-              <h4 className="font-bold text-slate-900 text-sm">Interactive Syllabus & Video Modules</h4>
+              <h4 className="font-bold text-slate-900 text-sm">{tr('Interactive Syllabus & Video Modules')}</h4>
               <div className="divide-y divide-slate-100 border border-slate-200 rounded-xl overflow-hidden">
                 {selectedCourse.syllabus.map((lesson, idx) => (
                   <div
@@ -240,9 +236,9 @@ export const AgriculturalTraining: React.FC = () => {
             <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-100 flex items-center justify-between">
               <div className="flex items-center gap-2 text-emerald-800">
                 <Award className="w-5 h-5 text-emerald-600" />
-                <span className="font-semibold">DAE Verified Agronomist Certificate of Completion</span>
+                <span className="font-semibold">{tr('DAE Verified Agronomist Certificate of Completion')}</span>
               </div>
-              <Badge variant="success">Included</Badge>
+              <Badge variant="success">{tr('Included')}</Badge>
             </div>
           </div>
         </Modal>

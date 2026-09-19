@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import { tr } from "@/agriplatform/lib/localize";
 import { ChevronLeft, ChevronRight, Search } from "@/components/icons";
 import { EmptyState } from "@/components/shared/EmptyState";
 
@@ -123,10 +124,8 @@ export function DataTable<T extends Record<string, unknown>>({
 
       {filteredData.length > pageSize && (
         <div className="px-4 py-3 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between text-xs text-slate-500">
-          <span>
-            Showing {(currentPage - 1) * pageSize + 1} to{" "}
-            {Math.min(currentPage * pageSize, filteredData.length)} of {filteredData.length} entries
-          </span>
+          <span>{tr('Showing')}{(currentPage - 1) * pageSize + 1}{tr('to')}{" "}
+            {Math.min(currentPage * pageSize, filteredData.length)}{tr('of')}{filteredData.length}{tr('entries')}</span>
           <div className="flex items-center gap-1.5">
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
@@ -136,7 +135,7 @@ export function DataTable<T extends Record<string, unknown>>({
               <ChevronLeft className="w-4 h-4" />
             </button>
             <span className="px-2 font-medium text-slate-700">
-              {currentPage} / {totalPages}
+              {currentPage}{tr('/')}{totalPages}
             </span>
             <button
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}

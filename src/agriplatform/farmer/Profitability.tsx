@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { tr } from "@/agriplatform/lib/localize";
 import {
   TrendingUp,
   DollarSign,
@@ -16,9 +17,11 @@ import { Skeleton } from '@/components/shared/Skeleton';
 import { useToast } from '@/components/shared/Toast';
 import { getProfitabilityMetrics } from '@/agriplatform/lib/farmerApi';
 import { ProfitabilityMetrics } from '@/agriplatform/types';
+import { useLanguage } from '@/agriplatform/lib/LanguageContext';
 
 export const Profitability: React.FC = () => {
   const { showToast } = useToast();
+  const { language } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [metrics, setMetrics] = useState<ProfitabilityMetrics | null>(null);
 
@@ -31,7 +34,7 @@ export const Profitability: React.FC = () => {
           setMetrics(res.data);
         }
       } catch {
-        showToast('error', 'Failed to load profitability telemetry');
+        showToast('error', tr('Failed to load profitability telemetry'));
       } finally {
         setLoading(false);
       }
@@ -58,47 +61,51 @@ export const Profitability: React.FC = () => {
     <div className="space-y-6">
       {/* Top Banner */}
       <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
-        <h2 className="text-lg font-bold text-slate-900">Farm Profitability & Financial Returns</h2>
+        <h2 className="text-lg font-bold text-slate-900">
+          {language === 'bn' ? 'খামারের লাভ-ক্ষতি ও আর্থিক হিসাব' : 'Farm Profitability & Financial Returns'}
+        </h2>
         <p className="text-xs text-slate-500 mt-0.5">
-          Real-time agro-economic margin calculation comparing harvest valuation against cumulative input ledger.
+          {language === 'bn'
+            ? 'ফসল বিক্রির আয় এবং বীজ, সার, কীটনাশক ও শ্রম ব্যয়ের তুলনাভিত্তিক নিট মুনাফার বিশ্লেষণ।'
+            : 'Real-time agro-economic margin calculation comparing harvest valuation against cumulative input ledger.'}
         </p>
       </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <MetricCard
-          title="Gross Farm Revenue"
+          title={language === 'bn' ? 'মোট খামার আয়' : 'Gross Farm Revenue'}
           value={`৳${metrics.totalRevenueBdt.toLocaleString()}`}
-          change="+18.5% vs Prior Season"
+          change={language === 'bn' ? '+১৮.৫% পূর্ববর্তী মৌসুমের চেয়ে বৃদ্ধি' : '+18.5% vs Prior Season'}
           trend="up"
-          subtitle="Harvest valuations & sales"
+          subtitle={language === 'bn' ? 'ফসল বিক্রয় ও বর্তমান মজুদ মূল্য' : 'Harvest valuations & sales'}
           icon={DollarSign}
           colorScheme="emerald"
         />
         <MetricCard
-          title="Total Operating Costs"
+          title={language === 'bn' ? 'মোট পরিচালন ব্যয়' : 'Total Operating Costs'}
           value={`৳${metrics.totalExpensesBdt.toLocaleString()}`}
-          change="Fertilizer & Labor Heavy"
+          change={language === 'bn' ? 'সার ও শ্রম খরচের পরিমাণ বেশি' : 'Fertilizer & Labor Heavy'}
           trend="neutral"
-          subtitle="All input disbursements"
+          subtitle={language === 'bn' ? 'বীজ, সার, সেচ ও মজুরি খরচ' : 'All input disbursements'}
           icon={Receipt}
           colorScheme="amber"
         />
         <MetricCard
-          title="Net Farm Profit"
+          title={language === 'bn' ? 'নিট মুনাফা' : 'Net Farm Profit'}
           value={`৳${metrics.netProfitBdt.toLocaleString()}`}
-          change="+24.2% Net Gain"
+          change={language === 'bn' ? '+২৪.২% নিট লাভ বৃদ্ধি' : '+24.2% Net Gain'}
           trend="up"
-          subtitle="Net earnings retained"
+          subtitle={language === 'bn' ? 'সব খরচ বাদে প্রকৃত আয়' : 'Net earnings retained'}
           icon={TrendingUp}
           colorScheme="blue"
         />
         <MetricCard
-          title="Net Profit Margin"
+          title={language === 'bn' ? 'মুনাফার হার (মার্জিন)' : 'Net Profit Margin'}
           value={`${metrics.profitMarginPercent}%`}
-          change="Healthy Agronomic ROI"
+          change={language === 'bn' ? 'সন্তোষজনক বিনিয়োগের মুনাফা' : 'Healthy Agronomic ROI'}
           trend="up"
-          subtitle="Return on capital deployed"
+          subtitle={language === 'bn' ? 'বিনিয়োগের বিপরীতে লাভ' : 'Return on capital deployed'}
           icon={PieChart}
           colorScheme="indigo"
         />
@@ -109,8 +116,8 @@ export const Profitability: React.FC = () => {
         {/* Crop By Crop Revenue & Margin */}
         <Card>
           <CardHeader
-            title="Crop-Wise Profitability Breakdown"
-            subtitle="Comparing Gross Revenue, Production Cost, and Net Margin by Batch"
+            title={language === 'bn' ? 'ফসলভিত্তিক লাভ-ক্ষতি' : 'Crop-Wise Profitability Breakdown'}
+            subtitle={language === 'bn' ? 'প্রতিটি ফসলের মোট বিক্রি, উৎপাদন খরচ ও অর্জিত মুনাফা' : 'Comparing Gross Revenue, Production Cost, and Net Margin by Batch'}
           />
 
           <div className="space-y-4 text-xs">
@@ -121,21 +128,27 @@ export const Profitability: React.FC = () => {
                   <div className="flex items-center justify-between mb-2">
                     <h4 className="font-bold text-slate-900 text-sm">{crop.cropName}</h4>
                     <Badge variant={crop.profit > 0 ? 'success' : 'danger'}>
-                      {margin}% Margin
+                      {margin}% {language === 'bn' ? 'মুনাফা' : 'Margin'}
                     </Badge>
                   </div>
 
                   <div className="grid grid-cols-3 gap-2 text-xs">
                     <div>
-                      <span className="text-[10px] text-slate-400 block uppercase">Revenue</span>
+                      <span className="text-[10px] text-slate-400 block uppercase">
+                        {language === 'bn' ? 'আয়' : 'Revenue'}
+                      </span>
                       <span className="font-bold text-emerald-700">৳{crop.revenue.toLocaleString()}</span>
                     </div>
                     <div>
-                      <span className="text-[10px] text-slate-400 block uppercase">Expenditure</span>
+                      <span className="text-[10px] text-slate-400 block uppercase">
+                        {language === 'bn' ? 'খরচ' : 'Expenditure'}
+                      </span>
                       <span className="font-semibold text-rose-600">৳{crop.expense.toLocaleString()}</span>
                     </div>
                     <div>
-                      <span className="text-[10px] text-slate-400 block uppercase">Net Profit</span>
+                      <span className="text-[10px] text-slate-400 block uppercase">
+                        {language === 'bn' ? 'নিট লাভ' : 'Net Profit'}
+                      </span>
                       <span className="font-extrabold text-slate-900">৳{crop.profit.toLocaleString()}</span>
                     </div>
                   </div>
@@ -148,15 +161,25 @@ export const Profitability: React.FC = () => {
         {/* Cost Breakdown by Category */}
         <Card>
           <CardHeader
-            title="Expense Allocation by Input Domain"
-            subtitle="Percentage share of capital across agronomic inputs"
+            title={language === 'bn' ? 'খাত অনুযায়ী খরচের বণ্টন' : 'Expense Allocation by Input Domain'}
+            subtitle={language === 'bn' ? 'বীজ, সার, সেচ, শ্রম ইত্যাদিতে খরচের শতাংশ' : 'Percentage share of capital across agronomic inputs'}
           />
 
           <div className="space-y-4 text-xs">
             {metrics.costBreakdownByCategory.map((cat) => (
               <div key={cat.category} className="space-y-1">
                 <div className="flex items-center justify-between">
-                  <span className="font-semibold text-slate-800">{cat.category}</span>
+                  <span className="font-semibold text-slate-800">
+                    {language === 'bn'
+                      ? cat.category === 'Fertilizer & Nutrients' ? 'সার ও পুষ্টি'
+                        : cat.category === 'Labor & Operations' ? 'কৃষি শ্রমিক ও পারিশ্রমিক'
+                        : cat.category === 'Irrigation & Pumping' ? 'সেচ ও জ্বালানি'
+                        : cat.category === 'Pest & Disease Control' ? 'কীটনাশক ও ঔষধ'
+                        : cat.category === 'Seeds & Seedlings' ? 'বীজ ও চারা'
+                        : cat.category === 'Machinery & Fuel' ? 'যন্ত্রপাতি ও জ্বালানি'
+                        : cat.category
+                      : cat.category}
+                  </span>
                   <div className="flex items-center gap-2">
                     <span className="font-mono text-slate-600 font-bold">
                       ৳{cat.amount.toLocaleString()}
@@ -179,8 +202,8 @@ export const Profitability: React.FC = () => {
       {/* Monthly Financial Cashflow */}
       <Card>
         <CardHeader
-          title="Monthly Agricultural Cash Flow Horizon"
-          subtitle="Monthly cash disbursements vs harvest liquidation"
+          title={language === 'bn' ? 'মাসভিত্তিক নগদ প্রবাহ (ক্যাশফ্লো)' : 'Monthly Agricultural Cash Flow Horizon'}
+          subtitle={language === 'bn' ? 'প্রতি মাসের আয় বনাম খরচের তুলনামূলক প্রবাহ' : 'Monthly cash disbursements vs harvest liquidation'}
         />
 
         <div className="grid grid-cols-2 sm:grid-cols-6 gap-3 text-xs">
@@ -189,11 +212,9 @@ export const Profitability: React.FC = () => {
               <span className="font-bold text-slate-700 block mb-1">{m.month}</span>
               <div className="space-y-0.5">
                 <span className="text-[11px] text-emerald-700 font-bold block">
-                  +৳{(m.revenue / 1000).toFixed(0)}k
-                </span>
+                  +৳{(m.revenue / 1000).toFixed(0)}{tr('k')}</span>
                 <span className="text-[11px] text-rose-600 font-semibold block">
-                  -৳{(m.expense / 1000).toFixed(0)}k
-                </span>
+                  -৳{(m.expense / 1000).toFixed(0)}{tr('k')}</span>
               </div>
             </div>
           ))}

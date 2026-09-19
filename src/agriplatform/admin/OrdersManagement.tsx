@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { tr } from "@/agriplatform/lib/localize";
 import {
   ShoppingCart,
   Search,
@@ -38,7 +39,7 @@ export const OrdersManagement: React.FC = () => {
           setOrders(res.data);
         }
       } catch {
-        showToast('error', 'Failed to load wholesale orders');
+        showToast('error', tr('Failed to load wholesale orders'));
       } finally {
         setLoading(false);
       }
@@ -77,42 +78,40 @@ export const OrdersManagement: React.FC = () => {
       {/* Top Banner */}
       <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-lg font-bold text-slate-900">National Wholesale Orders & Escrow Audit</h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Monitor institutional agricultural procurement contracts, delivery status, and escrow releases.
-          </p>
+          <h2 className="text-lg font-bold text-slate-900">{tr('National Wholesale Orders & Escrow Audit')}</h2>
+          <p className="text-xs text-slate-500 mt-0.5">{tr('Monitor institutional agricultural procurement contracts, delivery status, and escrow releases.')}</p>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs text-slate-500">Live Escrow Audited: <strong>৳{inEscrowValue.toLocaleString()} BDT</strong></span>
+          <span className="text-xs text-slate-500">{tr('Live Escrow Audited:')}<strong>৳{inEscrowValue.toLocaleString()}{tr('BDT')}</strong></span>
         </div>
       </div>
 
       {/* KPI Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="p-3 bg-white rounded-xl border border-slate-200">
-          <span className="text-[10px] text-slate-400 block uppercase font-bold">Total Orders Tracked</span>
+          <span className="text-[10px] text-slate-400 block uppercase font-bold">{tr('Total Orders Tracked')}</span>
           <span className="text-xl font-black text-slate-900">{orders.length}</span>
-          <span className="text-[10px] text-slate-500 block">Institutional & Mandi</span>
+          <span className="text-[10px] text-slate-500 block">{tr('Institutional & Mandi')}</span>
         </div>
         <div className="p-3 bg-white rounded-xl border border-slate-200">
-          <span className="text-[10px] text-slate-400 block uppercase font-bold">Total Contract Value</span>
-          <span className="text-xl font-black text-emerald-700">৳{(totalValue / 100000).toFixed(2)} Lakh</span>
-          <span className="text-[10px] text-emerald-600 block">Digitally secured</span>
+          <span className="text-[10px] text-slate-400 block uppercase font-bold">{tr('Total Contract Value')}</span>
+          <span className="text-xl font-black text-emerald-700">৳{(totalValue / 100000).toFixed(2)}{tr('Lakh')}</span>
+          <span className="text-[10px] text-emerald-600 block">{tr('Digitally secured')}</span>
         </div>
         <div className="p-3 bg-white rounded-xl border border-slate-200">
-          <span className="text-[10px] text-slate-400 block uppercase font-bold">Active in Transit</span>
+          <span className="text-[10px] text-slate-400 block uppercase font-bold">{tr('Active in Transit')}</span>
           <span className="text-xl font-black text-blue-600">
             {orders.filter((o) => o.fulfillmentStatus === 'In Transit').length}
           </span>
-          <span className="text-[10px] text-slate-500 block">GPS monitored freight</span>
+          <span className="text-[10px] text-slate-500 block">{tr('GPS monitored freight')}</span>
         </div>
         <div className="p-3 bg-white rounded-xl border border-slate-200">
-          <span className="text-[10px] text-slate-400 block uppercase font-bold">Disputed Orders</span>
+          <span className="text-[10px] text-slate-400 block uppercase font-bold">{tr('Disputed Orders')}</span>
           <span className="text-xl font-black text-red-600">
             {orders.filter((o) => o.escrowStatus === 'Disputed').length}
           </span>
-          <span className="text-[10px] text-slate-500 block">In arbitration queue</span>
+          <span className="text-[10px] text-slate-500 block">{tr('In arbitration queue')}</span>
         </div>
       </div>
 
@@ -122,7 +121,7 @@ export const OrdersManagement: React.FC = () => {
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="Search order code, buyer, farmer or produce..."
+            placeholder={tr('Search order code, buyer, farmer or produce...')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-9 pr-4 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-900"
@@ -134,11 +133,11 @@ export const OrdersManagement: React.FC = () => {
           onChange={(e) => setEscrowFilter(e.target.value)}
           className="px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-800"
         >
-          <option value="All">All Escrow Statuses</option>
-          <option value="Held in Escrow">Held in Escrow</option>
-          <option value="Released to Farmer">Released to Farmer</option>
-          <option value="Disputed">Disputed</option>
-          <option value="Refunded">Refunded</option>
+          <option value="All">{tr('All Escrow Statuses')}</option>
+          <option value="Held in Escrow">{tr('Held in Escrow')}</option>
+          <option value="Released to Farmer">{tr('Released to Farmer')}</option>
+          <option value="Disputed">{tr('Disputed')}</option>
+          <option value="Refunded">{tr('Refunded')}</option>
         </select>
       </div>
 
@@ -148,14 +147,14 @@ export const OrdersManagement: React.FC = () => {
           <table className="w-full text-left text-xs border-collapse">
             <thead>
               <tr className="border-b border-slate-200 bg-slate-50/80">
-                <th className="p-4 font-bold text-slate-600 uppercase">Order Code</th>
-                <th className="p-4 font-bold text-slate-600 uppercase">Produce & Volume</th>
-                <th className="p-4 font-bold text-slate-600 uppercase">Buyer vs Farmer</th>
-                <th className="p-4 font-bold text-slate-600 uppercase">Contract Value</th>
-                <th className="p-4 font-bold text-slate-600 uppercase">Escrow State</th>
-                <th className="p-4 font-bold text-slate-600 uppercase">Fulfillment</th>
-                <th className="p-4 font-bold text-slate-600 uppercase">Logistics</th>
-                <th className="p-4 font-bold text-slate-600 uppercase text-right">Actions</th>
+                <th className="p-4 font-bold text-slate-600 uppercase">{tr('Order Code')}</th>
+                <th className="p-4 font-bold text-slate-600 uppercase">{tr('Produce & Volume')}</th>
+                <th className="p-4 font-bold text-slate-600 uppercase">{tr('Buyer vs Farmer')}</th>
+                <th className="p-4 font-bold text-slate-600 uppercase">{tr('Contract Value')}</th>
+                <th className="p-4 font-bold text-slate-600 uppercase">{tr('Escrow State')}</th>
+                <th className="p-4 font-bold text-slate-600 uppercase">{tr('Fulfillment')}</th>
+                <th className="p-4 font-bold text-slate-600 uppercase">{tr('Logistics')}</th>
+                <th className="p-4 font-bold text-slate-600 uppercase text-right">{tr('Actions')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -165,13 +164,12 @@ export const OrdersManagement: React.FC = () => {
                   <td className="p-4">
                     <span className="font-semibold text-slate-800 block">{order.produceItem}</span>
                     <span className="text-[11px] text-slate-500 font-mono">
-                      {order.volumeKg.toLocaleString()} kg ({(order.volumeKg / 1000).toFixed(1)} MT)
-                    </span>
+                      {order.volumeKg.toLocaleString()}{tr('kg (')}{(order.volumeKg / 1000).toFixed(1)}{tr('MT)')}</span>
                   </td>
                   <td className="p-4">
                     <div className="space-y-0.5">
-                      <span className="text-slate-800 font-medium block">🏢 {order.buyerName}</span>
-                      <span className="text-slate-500 text-[11px] block">🌾 {order.farmerName}</span>
+                      <span className="text-slate-800 font-medium block">{tr('🏢')}{order.buyerName}</span>
+                      <span className="text-slate-500 text-[11px] block">{tr('🌾')}{order.farmerName}</span>
                     </div>
                   </td>
                   <td className="p-4 font-mono font-bold text-slate-900">
@@ -205,9 +203,7 @@ export const OrdersManagement: React.FC = () => {
                       variant="outline"
                       icon={Eye}
                       onClick={() => setSelectedOrder(order)}
-                    >
-                      Audit
-                    </Button>
+                    >{tr('Audit')}</Button>
                   </td>
                 </tr>
               ))}
@@ -228,41 +224,38 @@ export const OrdersManagement: React.FC = () => {
           <div className="space-y-4 text-xs">
             <div className="p-3.5 bg-slate-50 rounded-xl space-y-2.5">
               <div className="flex justify-between">
-                <span className="text-slate-500">Order Reference:</span>
+                <span className="text-slate-500">{tr('Order Reference:')}</span>
                 <span className="font-mono font-bold text-slate-800">{selectedOrder.orderCode}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Produce:</span>
+                <span className="text-slate-500">{tr('Produce:')}</span>
                 <span className="font-bold text-slate-800">{selectedOrder.produceItem}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Consignment Weight:</span>
-                <span className="font-bold text-slate-800 font-mono">{selectedOrder.volumeKg.toLocaleString()} kg</span>
+                <span className="text-slate-500">{tr('Consignment Weight:')}</span>
+                <span className="font-bold text-slate-800 font-mono">{selectedOrder.volumeKg.toLocaleString()}{tr('kg')}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Buyer Institution:</span>
+                <span className="text-slate-500">{tr('Buyer Institution:')}</span>
                 <span className="font-bold text-slate-800">{selectedOrder.buyerName}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Producer Farmer:</span>
+                <span className="text-slate-500">{tr('Producer Farmer:')}</span>
                 <span className="font-bold text-slate-800">{selectedOrder.farmerName}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Carrier / Fleet:</span>
+                <span className="text-slate-500">{tr('Carrier / Fleet:')}</span>
                 <span className="font-bold text-slate-800">{selectedOrder.logisticsPartner}</span>
               </div>
               <div className="flex justify-between pt-2 border-t border-slate-200">
-                <span className="text-slate-500 font-semibold">Total Escrow Fund:</span>
+                <span className="text-slate-500 font-semibold">{tr('Total Escrow Fund:')}</span>
                 <span className="font-bold text-emerald-800 font-mono text-sm">
-                  ৳{selectedOrder.totalValueBdt.toLocaleString()} BDT
-                </span>
+                  ৳{selectedOrder.totalValueBdt.toLocaleString()}{tr('BDT')}</span>
               </div>
             </div>
 
             <div className="flex justify-end gap-2 pt-2">
-              <Button variant="outline" size="sm" onClick={() => setSelectedOrder(null)}>
-                Close Audit
-              </Button>
+              <Button variant="outline" size="sm" onClick={() => setSelectedOrder(null)}>{tr('Close Audit')}</Button>
             </div>
           </div>
         </Modal>

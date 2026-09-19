@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { tr } from "@/agriplatform/lib/localize";
 import {
   Receipt,
   Plus,
@@ -18,9 +19,11 @@ import { Skeleton } from '@/components/shared/Skeleton';
 import { useToast } from '@/components/shared/Toast';
 import { getFarmExpenses, getCropBatches, addFarmExpense } from '@/agriplatform/lib/farmerApi';
 import { FarmExpense, CropBatch } from '@/agriplatform/types';
+import { useLanguage } from '@/agriplatform/lib/LanguageContext';
 
 export const FarmExpenses: React.FC = () => {
   const { showToast } = useToast();
+  const { language } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [expenses, setExpenses] = useState<FarmExpense[]>([]);
   const [cropBatches, setCropBatches] = useState<CropBatch[]>([]);
@@ -53,7 +56,7 @@ export const FarmExpenses: React.FC = () => {
           }
         }
       } catch {
-        showToast('error', 'Failed to load expense ledger');
+        showToast('error', tr('Failed to load expense ledger'));
       } finally {
         setLoading(false);
       }
@@ -88,10 +91,10 @@ export const FarmExpenses: React.FC = () => {
           paymentMethod: 'Cash',
           receiptReference: '',
         });
-        showToast('success', 'Expense recorded successfully');
+        showToast('success', tr('Expense recorded successfully'));
       }
     } catch {
-      showToast('error', 'Failed to record expense');
+      showToast('error', tr('Failed to record expense'));
     }
   };
 
@@ -128,9 +131,15 @@ export const FarmExpenses: React.FC = () => {
       {/* Top Banner */}
       <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-lg font-bold text-slate-900">Farm Operating Expenses Ledger</h2>
+          <h2 className="text-lg font-bold text-slate-900">
+            {language === 'bn' ? 'খামারের ব্যয়ের হিসাব (সহজ খরচ খাতা)' : 'Farm Expense Ledger'}
+          </h2>
           <p className="text-xs text-slate-500 mt-0.5">
-            Total Operational Input Outlay: <span className="font-bold text-emerald-700">৳{totalSpent.toLocaleString()}</span> across {expenses.length} disbursements.
+            {language === 'bn'
+              ? `চলতি মৌসুমে মোট খরচ: `
+              : `Current Season Total Expenses: `}
+            <span className="font-bold text-emerald-700">৳{totalSpent.toLocaleString()}</span>{' '}
+            {language === 'bn' ? `(মোট ${expenses.length} টি ভাউচার)` : `(Total ${expenses.length} entries)`}
           </p>
         </div>
 
@@ -140,20 +149,36 @@ export const FarmExpenses: React.FC = () => {
           icon={Plus}
           onClick={() => setIsAddModalOpen(true)}
         >
-          Record Expense Voucher
+          {language === 'bn' ? '+ নতুন খরচ লিখুন' : '+ Record Expense'}
         </Button>
       </div>
 
       {/* Category Breakdown Bar Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: 'Fertilizers', amount: categoryTotals['Fertilizers'] || 0, color: 'text-emerald-700' },
-          { label: 'Seeds & Seedlings', amount: categoryTotals['Seeds & Seedlings'] || 0, color: 'text-blue-700' },
-          { label: 'Labor Wages', amount: categoryTotals['Labor Wages'] || 0, color: 'text-amber-700' },
-          { label: 'Irrigation Energy', amount: categoryTotals['Irrigation Energy'] || 0, color: 'text-purple-700' },
+          {
+            label: language === 'bn' ? 'সার ক্রয়' : 'Fertilizers',
+            amount: categoryTotals['Fertilizers'] || 0,
+            color: 'text-emerald-700',
+          },
+          {
+            label: language === 'bn' ? 'বীজ ও চারা' : 'Seeds & Seedlings',
+            amount: categoryTotals['Seeds & Seedlings'] || 0,
+            color: 'text-blue-700',
+          },
+          {
+            label: language === 'bn' ? 'শ্রমিকের মজুরি' : 'Labor Wages',
+            amount: categoryTotals['Labor Wages'] || 0,
+            color: 'text-amber-700',
+          },
+          {
+            label: language === 'bn' ? 'সেচ ও ডিজেল/বিদ্যুৎ' : 'Irrigation Energy',
+            amount: categoryTotals['Irrigation Energy'] || 0,
+            color: 'text-purple-700',
+          },
         ].map((c) => (
           <div key={c.label} className="p-3 bg-white rounded-xl border border-slate-200/80">
-            <span className="text-[11px] text-slate-400 block font-medium">{c.label}</span>
+            <span className="text-[11px] text-slate-500 block font-medium">{c.label}</span>
             <span className={`text-base font-extrabold ${c.color} block mt-0.5`}>
               ৳{c.amount.toLocaleString()}
             </span>
@@ -164,21 +189,25 @@ export const FarmExpenses: React.FC = () => {
       {/* Filter and Table */}
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
         <div className="p-4 border-b border-slate-100 flex items-center justify-between gap-4">
-          <h3 className="font-bold text-sm text-slate-900">Itemized Expense History</h3>
+          <h3 className="font-bold text-sm text-slate-900">
+            {language === 'bn' ? 'খরচের তালিকা ও হিসাব' : 'Itemized Expense History'}
+          </h3>
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
             className="px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-800 focus:outline-none"
           >
-            <option value="All">All Categories ({expenses.length})</option>
-            <option value="Fertilizers">Fertilizers</option>
-            <option value="Seeds & Seedlings">Seeds & Seedlings</option>
-            <option value="Labor Wages">Labor Wages</option>
-            <option value="Machinery & Fuel">Machinery & Fuel</option>
-            <option value="Irrigation Energy">Irrigation Energy</option>
-            <option value="Pesticides">Pesticides</option>
-            <option value="Transport & Storage">Transport & Storage</option>
-            <option value="Other">Other</option>
+            <option value="All">
+              {language === 'bn' ? `সকল খাত (${expenses.length})` : `All Categories (${expenses.length})`}
+            </option>
+            <option value="Fertilizers">{language === 'bn' ? 'সার ও কীটনাশক' : 'Fertilizers'}</option>
+            <option value="Seeds & Seedlings">{language === 'bn' ? 'বীজ ও চারা' : 'Seeds & Seedlings'}</option>
+            <option value="Labor Wages">{language === 'bn' ? 'শ্রমিক মজুরি' : 'Labor Wages'}</option>
+            <option value="Machinery & Fuel">{language === 'bn' ? 'যন্ত্রপাতি ও ডিজেল' : 'Machinery & Fuel'}</option>
+            <option value="Irrigation Energy">{language === 'bn' ? 'সেচ খরচ' : 'Irrigation Energy'}</option>
+            <option value="Pesticides">{language === 'bn' ? 'কীটনাশক' : 'Pesticides'}</option>
+            <option value="Transport & Storage">{language === 'bn' ? 'পরিবহন ও সংরক্ষণ' : 'Transport & Storage'}</option>
+            <option value="Other">{language === 'bn' ? 'অন্যান্য খরচ' : 'Other'}</option>
           </select>
         </div>
 
@@ -186,11 +215,21 @@ export const FarmExpenses: React.FC = () => {
           <table className="w-full text-left text-xs border-collapse">
             <thead>
               <tr className="border-b border-slate-200 bg-slate-50/80">
-                <th className="p-4 font-bold text-slate-600 uppercase">Disbursement Details</th>
-                <th className="p-4 font-bold text-slate-600 uppercase">Category</th>
-                <th className="p-4 font-bold text-slate-600 uppercase">Field / Crop</th>
-                <th className="p-4 font-bold text-slate-600 uppercase">Payment Method</th>
-                <th className="p-4 font-bold text-slate-600 uppercase text-right">Amount (BDT)</th>
+                <th className="p-4 font-bold text-slate-600 uppercase">
+                  {language === 'bn' ? 'খরচের বিবরণ' : 'Disbursement Details'}
+                </th>
+                <th className="p-4 font-bold text-slate-600 uppercase">
+                  {language === 'bn' ? 'খাত' : 'Category'}
+                </th>
+                <th className="p-4 font-bold text-slate-600 uppercase">
+                  {language === 'bn' ? 'জমি / ফসল' : 'Field / Crop'}
+                </th>
+                <th className="p-4 font-bold text-slate-600 uppercase">
+                  {language === 'bn' ? 'পেমেন্ট মাধ্যম' : 'Payment Method'}
+                </th>
+                <th className="p-4 font-bold text-slate-600 uppercase text-right">
+                  {language === 'bn' ? 'পরিমাণ (টাকা)' : 'Amount (BDT)'}
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -245,15 +284,15 @@ export const FarmExpenses: React.FC = () => {
       <Modal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        title="Record Farm Operating Expense"
-        subtitle="Log fertilizer, seed, machinery, or labor wage disbursements"
+        title={language === 'bn' ? 'নতুন খরচের তথ্য লিখুন' : 'Record Farm Operating Expense'}
+        subtitle={language === 'bn' ? 'সার, বীজ, ডিজেল, সেচ বা শ্রমিকের মজুরির হিসাব লিখে রাখুন' : 'Log fertilizer, seed, machinery, or labor wage disbursements'}
         maxWidth="lg"
       >
         <form onSubmit={handleAddExpense} className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <FormSelect
               id="category"
-              label="Expense Category"
+              label={language === 'bn' ? 'খরচের খাত' : 'Expense Category'}
               value={newExpense.category}
               onChange={(e) =>
                 setNewExpense({
@@ -262,20 +301,20 @@ export const FarmExpenses: React.FC = () => {
                 })
               }
               options={[
-                { value: 'Fertilizers', label: 'Fertilizers & Soil Amendments' },
-                { value: 'Seeds & Seedlings', label: 'Seeds & Seedlings' },
-                { value: 'Labor Wages', label: 'Labor Wages & Tillage' },
-                { value: 'Machinery & Fuel', label: 'Machinery Rental & Diesel' },
-                { value: 'Irrigation Energy', label: 'Electricity / Diesel Irrigation' },
-                { value: 'Pesticides', label: 'Pesticides & Crop Protection' },
-                { value: 'Transport & Storage', label: 'Transport & Storage Fees' },
-                { value: 'Other', label: 'Other Miscellaneous' },
+                { value: 'Fertilizers', label: language === 'bn' ? 'সার ও কীটনাশক' : 'Fertilizers & Soil Amendments' },
+                { value: 'Seeds & Seedlings', label: language === 'bn' ? 'বীজ ও চারা' : 'Seeds & Seedlings' },
+                { value: 'Labor Wages', label: language === 'bn' ? 'শ্রমিক মজুরি' : 'Labor Wages & Tillage' },
+                { value: 'Machinery & Fuel', label: language === 'bn' ? 'যন্ত্রপাতি ও ডিজেল' : 'Machinery Rental & Diesel' },
+                { value: 'Irrigation Energy', label: language === 'bn' ? 'সেচ খরচ (বিদ্যুৎ/ডিজেল)' : 'Electricity / Diesel Irrigation' },
+                { value: 'Pesticides', label: language === 'bn' ? 'কীটনাশক ও স্প্রে' : 'Pesticides & Crop Protection' },
+                { value: 'Transport & Storage', label: language === 'bn' ? 'পরিবহন ও সংরক্ষণ' : 'Transport & Storage Fees' },
+                { value: 'Other', label: language === 'bn' ? 'অন্যান্য খরচ' : 'Other Miscellaneous' },
               ]}
             />
 
             <FormInput
               id="amount"
-              label="Disbursement Amount (BDT)"
+              label={language === 'bn' ? 'খরচের পরিমাণ (টাকা)' : 'Disbursement Amount (BDT)'}
               type="number"
               value={newExpense.amountBdt}
               onChange={(e) => setNewExpense({ ...newExpense, amountBdt: Number(e.target.value) })}
@@ -286,7 +325,7 @@ export const FarmExpenses: React.FC = () => {
           <div className="grid grid-cols-2 gap-3">
             <FormInput
               id="date"
-              label="Transaction Date"
+              label={language === 'bn' ? 'খরচের তারিখ' : 'Transaction Date'}
               type="date"
               value={newExpense.date}
               onChange={(e) => setNewExpense({ ...newExpense, date: e.target.value })}
@@ -295,7 +334,7 @@ export const FarmExpenses: React.FC = () => {
 
             <FormSelect
               id="paymentMethod"
-              label="Payment Method"
+              label={language === 'bn' ? 'পেমেন্ট মাধ্যম' : 'Payment Method'}
               value={newExpense.paymentMethod}
               onChange={(e) =>
                 setNewExpense({
@@ -304,16 +343,16 @@ export const FarmExpenses: React.FC = () => {
                 })
               }
               options={[
-                { value: 'Cash', label: 'Cash Payment' },
-                { value: 'Mobile Banking (bKash/Nagad)', label: 'Mobile Banking (bKash / Nagad)' },
-                { value: 'Bank Transfer', label: 'Direct Bank Transfer' },
+                { value: 'Cash', label: language === 'bn' ? 'নগদ ক্যাশ' : 'Cash Payment' },
+                { value: 'Mobile Banking (bKash/Nagad)', label: language === 'bn' ? 'মোবাইল ব্যাংকিং (বিকাশ / নগদ)' : 'Mobile Banking (bKash / Nagad)' },
+                { value: 'Bank Transfer', label: language === 'bn' ? 'ব্যাংক ট্রান্সফার' : 'Direct Bank Transfer' },
               ]}
             />
           </div>
 
           <FormInput
             id="fieldOrFarm"
-            label="Field or Farm Allocation"
+            label={language === 'bn' ? 'জমির নাম বা প্লট' : 'Field or Farm Allocation'}
             value={newExpense.fieldOrFarm}
             onChange={(e) => setNewExpense({ ...newExpense, fieldOrFarm: e.target.value })}
             required
@@ -321,8 +360,8 @@ export const FarmExpenses: React.FC = () => {
 
           <FormTextarea
             id="description"
-            label="Disbursement Description"
-            placeholder="e.g. 5 bags of Diammonium Phosphate (DAP) from Upazila BADC dealer..."
+            label={language === 'bn' ? 'খরচের বিস্তারিত বিবরণ' : 'Disbursement Description'}
+            placeholder={language === 'bn' ? 'যেমন: ৫ বস্তা ডিএপি সার ক্রয় ডিলার থেকে...' : 'e.g. 5 bags of Diammonium Phosphate (DAP) from Upazila BADC dealer...'}
             value={newExpense.description}
             onChange={(e) => setNewExpense({ ...newExpense, description: e.target.value })}
             required
@@ -331,8 +370,8 @@ export const FarmExpenses: React.FC = () => {
 
           <FormInput
             id="receipt"
-            label="Voucher or Receipt Reference (Optional)"
-            placeholder="e.g. REC-84920"
+            label={language === 'bn' ? 'ভাউচার / রসিদ নম্বর (ঐচ্ছিক)' : 'Voucher or Receipt Reference (Optional)'}
+            placeholder={tr('e.g. REC-84920')}
             value={newExpense.receiptReference}
             onChange={(e) => setNewExpense({ ...newExpense, receiptReference: e.target.value })}
           />
@@ -344,10 +383,10 @@ export const FarmExpenses: React.FC = () => {
               size="sm"
               onClick={() => setIsAddModalOpen(false)}
             >
-              Cancel
+              {language === 'bn' ? 'বাতিল' : 'Cancel'}
             </Button>
             <Button type="submit" variant="primary" size="sm">
-              Save Expense Entry
+              {language === 'bn' ? 'সংরক্ষণ করুন' : 'Save Expense Entry'}
             </Button>
           </div>
         </form>

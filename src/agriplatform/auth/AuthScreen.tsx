@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { tr } from "@/agriplatform/lib/localize";
 import {
   Sprout,
   ShieldCheck,
@@ -17,6 +18,8 @@ import { Button } from '@/components/shared/Button';
 import { Badge } from '@/components/shared/Badge';
 import { useToast } from '@/components/shared/Toast';
 import { PortalType } from '@/agriplatform/types';
+import { useLanguage } from '@/agriplatform/lib/LanguageContext';
+import { LanguageSwitcher } from '@/components/shared/LanguageSwitcher';
 
 export interface AuthUser {
   id: string;
@@ -35,6 +38,7 @@ interface AuthScreenProps {
 
 export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
   const { showToast } = useToast();
+  const { language, t } = useLanguage();
   const [selectedPortal, setSelectedPortal] = useState<PortalType>('farmer');
 
   // Farmer form state
@@ -63,7 +67,12 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
         portal: 'farmer',
       };
       onLogin(user);
-      showToast('success', 'স্বাগতম! মোহিউদ্দিন খান হিসেবে সফলভাবে কৃষক ড্যাশবোর্ডে লগিন করেছেন।');
+      showToast(
+        'success',
+        language === 'bn'
+          ? 'স্বাগতম! মোহিউদ্দিন খান হিসেবে সফলভাবে কৃষক ড্যাশবোর্ডে লগিন করেছেন।'
+          : 'Welcome! Successfully signed in as Farmer Mohiuddin Khan.'
+      );
     }, 400);
   };
 
@@ -83,7 +92,12 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
         portal: 'admin',
       };
       onLogin(user);
-      showToast('success', 'Welcome Administrator! Successfully logged into Central Admin Oversight Command.');
+      showToast(
+        'success',
+        language === 'bn'
+          ? 'স্বাগতম এডমিনিস্ট্রেটর! কেন্দ্রীয় প্রশাসনিক প্যানেলে প্রবেশ করেছেন।'
+          : 'Welcome Administrator! Successfully logged into Central Admin Oversight Command.'
+      );
     }, 400);
   };
 
@@ -98,25 +112,22 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-extrabold text-white text-base sm:text-lg tracking-tight">AgriPlatform</span>
-                <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                  National Agritech
-                </span>
+                <span className="font-extrabold text-white text-base sm:text-lg tracking-tight">{tr('AgriPlatform')}</span>
+                <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">{tr('National Agritech')}</span>
               </div>
-              <p className="text-[11px] sm:text-xs text-slate-400 hidden xs:block">Government Certified Agronomy & Digital Platform</p>
+              <p className="text-[11px] sm:text-xs text-slate-400 hidden xs:block">{tr('Government Certified Agronomy & Digital Platform')}</p>
             </div>
           </div>
 
-          <div className="hidden sm:flex items-center gap-3 text-xs text-slate-400">
-            <span className="flex items-center gap-1">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-              16 Farmer Modules
-            </span>
-            <span>•</span>
-            <span className="flex items-center gap-1">
-              <CheckCircle2 className="w-3.5 h-3.5 text-indigo-400" />
-              10 Admin Modules
-            </span>
+          <div className="flex items-center gap-3">
+            <LanguageSwitcher />
+            <div className="hidden sm:flex items-center gap-3 text-xs text-slate-400">
+              <span className="flex items-center gap-1">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />{tr('16 Farmer Modules')}</span>
+              <span>{tr('•')}</span>
+              <span className="flex items-center gap-1">
+                <CheckCircle2 className="w-3.5 h-3.5 text-indigo-400" />{tr('10 Admin Modules')}</span>
+            </div>
           </div>
         </div>
       </header>
@@ -126,10 +137,12 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
         <div className="w-full max-w-xl bg-slate-950/80 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-2xl shadow-black/50 backdrop-blur-xl">
           <div className="text-center mb-5 sm:mb-6">
             <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-              প্ল্যাটফর্মে প্রবেশ করুন • Account Sign In
+              {t('authHeading')}
             </h1>
             <p className="text-xs text-slate-400 mt-1 max-w-md mx-auto">
-              ফার্মার ও এডমিনের জন্য আলাদা একাউন্ট ও পৃথক ড্যাশবোর্ড সিস্টেম। আপনার পোর্টাল নির্বাচন করে লগিন করুন।
+              {language === 'bn'
+                ? 'ফার্মার ও এডমিনের জন্য আলাদা একাউন্ট ও পৃথক ড্যাশবোর্ড সিস্টেম। আপনার পোর্টাল নির্বাচন করে লগিন করুন।'
+                : 'Dedicated portals for Farmers and Platform Administrators. Select your portal to sign in.'}
             </p>
           </div>
 
@@ -145,7 +158,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
               }`}
             >
               <Sprout className="w-4 h-4 shrink-0" />
-              <span className="truncate">ফার্মার পোর্টাল</span>
+              <span className="truncate">{t('farmerPortalTab')}</span>
             </button>
 
             <button
@@ -158,7 +171,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
               }`}
             >
               <ShieldCheck className="w-4 h-4 shrink-0" />
-              <span className="truncate">এডমিন পোর্টাল</span>
+              <span className="truncate">{t('adminPortalTab')}</span>
             </button>
           </div>
 
@@ -166,16 +179,20 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
           {selectedPortal === 'farmer' && (
             <div className="space-y-4">
               <div className="p-3 bg-emerald-950/30 rounded-xl border border-emerald-800/40 text-xs text-emerald-300">
-                <p className="font-semibold mb-0.5">🌾 কৃষক একাউন্ট সুবিধা (16 Modules):</p>
+                <p className="font-semibold mb-0.5">
+                  {language === 'bn' ? '🌾 কৃষক একাউন্ট সুবিধা (16 Modules):' : '🌾 Farmer Account Features (16 Modules):'}
+                </p>
                 <p className="text-[11px] text-emerald-400/90">
-                  লগিন করলেই সরাসরি আপনার ফার্মার ড্যাশবোর্ড, খামার ও মাঠ ব্যবস্থাপনা, AI ফসল পরামর্শ, ফসল ক্যালেন্ডার ও হার্ভেস্ট ব্যবস্থাপনায় নিয়ে যাবে।
+                  {language === 'bn'
+                    ? 'লগিন করলেই সরাসরি আপনার ফার্মার ড্যাশবোর্ড, খামার ও মাঠ ব্যবস্থাপনা, AI ফসল পরামর্শ, ফসল ক্যালেন্ডার ও হার্ভেস্ট ব্যবস্থাপনায় নিয়ে যাবে।'
+                    : 'Signing in takes you straight to your Farmer Dashboard, Farms & Field Management, AI Crop Advice, Crop Calendar, and Harvest Management.'}
                 </p>
               </div>
 
               <form onSubmit={handleFarmerLogin} className="space-y-3.5">
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 mb-1">
-                    মোবাইল নম্বর অথবা জাতীয় পরিচয়পত্র (NID)
+                    {language === 'bn' ? 'মোবাইল নম্বর অথবা জাতীয় পরিচয়পত্র (NID)' : 'Mobile Number or National ID (NID)'}
                   </label>
                   <div className="relative">
                     <Phone className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -184,7 +201,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
                       required
                       value={farmerIdentifier}
                       onChange={(e) => setFarmerIdentifier(e.target.value)}
-                      placeholder="+880 17XX-XXXXXX or NID"
+                      placeholder={tr('+880 17XX-XXXXXX or NID')}
                       className="w-full bg-slate-900 border border-slate-700 rounded-xl pl-9 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-emerald-500"
                     />
                   </div>
@@ -201,7 +218,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
                       required
                       value={farmerPassword}
                       onChange={(e) => setFarmerPassword(e.target.value)}
-                      placeholder="••••••••"
+                      placeholder={tr('••••••••')}
                       className="w-full bg-slate-900 border border-slate-700 rounded-xl pl-9 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-emerald-500"
                     />
                   </div>
@@ -213,7 +230,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
                   className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl transition-all shadow-lg shadow-emerald-950/50 flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Sprout className="w-4 h-4" />
-                  <span>{loading ? 'প্রবেশ করা হচ্ছে...' : 'ফার্মার ড্যাশবোর্ডে প্রবেশ করুন'}</span>
+                  <span>{loading ? (language === 'bn' ? 'প্রবেশ করা হচ্ছে...' : 'Signing in...') : (language === 'bn' ? 'ফার্মার ড্যাশবোর্ডে প্রবেশ করুন' : 'Enter Farmer Dashboard')}</span>
                   <ArrowRight className="w-4 h-4 ml-1" />
                 </button>
               </form>
@@ -226,10 +243,10 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
                   className="w-full py-2.5 px-4 bg-slate-900 hover:bg-slate-800 border border-emerald-600/40 hover:border-emerald-500 rounded-xl text-xs text-emerald-400 font-semibold transition-all flex items-center justify-between cursor-pointer"
                 >
                   <div className="text-left">
-                    <span className="block font-bold">⚡ এক ক্লিকে ডেমো ফার্মার হিসেবে প্রবেশ করুন</span>
-                    <span className="text-[10px] text-slate-400">মোহিউদ্দিন খান • শেরপুর, বগুড়া (১৮.৫ একর খামার)</span>
+                    <span className="block font-bold">{language === 'bn' ? '⚡ এক ক্লিকে ডেমো ফার্মার হিসেবে প্রবেশ করুন' : '⚡ Enter as Demo Farmer in One Click'}</span>
+                    <span className="text-[10px] text-slate-400">{language === 'bn' ? 'মোহিউদ্দিন খান • শেরপুর, বগুড়া (১৮.৫ একর খামার)' : 'Mohiuddin Khan • Sherpur, Bogura (18.5-acre farm)'}</span>
                   </div>
-                  <span className="text-xs bg-emerald-500/20 text-emerald-300 px-2.5 py-1 rounded-md">Instant Demo</span>
+                  <span className="text-xs bg-emerald-500/20 text-emerald-300 px-2.5 py-1 rounded-md">{tr('Instant Demo')}</span>
                 </button>
               </div>
             </div>
@@ -239,9 +256,11 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
           {selectedPortal === 'admin' && (
             <div className="space-y-4">
               <div className="p-3 bg-indigo-950/30 rounded-xl border border-indigo-800/40 text-xs text-indigo-300">
-                <p className="font-semibold mb-0.5">🛡️ কেন্দ্রীয় এডমিন কন্ট্রোল (10 Modules):</p>
+                <p className="font-semibold mb-0.5">{tr('🛡️')}{language === 'bn' ? 'কেন্দ্রীয় এডমিন কন্ট্রোল (10 Modules):' : 'Central Admin Control (10 Modules):'}</p>
                 <p className="text-[11px] text-indigo-400/90">
-                  লগিন করলেই সরাসরি Admin Dashboard, User Management, Marketplace, Orders, Payments, Quality, Logistics, Training, Reports ও Disputes প্যানেলে নিয়ে যাবে।
+                  {language === 'bn'
+                    ? 'লগিন করলেই সরাসরি Admin Dashboard, User Management, Marketplace, Orders, Payments, Quality, Logistics, Training, Reports ও Disputes প্যানেলে নিয়ে যাবে।'
+                    : 'Signing in gives immediate access to Admin Dashboard, User Management, Marketplace, Orders, Payments, Quality Control, Logistics, Training, Reports & Disputes panels.'}
                 </p>
               </div>
 
@@ -257,7 +276,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
                       required
                       value={adminIdentifier}
                       onChange={(e) => setAdminIdentifier(e.target.value)}
-                      placeholder="admin@agrisystem.internal"
+                      placeholder={tr('admin@agrisystem.internal')}
                       className="w-full bg-slate-900 border border-slate-700 rounded-xl pl-9 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-indigo-500"
                     />
                   </div>
@@ -274,7 +293,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
                       required
                       value={adminPassword}
                       onChange={(e) => setAdminPassword(e.target.value)}
-                      placeholder="••••••••"
+                      placeholder={tr('••••••••')}
                       className="w-full bg-slate-900 border border-slate-700 rounded-xl pl-9 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-indigo-500"
                     />
                   </div>
@@ -286,7 +305,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
                   className="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl transition-all shadow-lg shadow-indigo-950/50 flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <ShieldCheck className="w-4 h-4" />
-                  <span>{loading ? 'প্রবেশ করা হচ্ছে...' : 'এডমিন ড্যাশবোর্ডে প্রবেশ করুন'}</span>
+                  <span>{loading ? (language === 'bn' ? 'প্রবেশ করা হচ্ছে...' : 'Signing in...') : (language === 'bn' ? 'এডমিন ড্যাশবোর্ডে প্রবেশ করুন' : 'Enter Admin Dashboard')}</span>
                   <ArrowRight className="w-4 h-4 ml-1" />
                 </button>
               </form>
@@ -299,10 +318,10 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
                   className="w-full py-2.5 px-4 bg-slate-900 hover:bg-slate-800 border border-indigo-600/40 hover:border-indigo-500 rounded-xl text-xs text-indigo-400 font-semibold transition-all flex items-center justify-between cursor-pointer"
                 >
                   <div className="text-left">
-                    <span className="block font-bold">⚡ এক ক্লিকে ডেমো এডমিন হিসেবে প্রবেশ করুন</span>
-                    <span className="text-[10px] text-slate-400">তারিকুল ইসলাম • সেন্ট্রাল হেডকোয়ার্টার প্ল্যাটফর্ম এডমিন</span>
+                    <span className="block font-bold">{language === 'bn' ? '⚡ এক ক্লিকে ডেমো এডমিন হিসেবে প্রবেশ করুন' : '⚡ Enter as Demo Admin in One Click'}</span>
+                    <span className="text-[10px] text-slate-400">{language === 'bn' ? 'তারিকুল ইসলাম • সেন্ট্রাল হেডকোয়ার্টার প্ল্যাটফর্ম এডমিন' : 'Tariqul Islam • Central Headquarters Platform Admin'}</span>
                   </div>
-                  <span className="text-xs bg-indigo-500/20 text-indigo-300 px-2.5 py-1 rounded-md">Instant Demo</span>
+                  <span className="text-xs bg-indigo-500/20 text-indigo-300 px-2.5 py-1 rounded-md">{tr('Instant Demo')}</span>
                 </button>
               </div>
             </div>
@@ -312,9 +331,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
 
       {/* Footer */}
       <footer className="border-t border-slate-800 bg-slate-950/60 px-6 py-4 text-center text-xs text-slate-500">
-        <p>
-          Bangladesh Digital Agriculture Platform • Secure Multi-Role Authentication System
-        </p>
+        <p>{tr('Bangladesh Digital Agriculture Platform • Secure Multi-Role Authentication System')}</p>
       </footer>
     </div>
   );

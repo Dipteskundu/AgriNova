@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { tr } from "@/agriplatform/lib/localize";
 import {
   GraduationCap,
   Plus,
@@ -41,7 +42,7 @@ export const TrainingManagement: React.FC = () => {
           setCourses(res.data);
         }
       } catch {
-        showToast('error', 'Failed to load administrative training catalog');
+        showToast('error', tr('Failed to load administrative training catalog'));
       } finally {
         setLoading(false);
       }
@@ -67,10 +68,10 @@ export const TrainingManagement: React.FC = () => {
           instructorAssigned: 'Dr. Shahinur Alam (BARI)',
           status: 'Published',
         });
-        showToast('success', 'New extension curriculum published');
+        showToast('success', tr('New extension curriculum published'));
       }
     } catch {
-      showToast('error', 'Failed to publish training course');
+      showToast('error', tr('Failed to publish training course'));
     }
   };
 
@@ -90,10 +91,8 @@ export const TrainingManagement: React.FC = () => {
       {/* Top Banner */}
       <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-lg font-bold text-slate-900">Training Course Curriculum Oversight</h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Oversee vocational agricultural masterclasses, regional participation, and certification pass rates.
-          </p>
+          <h2 className="text-lg font-bold text-slate-900">{tr('Training Course Curriculum Oversight')}</h2>
+          <p className="text-xs text-slate-500 mt-0.5">{tr('Oversee vocational agricultural masterclasses, regional participation, and certification pass rates.')}</p>
         </div>
 
         <Button
@@ -101,9 +100,7 @@ export const TrainingManagement: React.FC = () => {
           size="sm"
           icon={Plus}
           onClick={() => setIsAddModalOpen(true)}
-        >
-          Create New Course Curriculum
-        </Button>
+        >{tr('Create New Course Curriculum')}</Button>
       </div>
 
       {/* Grid of Admin Courses */}
@@ -132,33 +129,32 @@ export const TrainingManagement: React.FC = () => {
               <h3 className="text-sm font-bold text-slate-900 leading-snug mb-1">
                 {course.courseTitle}
               </h3>
-              <p className="text-[11px] text-slate-500 mb-3">
-                Lead Agronomist: <span className="font-semibold text-slate-700">{course.instructorAssigned}</span>
+              <p className="text-[11px] text-slate-500 mb-3">{tr('Lead Agronomist:')}<span className="font-semibold text-slate-700">{course.instructorAssigned}</span>
               </p>
 
               {/* Participation Stats */}
               <div className="grid grid-cols-2 gap-2 p-3 bg-slate-50 rounded-xl border border-slate-100 text-xs mt-2">
                 <div>
-                  <span className="text-[10px] text-slate-400 block uppercase">Enrolled Farmers</span>
+                  <span className="text-[10px] text-slate-400 block uppercase">{tr('Enrolled Farmers')}</span>
                   <span className="font-extrabold text-sm text-slate-900">
                     {course.enrolledCount.toLocaleString()}
                   </span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-400 block uppercase">Completion Rate</span>
+                  <span className="text-[10px] text-slate-400 block uppercase">{tr('Completion Rate')}</span>
                   <span className="font-bold text-emerald-700">{course.completionRatePercent}%</span>
                 </div>
               </div>
 
               <div className="mt-3 text-xs text-slate-600">
-                <span className="text-[11px] text-slate-400 block">Target Region</span>
+                <span className="text-[11px] text-slate-400 block">{tr('Target Region')}</span>
                 <span className="font-medium text-slate-800">{course.targetRegion}</span>
               </div>
             </div>
 
             <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
-              <span>Updated: {course.lastUpdated}</span>
-              <span className="font-mono">ID: {course.id}</span>
+              <span>{tr('Updated:')}{course.lastUpdated}</span>
+              <span className="font-mono">{tr('ID:')}{course.id}</span>
             </div>
           </Card>
         ))}
@@ -168,15 +164,15 @@ export const TrainingManagement: React.FC = () => {
       <Modal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        title="Publish Extension Course Curriculum"
-        subtitle="Set up instructor assignment and regional enrollment targets"
+        title={tr('Publish Extension Course Curriculum')}
+        subtitle={tr('Set up instructor assignment and regional enrollment targets')}
         maxWidth="lg"
       >
         <form onSubmit={handleCreateCourse} className="space-y-4">
           <FormInput
             id="courseTitle"
-            label="Curriculum Title"
-            placeholder="e.g. Modern Alternate Wetting and Drying (AWD) Irrigation Protocol"
+            label={tr('Curriculum Title')}
+            placeholder={tr('e.g. Modern Alternate Wetting and Drying (AWD) Irrigation Protocol')}
             value={newCourse.courseTitle}
             onChange={(e) => setNewCourse({ ...newCourse, courseTitle: e.target.value })}
             required
@@ -185,8 +181,8 @@ export const TrainingManagement: React.FC = () => {
           <div className="grid grid-cols-2 gap-3">
             <FormInput
               id="instructor"
-              label="Assigned Lead Instructor"
-              placeholder="e.g. Dr. Shahinur Alam (BARI)"
+              label={tr('Assigned Lead Instructor')}
+              placeholder={tr('e.g. Dr. Shahinur Alam (BARI)')}
               value={newCourse.instructorAssigned}
               onChange={(e) =>
                 setNewCourse({ ...newCourse, instructorAssigned: e.target.value })
@@ -196,7 +192,7 @@ export const TrainingManagement: React.FC = () => {
 
             <FormSelect
               id="status"
-              label="Publication Status"
+              label={tr('Publication Status')}
               value={newCourse.status}
               onChange={(e) =>
                 setNewCourse({
@@ -205,17 +201,17 @@ export const TrainingManagement: React.FC = () => {
                 })
               }
               options={[
-                { value: 'Published', label: 'Published (Open Enrollment)' },
-                { value: 'Draft', label: 'Draft (Under Review)' },
-                { value: 'Archived', label: 'Archived' },
+                { value: 'Published', label: tr('Published (Open Enrollment)') },
+                { value: 'Draft', label: tr('Draft (Under Review)') },
+                { value: 'Archived', label: tr('Archived') },
               ]}
             />
           </div>
 
           <FormInput
             id="targetRegion"
-            label="Target Agro-Ecological Region"
-            placeholder="e.g. Barind Tract & Drought-Prone Northwest"
+            label={tr('Target Agro-Ecological Region')}
+            placeholder={tr('e.g. Barind Tract & Drought-Prone Northwest')}
             value={newCourse.targetRegion}
             onChange={(e) => setNewCourse({ ...newCourse, targetRegion: e.target.value })}
             required
@@ -227,12 +223,8 @@ export const TrainingManagement: React.FC = () => {
               variant="outline"
               size="sm"
               onClick={() => setIsAddModalOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" variant="primary" size="sm">
-              Publish Curriculum
-            </Button>
+            >{tr('Cancel')}</Button>
+            <Button type="submit" variant="primary" size="sm">{tr('Publish Curriculum')}</Button>
           </div>
         </form>
       </Modal>

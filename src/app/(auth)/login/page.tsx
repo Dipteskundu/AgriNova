@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { ToastProvider } from "@/components/shared/Toast";
+import { LanguageProvider } from "@/agriplatform/lib/LanguageContext";
 import { AuthScreen, AuthUser } from "@/agriplatform/auth/AuthScreen";
 
 export default function LoginPage() {
@@ -15,8 +16,10 @@ export default function LoginPage() {
   };
 
   return (
-    <ToastProvider>
-      <AuthScreen onLogin={handleLogin} />
-    </ToastProvider>
+    <LanguageProvider>
+      <ToastProvider>
+        <AuthScreen onLogin={handleLogin} />
+      </ToastProvider>
+    </LanguageProvider>
   );
 }

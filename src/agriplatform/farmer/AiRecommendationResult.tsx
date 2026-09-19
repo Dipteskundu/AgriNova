@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { tr } from "@/agriplatform/lib/localize";
 import {
   Sparkles,
   CheckCircle2,
@@ -39,7 +40,7 @@ export const AiRecommendationResult: React.FC<AiRecommendationResultProps> = ({
           setDiagnostic(res.data);
         }
       } catch {
-        showToast('error', 'Failed to retrieve AI agronomic diagnostic');
+        showToast('error', tr('Failed to retrieve AI agronomic diagnostic'));
       } finally {
         setLoading(false);
       }
@@ -73,17 +74,14 @@ export const AiRecommendationResult: React.FC<AiRecommendationResultProps> = ({
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-700/80 border border-emerald-500/40 text-emerald-200 text-xs font-semibold">
-              <Sparkles className="w-3.5 h-3.5 text-emerald-300" />
-              Machine Learning Agronomy Model • Confidence {yieldPotentialPrediction.confidenceLevel}%
+              <Sparkles className="w-3.5 h-3.5 text-emerald-300" />{tr('Machine Learning Agronomy Model • Confidence')}{yieldPotentialPrediction.confidenceLevel}%
             </div>
-            <h2 className="text-xl font-black">AI Soil & Crop Diagnostic Synthesis</h2>
-            <p className="text-xs text-emerald-100 max-w-2xl leading-relaxed">
-              Synthesized by comparing soil telemetry (pH 6.4, N-18kg, P-24kg, K-42kg) with historical regional harvest logs across Bogura district.
-            </p>
+            <h2 className="text-xl font-black">{tr('AI Soil & Crop Diagnostic Synthesis')}</h2>
+            <p className="text-xs text-emerald-100 max-w-2xl leading-relaxed">{tr('Synthesized by comparing soil telemetry (pH 6.4, N-18kg, P-24kg, K-42kg) with historical regional harvest logs across Bogura district.')}</p>
           </div>
 
           <div className="bg-white/10 backdrop-blur-xs p-4 rounded-xl border border-white/20 text-center shrink-0">
-            <span className="text-[11px] text-emerald-200 block uppercase font-medium">Predicted Yield Potential</span>
+            <span className="text-[11px] text-emerald-200 block uppercase font-medium">{tr('Predicted Yield Potential')}</span>
             <span className="text-2xl font-black text-white">
               {yieldPotentialPrediction.minimumYield} - {yieldPotentialPrediction.maximumYield}{' '}
               <span className="text-sm font-normal text-emerald-200">{yieldPotentialPrediction.unit}</span>
@@ -95,8 +93,8 @@ export const AiRecommendationResult: React.FC<AiRecommendationResultProps> = ({
       {/* Agronomic Rationale */}
       <Card>
         <CardHeader
-          title="Agronomic Synthesis & Rationale"
-          subtitle="Model diagnosis on soil chemistry, seasonal suitability, and moisture retention"
+          title={tr('Agronomic Synthesis & Rationale')}
+          subtitle={tr('Model diagnosis on soil chemistry, seasonal suitability, and moisture retention')}
         />
         <div className="p-4 bg-emerald-50/70 border border-emerald-100 rounded-xl text-xs text-emerald-950 leading-relaxed">
           {agronomicRationale}
@@ -106,18 +104,18 @@ export const AiRecommendationResult: React.FC<AiRecommendationResultProps> = ({
       {/* Soil Deficiencies Table */}
       <Card>
         <CardHeader
-          title="Soil Chemical Deficiencies & Macronutrient Balance"
-          subtitle="Real-time test reading compared against optimal baseline thresholds"
+          title={tr('Soil Chemical Deficiencies & Macronutrient Balance')}
+          subtitle={tr('Real-time test reading compared against optimal baseline thresholds')}
         />
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
               <tr className="border-b border-slate-200 bg-slate-50">
-                <th className="p-3 font-bold text-slate-600 uppercase">Nutrient Parameter</th>
-                <th className="p-3 font-bold text-slate-600 uppercase">Current Sensor Level</th>
-                <th className="p-3 font-bold text-slate-600 uppercase">Agronomic Target</th>
-                <th className="p-3 font-bold text-slate-600 uppercase">Deficiency Status</th>
+                <th className="p-3 font-bold text-slate-600 uppercase">{tr('Nutrient Parameter')}</th>
+                <th className="p-3 font-bold text-slate-600 uppercase">{tr('Current Sensor Level')}</th>
+                <th className="p-3 font-bold text-slate-600 uppercase">{tr('Agronomic Target')}</th>
+                <th className="p-3 font-bold text-slate-600 uppercase">{tr('Deficiency Status')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -154,8 +152,8 @@ export const AiRecommendationResult: React.FC<AiRecommendationResultProps> = ({
         {/* Fertilizer Regimen */}
         <Card>
           <CardHeader
-            title="Prescriptive Fertilizer Dosing Schedule"
-            subtitle="Calculated to correct soil deficiencies over 90-day growth cycle"
+            title={tr('Prescriptive Fertilizer Dosing Schedule')}
+            subtitle={tr('Calculated to correct soil deficiencies over 90-day growth cycle')}
           />
 
           <div className="space-y-3 text-xs">
@@ -166,7 +164,7 @@ export const AiRecommendationResult: React.FC<AiRecommendationResultProps> = ({
                   <Badge variant="info">{fert.dosagePerAcre}</Badge>
                 </div>
                 <p className="text-[11px] text-slate-500 mb-1">
-                  <span className="font-semibold text-slate-700">Application Window:</span> {fert.applicationWindow}
+                  <span className="font-semibold text-slate-700">{tr('Application Window:')}</span> {fert.applicationWindow}
                 </p>
                 <p className="text-[11px] text-slate-600">{fert.purpose}</p>
               </div>
@@ -177,8 +175,8 @@ export const AiRecommendationResult: React.FC<AiRecommendationResultProps> = ({
         {/* Risk Factors & Mitigations */}
         <Card>
           <CardHeader
-            title="Microclimate & Disease Risk Radar"
-            subtitle="Simulated agronomic risks and proactive field countermeasures"
+            title={tr('Microclimate & Disease Risk Radar')}
+            subtitle={tr('Simulated agronomic risks and proactive field countermeasures')}
           />
 
           <div className="space-y-3 text-xs">
@@ -195,11 +193,10 @@ export const AiRecommendationResult: React.FC<AiRecommendationResultProps> = ({
                         : 'neutral'
                     }
                   >
-                    {risk.impact} Risk
-                  </Badge>
+                    {risk.impact}{tr('Risk')}</Badge>
                 </div>
                 <p className="text-slate-600 leading-relaxed">
-                  <span className="font-semibold text-slate-800">Countermeasure:</span> {risk.mitigationStrategy}
+                  <span className="font-semibold text-slate-800">{tr('Countermeasure:')}</span> {risk.mitigationStrategy}
                 </p>
               </div>
             ))}
@@ -211,27 +208,21 @@ export const AiRecommendationResult: React.FC<AiRecommendationResultProps> = ({
       {onNavigate && (
         <div className="p-5 bg-white rounded-2xl border border-slate-200/80 flex items-center justify-between gap-4">
           <div>
-            <h4 className="font-bold text-slate-900 text-sm">Ready to execute this crop recommendation?</h4>
-            <p className="text-xs text-slate-500">
-              Apply this fertilizer regimen directly to your field batch or compare against alternative winter crops.
-            </p>
+            <h4 className="font-bold text-slate-900 text-sm">{tr('Ready to execute this crop recommendation?')}</h4>
+            <p className="text-xs text-slate-500">{tr('Apply this fertilizer regimen directly to your field batch or compare against alternative winter crops.')}</p>
           </div>
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
               size="sm"
               onClick={() => onNavigate('comparison')}
-            >
-              Compare Other Crops
-            </Button>
+            >{tr('Compare Other Crops')}</Button>
             <Button
               variant="primary"
               size="sm"
               icon={ArrowRight}
               onClick={() => onNavigate('crops')}
-            >
-              Create Crop Batch
-            </Button>
+            >{tr('Create Crop Batch')}</Button>
           </div>
         </div>
       )}

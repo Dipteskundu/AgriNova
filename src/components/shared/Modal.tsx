@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { tr } from "@/agriplatform/lib/localize";
 import { X } from "@/components/icons";
 
 interface ModalProps {
@@ -56,7 +57,7 @@ export const Modal: React.FC<ModalProps> = ({
           <button
             onClick={onClose}
             className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
-            aria-label="Close dialog"
+            aria-label={tr('Close dialog')}
           >
             <X className="w-5 h-5" />
           </button>

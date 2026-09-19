@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { tr } from "@/agriplatform/lib/localize";
 import {
   Bell,
   AlertTriangle,
@@ -47,7 +48,7 @@ export const AdvisoryManagement: React.FC = () => {
           setAdvisories(res.data);
         }
       } catch {
-        showToast('error', 'Failed to load agronomic advisories');
+        showToast('error', tr('Failed to load agronomic advisories'));
       } finally {
         setLoading(false);
       }
@@ -86,10 +87,10 @@ export const AdvisoryManagement: React.FC = () => {
           recommendedTreatments: 'Apply recommended bio-pesticide or approved fungicide',
           issuingAuthority: 'Department of Agricultural Extension (DAE)',
         });
-        showToast('success', 'Advisory published to farmer networks & SMS gateway');
+        showToast('success', tr('Advisory published to farmer networks & SMS gateway'));
       }
     } catch {
-      showToast('error', 'Failed to broadcast advisory');
+      showToast('error', tr('Failed to broadcast advisory'));
     }
   };
 
@@ -114,10 +115,8 @@ export const AdvisoryManagement: React.FC = () => {
       {/* Top Banner */}
       <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-lg font-bold text-slate-900">Agronomic Advisory & Pest Warning Control</h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Broadcast emergency blight notices, fertilization timing, and water management bulletins.
-          </p>
+          <h2 className="text-lg font-bold text-slate-900">{tr('Agronomic Advisory & Pest Warning Control')}</h2>
+          <p className="text-xs text-slate-500 mt-0.5">{tr('Broadcast emergency blight notices, fertilization timing, and water management bulletins.')}</p>
         </div>
 
         <div className="flex items-center gap-2">
@@ -126,11 +125,11 @@ export const AdvisoryManagement: React.FC = () => {
             onChange={(e) => setFilterSeverity(e.target.value)}
             className="px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-800 focus:outline-none"
           >
-            <option value="All">All Severities</option>
-            <option value="urgent">Urgent</option>
-            <option value="high">High</option>
-            <option value="medium">Medium</option>
-            <option value="low">Low</option>
+            <option value="All">{tr('All Severities')}</option>
+            <option value="urgent">{tr('Urgent')}</option>
+            <option value="high">{tr('High')}</option>
+            <option value="medium">{tr('Medium')}</option>
+            <option value="low">{tr('Low')}</option>
           </select>
 
           <Button
@@ -138,9 +137,7 @@ export const AdvisoryManagement: React.FC = () => {
             size="sm"
             icon={Plus}
             onClick={() => setIsModalOpen(true)}
-          >
-            Publish New Advisory
-          </Button>
+          >{tr('Publish New Advisory')}</Button>
         </div>
       </div>
 
@@ -159,20 +156,19 @@ export const AdvisoryManagement: React.FC = () => {
                       : 'info'
                   }
                 >
-                  {adv.severity.toUpperCase()} RISK
-                </Badge>
+                  {adv.severity.toUpperCase()}{tr('RISK')}</Badge>
                 <Badge variant="neutral">{adv.category}</Badge>
               </div>
 
-              <span className="text-[11px] text-slate-400 font-mono">ID: {adv.id}</span>
+              <span className="text-[11px] text-slate-400 font-mono">{tr('ID:')}{adv.id}</span>
             </div>
 
             <h3 className="text-base font-bold text-slate-900">{adv.title}</h3>
 
             <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 mt-1 mb-3">
-              <span>Target Crops: <strong className="text-slate-700">{adv.targetCrops.join(', ')}</strong></span>
-              <span>Districts: <strong className="text-slate-700">{adv.targetDistricts.join(', ')}</strong></span>
-              <span>Valid Until: <strong className="text-slate-700">{adv.validUntil}</strong></span>
+              <span>{tr('Target Crops:')}<strong className="text-slate-700">{adv.targetCrops.join(', ')}</strong></span>
+              <span>{tr('Districts:')}<strong className="text-slate-700">{adv.targetDistricts.join(', ')}</strong></span>
+              <span>{tr('Valid Until:')}<strong className="text-slate-700">{adv.validUntil}</strong></span>
             </div>
 
             <p className="text-xs text-slate-700 leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-100">
@@ -180,13 +176,11 @@ export const AdvisoryManagement: React.FC = () => {
             </p>
 
             <div className="mt-3">
-              <span className="text-[11px] font-bold text-slate-500 uppercase block mb-1">
-                Actionable Field Protocol
-              </span>
+              <span className="text-[11px] font-bold text-slate-500 uppercase block mb-1">{tr('Actionable Field Protocol')}</span>
               <ul className="space-y-1">
                 {adv.recommendedTreatments.map((rec, i) => (
                   <li key={i} className="text-xs text-slate-700 flex items-start gap-1.5">
-                    <span className="text-emerald-600 font-bold">•</span>
+                    <span className="text-emerald-600 font-bold">{tr('•')}</span>
                     <span>{rec}</span>
                   </li>
                 ))}
@@ -194,8 +188,8 @@ export const AdvisoryManagement: React.FC = () => {
             </div>
 
             <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
-              <span>Issuing Body: {adv.issuingAuthority}</span>
-              <span>Issued: {adv.issueDate}</span>
+              <span>{tr('Issuing Body:')}{adv.issuingAuthority}</span>
+              <span>{tr('Issued:')}{adv.issueDate}</span>
             </div>
           </Card>
         ))}
@@ -205,15 +199,15 @@ export const AdvisoryManagement: React.FC = () => {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title="Compose Agronomic Bulletin"
-        subtitle="Will be pushed to all farmers growing target crops in selected districts"
+        title={tr('Compose Agronomic Bulletin')}
+        subtitle={tr('Will be pushed to all farmers growing target crops in selected districts')}
         maxWidth="lg"
       >
         <form onSubmit={handlePublish} className="space-y-3">
           <FormInput
             id="title"
-            label="Advisory Title"
-            placeholder="e.g. Rice Blast Fungicide Alert"
+            label={tr('Advisory Title')}
+            placeholder={tr('e.g. Rice Blast Fungicide Alert')}
             value={newAdvisory.title}
             onChange={(e) => setNewAdvisory({ ...newAdvisory, title: e.target.value })}
             required
@@ -222,7 +216,7 @@ export const AdvisoryManagement: React.FC = () => {
           <div className="grid grid-cols-2 gap-3">
             <FormSelect
               id="severity"
-              label="Severity"
+              label={tr('Severity')}
               value={newAdvisory.severity}
               onChange={(e) =>
                 setNewAdvisory({
@@ -231,16 +225,16 @@ export const AdvisoryManagement: React.FC = () => {
                 })
               }
               options={[
-                { value: 'urgent', label: 'Urgent (Emergency Action)' },
-                { value: 'high', label: 'High (Outbreak Likely)' },
-                { value: 'medium', label: 'Medium (Precautionary)' },
-                { value: 'low', label: 'Low (Advisory Info)' },
+                { value: 'urgent', label: tr('Urgent (Emergency Action)') },
+                { value: 'high', label: tr('High (Outbreak Likely)') },
+                { value: 'medium', label: tr('Medium (Precautionary)') },
+                { value: 'low', label: tr('Low (Advisory Info)') },
               ]}
             />
 
             <FormSelect
               id="category"
-              label="Advisory Category"
+              label={tr('Advisory Category')}
               value={newAdvisory.category}
               onChange={(e) =>
                 setNewAdvisory({
@@ -249,10 +243,10 @@ export const AdvisoryManagement: React.FC = () => {
                 })
               }
               options={[
-                { value: 'Pest Alert', label: 'Pest Alert' },
-                { value: 'Weather Advisory', label: 'Weather Advisory' },
-                { value: 'Nutrient Management', label: 'Nutrient Management' },
-                { value: 'Irrigation Timing', label: 'Irrigation Timing' },
+                { value: 'Pest Alert', label: tr('Pest Alert') },
+                { value: 'Weather Advisory', label: tr('Weather Advisory') },
+                { value: 'Nutrient Management', label: tr('Nutrient Management') },
+                { value: 'Irrigation Timing', label: tr('Irrigation Timing') },
               ]}
             />
           </div>
@@ -260,14 +254,14 @@ export const AdvisoryManagement: React.FC = () => {
           <div className="grid grid-cols-2 gap-3">
             <FormInput
               id="targetCrops"
-              label="Target Crops (comma-separated)"
+              label={tr('Target Crops (comma-separated)')}
               value={newAdvisory.targetCrops}
               onChange={(e) => setNewAdvisory({ ...newAdvisory, targetCrops: e.target.value })}
               required
             />
             <FormInput
               id="targetDistricts"
-              label="Target Districts (comma-separated)"
+              label={tr('Target Districts (comma-separated)')}
               value={newAdvisory.targetDistricts}
               onChange={(e) => setNewAdvisory({ ...newAdvisory, targetDistricts: e.target.value })}
               required
@@ -276,8 +270,8 @@ export const AdvisoryManagement: React.FC = () => {
 
           <FormTextarea
             id="advisoryText"
-            label="Agronomic Advisory Details"
-            placeholder="Describe climatic conditions, pest vectors, and early symptoms..."
+            label={tr('Agronomic Advisory Details')}
+            placeholder={tr('Describe climatic conditions, pest vectors, and early symptoms...')}
             value={newAdvisory.advisoryText}
             onChange={(e) => setNewAdvisory({ ...newAdvisory, advisoryText: e.target.value })}
             required
@@ -286,8 +280,8 @@ export const AdvisoryManagement: React.FC = () => {
 
           <FormTextarea
             id="recommendedTreatments"
-            label="Recommended Field Treatments (one per line)"
-            placeholder="Spray azoxystrobin @ 1ml/L&#10;Drain standing water..."
+            label={tr('Recommended Field Treatments (one per line)')}
+            placeholder={tr('Spray azoxystrobin @ 1ml/L Drain standing water...')}
             value={newAdvisory.recommendedTreatments}
             onChange={(e) =>
               setNewAdvisory({ ...newAdvisory, recommendedTreatments: e.target.value })
@@ -302,12 +296,8 @@ export const AdvisoryManagement: React.FC = () => {
               variant="outline"
               size="sm"
               onClick={() => setIsModalOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" variant="primary" size="sm" icon={Send}>
-              Publish & Broadcast
-            </Button>
+            >{tr('Cancel')}</Button>
+            <Button type="submit" variant="primary" size="sm" icon={Send}>{tr('Publish & Broadcast')}</Button>
           </div>
         </form>
       </Modal>

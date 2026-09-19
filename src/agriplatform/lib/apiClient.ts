@@ -4,6 +4,7 @@
  */
 
 import { ApiResponse } from '@/agriplatform/types';
+import { getAppLanguage, localizeDeep } from '@/agriplatform/lib/localize';
 
 export class ApiError extends Error {
   public statusCode: number;
@@ -32,9 +33,10 @@ export async function simulateApiCall<T>(
       if (shouldFail) {
         reject(new ApiError(errorMessage, 400));
       } else {
+        const localized = getAppLanguage() === 'bn' ? localizeDeep<T>(data) : data;
         resolve({
           success: true,
-          data,
+          data: localized,
           timestamp: new Date().toISOString(),
           message: 'Operation executed successfully',
         });

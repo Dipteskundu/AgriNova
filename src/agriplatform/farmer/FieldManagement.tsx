@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { tr } from "@/agriplatform/lib/localize";
 import {
   Grid3X3,
   Plus,
@@ -18,9 +19,11 @@ import { Skeleton } from '@/components/shared/Skeleton';
 import { useToast } from '@/components/shared/Toast';
 import { getFields, getFarms, createField } from '@/agriplatform/lib/farmerApi';
 import { Field, Farm } from '@/agriplatform/types';
+import { useLanguage } from '@/agriplatform/lib/LanguageContext';
 
 export const FieldManagement: React.FC = () => {
   const { showToast } = useToast();
+  const { language } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [fields, setFields] = useState<Field[]>([]);
   const [farms, setFarms] = useState<Farm[]>([]);
@@ -54,7 +57,7 @@ export const FieldManagement: React.FC = () => {
           }
         }
       } catch {
-        showToast('error', 'Failed to load fields');
+        showToast('error', tr('Failed to load fields'));
       } finally {
         setLoading(false);
       }
@@ -89,10 +92,10 @@ export const FieldManagement: React.FC = () => {
       if (res.success) {
         setFields([res.data, ...fields]);
         setIsAddModalOpen(false);
-        showToast('success', 'Field plot created successfully');
+        showToast('success', tr('Field plot created successfully'));
       }
     } catch {
-      showToast('error', 'Failed to create field');
+      showToast('error', tr('Failed to create field'));
     }
   };
 
@@ -112,9 +115,13 @@ export const FieldManagement: React.FC = () => {
       {/* Top Controls */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
         <div>
-          <h2 className="text-lg font-bold text-slate-900">Field & Plot Telemetry</h2>
+          <h2 className="text-lg font-bold text-slate-900">
+            {language === 'bn' ? 'জমির প্লট ও মাটির পুষ্টি উপাদান' : 'Field & Plot Telemetry'}
+          </h2>
           <p className="text-xs text-slate-500 mt-0.5">
-            Monitoring {fields.length} individual crop plots, real-time soil NPK, pH, moisture, and NDVI health.
+            {language === 'bn'
+              ? `মোট ${fields.length} টি প্লটের মাটির পিএইচ (pH), আর্দ্রতা ও নাইট্রোজেন-ফসফরাস-পটাশিয়াম মাত্রা।`
+              : `Monitoring ${fields.length} individual crop plots, real-time soil NPK, pH, moisture, and NDVI health.`}
           </p>
         </div>
 
@@ -124,7 +131,7 @@ export const FieldManagement: React.FC = () => {
             onChange={(e) => setSelectedFarmFilter(e.target.value)}
             className="px-3 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded-lg text-slate-800 focus:outline-none"
           >
-            <option value="All">All Farms ({fields.length} plots)</option>
+            <option value="All">{language === 'bn' ? `সকল খামার (${fields.length} প্লট)` : `All Farms (${fields.length} plots)`}</option>
             {farms.map((farm) => (
               <option key={farm.id} value={farm.id}>
                 {farm.name}
@@ -138,7 +145,7 @@ export const FieldManagement: React.FC = () => {
             icon={Plus}
             onClick={() => setIsAddModalOpen(true)}
           >
-            Add Field Plot
+            {language === 'bn' ? '+ নতুন প্লট যোগ করুন' : 'Add Field Plot'}
           </Button>
         </div>
       </div>
@@ -168,31 +175,45 @@ export const FieldManagement: React.FC = () => {
                       : 'warning'
                   }
                 >
-                  {field.status}
+                  {language === 'bn'
+                    ? field.status === 'cultivated' ? 'চাষকৃত'
+                      : field.status === 'prepared' ? 'প্রস্তুতকৃত'
+                      : 'পতিত জমি'
+                    : field.status}
                 </Badge>
               </div>
 
               {/* Crop & Acreage */}
               <div className="mt-3 p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between text-xs">
                 <div>
-                  <span className="text-[10px] text-slate-400 uppercase tracking-wider">Current Crop</span>
-                  <p className="font-semibold text-slate-800">{field.currentCrop || 'Fallow / Soil Resting'}</p>
+                  <span className="text-[10px] text-slate-400 uppercase tracking-wider">
+                    {language === 'bn' ? 'বর্তমান ফসল' : 'Current Crop'}
+                  </span>
+                  <p className="font-semibold text-slate-800">
+                    {field.currentCrop || (language === 'bn' ? 'পরিকল্পনাধীন / খালি জমি' : 'Fallow / Soil Resting')}
+                  </p>
                 </div>
                 <div className="text-right">
-                  <span className="text-[10px] text-slate-400 uppercase tracking-wider">Plot Size</span>
-                  <p className="font-bold text-emerald-700">{field.sizeAcres} Acres</p>
+                  <span className="text-[10px] text-slate-400 uppercase tracking-wider">
+                    {language === 'bn' ? 'জমির পরিমাণ' : 'Plot Size'}
+                  </span>
+                  <p className="font-bold text-emerald-700">
+                    {field.sizeAcres} {language === 'bn' ? 'একর' : 'Acres'}
+                  </p>
                 </div>
               </div>
 
               {/* Soil Telemetry & NPK Matrix */}
               <div className="mt-4 space-y-2 text-xs">
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-500">Soil pH</span>
-                  <span className="font-semibold text-slate-800">{field.soilPh} (Neutral Optimal)</span>
+                  <span className="text-slate-500">{language === 'bn' ? 'মাটির পিএইচ (pH)' : 'Soil pH'}</span>
+                  <span className="font-semibold text-slate-800">
+                    {field.soilPh} ({language === 'bn' ? 'আদর্শ সহনীয়' : 'Neutral Optimal'})
+                  </span>
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-500">Moisture Content</span>
+                  <span className="text-slate-500">{language === 'bn' ? 'মাটির আর্দ্রতা' : 'Moisture Content'}</span>
                   <div className="flex items-center gap-2">
                     <div className="w-16 bg-slate-200 h-1.5 rounded-full overflow-hidden">
                       <div
@@ -207,25 +228,25 @@ export const FieldManagement: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <span className="text-slate-500 flex items-center gap-1">
                     <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                    NDVI Green Biomass
+                    {language === 'bn' ? 'ফসলের সতেজতা (NDVI)' : 'NDVI Green Biomass'}
                   </span>
-                  <span className="font-mono font-bold text-emerald-700">{field.ndviScore} / 1.0</span>
+                  <span className="font-mono font-bold text-emerald-700">{field.ndviScore}{tr('/ 1.0')}</span>
                 </div>
 
                 {/* NPK Pills */}
                 <div className="pt-2 border-t border-slate-100">
                   <span className="text-[10px] text-slate-400 uppercase tracking-wider block mb-1.5">
-                    Available Nutrients (kg/ha)
+                    {language === 'bn' ? 'বিদ্যমান পুষ্টি উপাদান (কেজি/হেক্টর)' : 'Available Nutrients (kg/ha)'}
                   </span>
                   <div className="grid grid-cols-3 gap-1.5 text-center text-[11px]">
                     <div className="p-1 rounded bg-slate-100 font-medium">
-                      N: <span className="font-bold text-slate-800">{field.nitrogenLevelKgPerHa}</span>
+                      N {language === 'bn' ? '(নাইট্রোজেন)' : '(Nitrogen)'}{tr(':')}<span className="font-bold text-slate-800">{field.nitrogenLevelKgPerHa}</span>
                     </div>
                     <div className="p-1 rounded bg-slate-100 font-medium">
-                      P: <span className="font-bold text-slate-800">{field.phosphorusLevelKgPerHa}</span>
+                      P {language === 'bn' ? '(ফসফরাস)' : '(Phosphorus)'}{tr(':')}<span className="font-bold text-slate-800">{field.phosphorusLevelKgPerHa}</span>
                     </div>
                     <div className="p-1 rounded bg-slate-100 font-medium">
-                      K: <span className="font-bold text-slate-800">{field.potassiumLevelKgPerHa}</span>
+                      K {language === 'bn' ? '(পটাশিয়াম)' : '(Potassium)'}{tr(':')}<span className="font-bold text-slate-800">{field.potassiumLevelKgPerHa}</span>
                     </div>
                   </div>
                 </div>
@@ -233,7 +254,9 @@ export const FieldManagement: React.FC = () => {
             </div>
 
             <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
-              <span className="text-slate-400 text-[10px]">Tested: {field.lastSoilTested}</span>
+              <span className="text-slate-400 text-[10px]">
+                {language === 'bn' ? 'পরীক্ষার তারিখ: ' : 'Tested: '}{field.lastSoilTested}
+              </span>
               <span
                 className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold ${
                   field.irrigationStatus === 'Optimal'
@@ -244,7 +267,12 @@ export const FieldManagement: React.FC = () => {
                 }`}
               >
                 <Droplets className="w-3 h-3" />
-                {field.irrigationStatus}
+                {language === 'bn'
+                  ? field.irrigationStatus === 'Optimal' ? 'সেচ পর্যাপ্ত'
+                    : field.irrigationStatus === 'Needed' ? 'সেচ প্রয়োজন'
+                    : field.irrigationStatus === 'Scheduled' ? 'সেচ নির্ধারিত'
+                    : 'অতিরিক্ত আর্দ্র'
+                  : field.irrigationStatus}
               </span>
             </div>
           </Card>
@@ -255,14 +283,14 @@ export const FieldManagement: React.FC = () => {
       <Modal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        title="Add New Field Plot"
-        subtitle="Specify soil chemistry, current crop, and acreage"
+        title={language === 'bn' ? 'নতুন জমির প্লট যোগ করুন' : 'Add New Field Plot'}
+        subtitle={language === 'bn' ? 'মাটির উপাদান, জমির পরিমাণ ও ফসলের তথ্য দিন' : 'Specify soil chemistry, current crop, and acreage'}
         maxWidth="lg"
       >
         <form onSubmit={handleCreateField} className="space-y-4">
           <FormSelect
             id="parentFarm"
-            label="Parent Farm Estate"
+            label={language === 'bn' ? 'খামার নির্বাচন করুন' : 'Parent Farm Estate'}
             value={newField.farmId}
             onChange={(e) => setNewField({ ...newField, farmId: e.target.value })}
             options={farms.map((f) => ({ value: f.id, label: `${f.name} (${f.location})` }))}
@@ -270,15 +298,15 @@ export const FieldManagement: React.FC = () => {
           <div className="grid grid-cols-2 gap-3">
             <FormInput
               id="plotName"
-              label="Field Plot Name / Number"
-              placeholder="e.g. Plot A4 - South Basin"
+              label={language === 'bn' ? 'প্লটের নাম বা নম্বর' : 'Field Plot Name / Number'}
+              placeholder={language === 'bn' ? 'যেমন: উত্তর মাঠ প্লট-৩' : 'e.g. Plot A4 - South Basin'}
               value={newField.name}
               onChange={(e) => setNewField({ ...newField, name: e.target.value })}
               required
             />
             <FormInput
               id="sizeAcres"
-              label="Plot Size (Acres)"
+              label={language === 'bn' ? 'জমির পরিমাণ (একর)' : 'Plot Size (Acres)'}
               type="number"
               step="0.1"
               value={newField.sizeAcres}
@@ -290,14 +318,14 @@ export const FieldManagement: React.FC = () => {
           <div className="grid grid-cols-2 gap-3">
             <FormInput
               id="currentCrop"
-              label="Current Planted Crop (Optional)"
-              placeholder="e.g. BRRI Dhan-28"
+              label={language === 'bn' ? 'বর্তমান রোপিত ফসল' : 'Current Planted Crop (Optional)'}
+              placeholder={language === 'bn' ? 'যেমন: ব্রি ধান-২৮' : 'e.g. BRRI Dhan-28'}
               value={newField.currentCrop}
               onChange={(e) => setNewField({ ...newField, currentCrop: e.target.value })}
             />
             <FormInput
               id="soilPh"
-              label="Soil pH Level"
+              label={language === 'bn' ? 'মাটির পিএইচ (pH)' : 'Soil pH Level'}
               type="number"
               step="0.1"
               value={newField.soilPh}
@@ -308,12 +336,12 @@ export const FieldManagement: React.FC = () => {
 
           <div className="pt-2 border-t border-slate-100">
             <label className="text-xs font-semibold text-slate-700 block mb-1">
-              Soil Nutrients (kg / ha)
+              {language === 'bn' ? 'মাটির পুষ্টি উপাদান (কেজি / হেক্টর)' : 'Soil Nutrients (kg / ha)'}
             </label>
             <div className="grid grid-cols-3 gap-2">
               <FormInput
                 id="nitrogen"
-                label="Nitrogen (N)"
+                label={language === 'bn' ? 'নাইট্রোজেন (N)' : 'Nitrogen (N)'}
                 type="number"
                 value={newField.nitrogenLevelKgPerHa}
                 onChange={(e) => setNewField({ ...newField, nitrogenLevelKgPerHa: Number(e.target.value) })}
@@ -321,7 +349,7 @@ export const FieldManagement: React.FC = () => {
               />
               <FormInput
                 id="phosphorus"
-                label="Phosphorus (P)"
+                label={language === 'bn' ? 'ফসফরাস (P)' : 'Phosphorus (P)'}
                 type="number"
                 value={newField.phosphorusLevelKgPerHa}
                 onChange={(e) => setNewField({ ...newField, phosphorusLevelKgPerHa: Number(e.target.value) })}
@@ -329,7 +357,7 @@ export const FieldManagement: React.FC = () => {
               />
               <FormInput
                 id="potassium"
-                label="Potassium (K)"
+                label={language === 'bn' ? 'পটাশিয়াম (K)' : 'Potassium (K)'}
                 type="number"
                 value={newField.potassiumLevelKgPerHa}
                 onChange={(e) => setNewField({ ...newField, potassiumLevelKgPerHa: Number(e.target.value) })}
@@ -341,7 +369,7 @@ export const FieldManagement: React.FC = () => {
           <div className="grid grid-cols-2 gap-3">
             <FormInput
               id="moisture"
-              label="Moisture Level (%)"
+              label={language === 'bn' ? 'আর্দ্রতা (%)' : 'Moisture Level (%)'}
               type="number"
               value={newField.moisturePercentage}
               onChange={(e) => setNewField({ ...newField, moisturePercentage: Number(e.target.value) })}
@@ -349,14 +377,14 @@ export const FieldManagement: React.FC = () => {
             />
             <FormSelect
               id="irrigationStatus"
-              label="Irrigation Status"
+              label={language === 'bn' ? 'সেচের অবস্থা' : 'Irrigation Status'}
               value={newField.irrigationStatus}
               onChange={(e) => setNewField({ ...newField, irrigationStatus: e.target.value as Field['irrigationStatus'] })}
               options={[
-                { value: 'Optimal', label: 'Optimal' },
-                { value: 'Needed', label: 'Needed' },
-                { value: 'Scheduled', label: 'Scheduled' },
-                { value: 'Over-watered', label: 'Over-watered' },
+                { value: 'Optimal', label: language === 'bn' ? 'সেচ পর্যাপ্ত' : 'Optimal' },
+                { value: 'Needed', label: language === 'bn' ? 'সেচ প্রয়োজন' : 'Needed' },
+                { value: 'Scheduled', label: language === 'bn' ? 'সেচ নির্ধারিত' : 'Scheduled' },
+                { value: 'Over-watered', label: language === 'bn' ? 'অতিরিক্ত আর্দ্র' : 'Over-watered' },
               ]}
             />
           </div>
@@ -368,10 +396,10 @@ export const FieldManagement: React.FC = () => {
               size="sm"
               onClick={() => setIsAddModalOpen(false)}
             >
-              Cancel
+              {language === 'bn' ? 'বাতিল' : 'Cancel'}
             </Button>
             <Button type="submit" variant="primary" size="sm">
-              Save Plot
+              {language === 'bn' ? 'প্লট সংরক্ষণ করুন' : 'Save Plot'}
             </Button>
           </div>
         </form>

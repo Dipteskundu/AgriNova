@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { tr } from "@/agriplatform/lib/localize";
 import {
   Send,
   AlertTriangle,
@@ -41,7 +42,7 @@ export const WeatherAlertBroadcast: React.FC = () => {
           setActiveAlerts(res.data.microclimateAlerts);
         }
       } catch {
-        showToast('error', 'Failed to load meteorological broadcasts');
+        showToast('error', tr('Failed to load meteorological broadcasts'));
       } finally {
         setLoading(false);
       }
@@ -75,7 +76,7 @@ export const WeatherAlertBroadcast: React.FC = () => {
 
   const handleDismiss = (id: string) => {
     setActiveAlerts((prev) => prev.filter((a) => a.id !== id));
-    showToast('info', 'Advisory bulletin expired');
+    showToast('info', tr('Advisory bulletin expired'));
   };
 
   if (loading) {
@@ -94,15 +95,13 @@ export const WeatherAlertBroadcast: React.FC = () => {
       {/* Top Banner */}
       <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-lg font-bold text-slate-900">National Agromet & Flash-Flood Broadcast Terminal</h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Real-time push broadcasting of severe weather, pest outbreaks, and heatwave warnings to farmer dashboards and SMS.
-          </p>
+          <h2 className="text-lg font-bold text-slate-900">{tr('National Agromet & Flash-Flood Broadcast Terminal')}</h2>
+          <p className="text-xs text-slate-500 mt-0.5">{tr('Real-time push broadcasting of severe weather, pest outbreaks, and heatwave warnings to farmer dashboards and SMS.')}</p>
         </div>
 
         <div className="flex items-center gap-2">
           <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-xs font-semibold text-slate-700">BMD Sat-Link Active</span>
+          <span className="text-xs font-semibold text-slate-700">{tr('BMD Sat-Link Active')}</span>
         </div>
       </div>
 
@@ -111,15 +110,15 @@ export const WeatherAlertBroadcast: React.FC = () => {
         <div className="lg:col-span-1">
           <Card>
             <CardHeader
-              title="Issue Weather Alert"
-              subtitle="Compose and broadcast immediate microclimate advisory"
+              title={tr('Issue Weather Alert')}
+              subtitle={tr('Compose and broadcast immediate microclimate advisory')}
             />
 
             <form onSubmit={handleSendBroadcast} className="space-y-3">
               <FormInput
                 id="title"
-                label="Alert Headline"
-                placeholder="e.g. Severe Nor'wester (Kalbaishakhi) Storm Warning"
+                label={tr('Alert Headline')}
+                placeholder={tr('e.g. Severe Nor\'wester (Kalbaishakhi) Storm Warning')}
                 value={broadcastForm.title}
                 onChange={(e) => setBroadcastForm({ ...broadcastForm, title: e.target.value })}
                 required
@@ -127,7 +126,7 @@ export const WeatherAlertBroadcast: React.FC = () => {
 
               <FormSelect
                 id="severity"
-                label="Risk Severity Level"
+                label={tr('Risk Severity Level')}
                 value={broadcastForm.severity}
                 onChange={(e) =>
                   setBroadcastForm({
@@ -136,16 +135,16 @@ export const WeatherAlertBroadcast: React.FC = () => {
                   })
                 }
                 options={[
-                  { value: 'advisory', label: 'Advisory (Information / Caution)' },
-                  { value: 'warning', label: 'Warning (Moderate Agronomic Hazard)' },
-                  { value: 'critical', label: 'Critical (Severe Flash Flood / Cyclone)' },
+                  { value: 'advisory', label: tr('Advisory (Information / Caution)') },
+                  { value: 'warning', label: tr('Warning (Moderate Agronomic Hazard)') },
+                  { value: 'critical', label: tr('Critical (Severe Flash Flood / Cyclone)') },
                 ]}
               />
 
               <FormTextarea
                 id="message"
-                label="Meteorological Description"
-                placeholder="Gusty winds of 50-70 km/h with heavy squalls predicted within the next 12 hours..."
+                label={tr('Meteorological Description')}
+                placeholder={tr('Gusty winds of 50-70 km/h with heavy squalls predicted within the next 12 hours...')}
                 value={broadcastForm.message}
                 onChange={(e) => setBroadcastForm({ ...broadcastForm, message: e.target.value })}
                 required
@@ -154,8 +153,8 @@ export const WeatherAlertBroadcast: React.FC = () => {
 
               <FormTextarea
                 id="actionRequired"
-                label="Recommended Agronomic Defense"
-                placeholder="Suspend harvesting and chemical spraying, secure nursery seedbeds, clear drainage canals..."
+                label={tr('Recommended Agronomic Defense')}
+                placeholder={tr('Suspend harvesting and chemical spraying, secure nursery seedbeds, clear drainage canals...')}
                 value={broadcastForm.actionRequired}
                 onChange={(e) =>
                   setBroadcastForm({ ...broadcastForm, actionRequired: e.target.value })
@@ -166,8 +165,8 @@ export const WeatherAlertBroadcast: React.FC = () => {
 
               <FormInput
                 id="validUntil"
-                label="Advisory Expiration Window"
-                placeholder="e.g. Tomorrow 18:00 BST"
+                label={tr('Advisory Expiration Window')}
+                placeholder={tr('e.g. Tomorrow 18:00 BST')}
                 value={broadcastForm.validUntil}
                 onChange={(e) =>
                   setBroadcastForm({ ...broadcastForm, validUntil: e.target.value })
@@ -181,9 +180,7 @@ export const WeatherAlertBroadcast: React.FC = () => {
                 size="sm"
                 icon={Send}
                 className="w-full mt-2"
-              >
-                Transmit Push Broadcast
-              </Button>
+              >{tr('Transmit Push Broadcast')}</Button>
             </form>
           </Card>
         </div>
@@ -193,7 +190,7 @@ export const WeatherAlertBroadcast: React.FC = () => {
           <Card>
             <CardHeader
               title={`Active Agronomic Bulletins (${activeAlerts.length})`}
-              subtitle="Currently transmitting to field officers, farmer portals, and regional SMS gateways"
+              subtitle={tr('Currently transmitting to field officers, farmer portals, and regional SMS gateways')}
             />
 
             <div className="space-y-3">
@@ -237,7 +234,7 @@ export const WeatherAlertBroadcast: React.FC = () => {
                       <button
                         onClick={() => handleDismiss(alert.id)}
                         className="text-slate-400 hover:text-rose-600 p-1 transition-colors"
-                        title="Dismiss bulletin"
+                        title={tr('Dismiss bulletin')}
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -247,18 +244,15 @@ export const WeatherAlertBroadcast: React.FC = () => {
                   <p className="text-xs text-slate-700 leading-relaxed">{alert.message}</p>
 
                   <div className="p-2.5 bg-white/80 rounded-lg border border-slate-200/60 text-xs">
-                    <span className="font-bold text-slate-800 block text-[10px] uppercase">
-                      Required Field Action
-                    </span>
+                    <span className="font-bold text-slate-800 block text-[10px] uppercase">{tr('Required Field Action')}</span>
                     <span className="text-slate-700">{alert.actionRequired}</span>
                   </div>
 
                   <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1">
                     <span className="flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
-                      Expires: {alert.validUntil}
+                      <Clock className="w-3 h-3" />{tr('Expires:')}{alert.validUntil}
                     </span>
-                    <span className="font-mono">ID: {alert.id}</span>
+                    <span className="font-mono">{tr('ID:')}{alert.id}</span>
                   </div>
                 </div>
               ))}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { tr } from "@/agriplatform/lib/localize";
 import {
   Bell,
   CheckCheck,
@@ -23,9 +24,11 @@ import {
   markAllNotificationsRead,
 } from '@/agriplatform/lib/farmerApi';
 import { FarmerNotification } from '@/agriplatform/types';
+import { useLanguage } from '@/agriplatform/lib/LanguageContext';
 
 export const FarmerNotifications: React.FC = () => {
   const { showToast } = useToast();
+  const { language } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [notifications, setNotifications] = useState<FarmerNotification[]>([]);
   const [filterType, setFilterType] = useState<string>('All');
@@ -39,7 +42,7 @@ export const FarmerNotifications: React.FC = () => {
           setNotifications(res.data);
         }
       } catch {
-        showToast('error', 'Failed to retrieve notifications');
+        showToast('error', tr('Failed to retrieve notifications'));
       } finally {
         setLoading(false);
       }
@@ -54,10 +57,10 @@ export const FarmerNotifications: React.FC = () => {
         setNotifications((prev) =>
           prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
         );
-        showToast('info', 'Notification marked as read');
+        showToast('info', tr('Notification marked as read'));
       }
     } catch {
-      showToast('error', 'Failed to update notification');
+      showToast('error', tr('Failed to update notification'));
     }
   };
 
@@ -66,10 +69,10 @@ export const FarmerNotifications: React.FC = () => {
       const res = await markAllNotificationsRead();
       if (res.success) {
         setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
-        showToast('success', 'All notifications marked as read');
+        showToast('success', tr('All notifications marked as read'));
       }
     } catch {
-      showToast('error', 'Failed to mark all as read');
+      showToast('error', tr('Failed to mark all as read'));
     }
   };
 
@@ -96,12 +99,20 @@ export const FarmerNotifications: React.FC = () => {
       {/* Top Banner */}
       <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-lg font-bold text-slate-900">Notifications & Agronomic Alerts</h2>
+          <h2 className="text-lg font-bold text-slate-900">
+            {language === 'bn' ? 'বিজ্ঞপ্তি ও জরুরি কৃষি সংকেত' : 'Notifications & Agronomic Alerts'}
+          </h2>
           <p className="text-xs text-slate-500 mt-0.5">
             {unreadCount > 0 ? (
-              <span className="text-amber-700 font-semibold">{unreadCount} unread alert{unreadCount > 1 ? 's' : ''} requiring attention</span>
+              <span className="text-amber-700 font-semibold">
+                {language === 'bn'
+                  ? `${unreadCount} টি অপঠিত সংকেত মনোযোগ দাবি করছে`
+                  : `${unreadCount} unread alert${unreadCount > 1 ? 's' : ''} requiring attention`}
+              </span>
             ) : (
-              'All farm schedules, market prices, and weather alerts are up to date'
+              language === 'bn'
+                ? 'সব কাজের সময়সূচি, বাজার দর ও আবহাওয়া সংকেত স্বাভাবিক রয়েছে'
+                : 'All farm schedules, market prices, and weather alerts are up to date'
             )}
           </p>
         </div>
@@ -114,7 +125,7 @@ export const FarmerNotifications: React.FC = () => {
               icon={CheckCheck}
               onClick={handleMarkAllRead}
             >
-              Mark All as Read
+              {language === 'bn' ? 'সব পঠিত হিসেবে চিহ্নিত করুন' : 'Mark All as Read'}
             </Button>
           )}
 
@@ -124,13 +135,13 @@ export const FarmerNotifications: React.FC = () => {
             onChange={(e) => setFilterType(e.target.value)}
             className="px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-800 focus:outline-none"
           >
-            <option value="All">All Types ({notifications.length})</option>
-            <option value="weather">Weather Alerts</option>
-            <option value="crop_schedule">Crop Schedule</option>
-            <option value="market_price">Market Prices</option>
-            <option value="subsidy">Government Subsidy</option>
-            <option value="inspection">Inspection & Quality</option>
-            <option value="system">System Notices</option>
+            <option value="All">{language === 'bn' ? `সকল ধরন (${notifications.length})` : `All Types (${notifications.length})`}</option>
+            <option value="weather">{language === 'bn' ? 'আবহাওয়া সংকেত' : 'Weather Alerts'}</option>
+            <option value="crop_schedule">{language === 'bn' ? 'ফসল পরিচর্যা সময়সূচি' : 'Crop Schedule'}</option>
+            <option value="market_price">{language === 'bn' ? 'বাজার দর' : 'Market Prices'}</option>
+            <option value="subsidy">{language === 'bn' ? 'সরকারি প্রণোদনা' : 'Government Subsidy'}</option>
+            <option value="inspection">{language === 'bn' ? 'পরিদর্শন ও মান যাচাই' : 'Inspection & Quality'}</option>
+            <option value="system">{language === 'bn' ? 'সিস্টেম বার্তা' : 'System Notices'}</option>
           </select>
         </div>
       </div>
@@ -190,7 +201,11 @@ export const FarmerNotifications: React.FC = () => {
                             : 'neutral'
                         }
                       >
-                        {item.priority.toUpperCase()}
+                        {language === 'bn'
+                          ? item.priority === 'high' ? 'জরুরি'
+                            : item.priority === 'medium' ? 'মাঝারি'
+                            : 'সাধারণ'
+                          : item.priority.toUpperCase()}
                       </Badge>
                     </div>
                     <p className="text-xs text-slate-600 max-w-2xl leading-relaxed">
@@ -208,7 +223,7 @@ export const FarmerNotifications: React.FC = () => {
                     size="sm"
                     onClick={() => handleMarkRead(item.id)}
                   >
-                    Dismiss
+                    {language === 'bn' ? 'মুছে ফেলুন' : 'Dismiss'}
                   </Button>
                 )}
               </div>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { tr } from "@/agriplatform/lib/localize";
 import {
   Users,
   Search,
@@ -47,7 +48,7 @@ export const UserManagement: React.FC = () => {
           setUsers(res.data);
         }
       } catch {
-        showToast('error', 'Failed to load user accounts');
+        showToast('error', tr('Failed to load user accounts'));
       } finally {
         setLoading(false);
       }
@@ -65,7 +66,7 @@ export const UserManagement: React.FC = () => {
         showToast('success', `User status updated to ${nextStatus}`);
       }
     } catch {
-      showToast('error', 'Failed to update user status');
+      showToast('error', tr('Failed to update user status'));
     }
   };
 
@@ -77,7 +78,7 @@ export const UserManagement: React.FC = () => {
         showToast('success', `Verification badge ${!user.verificationBadge ? 'granted' : 'revoked'}`);
       }
     } catch {
-      showToast('error', 'Failed to update verification');
+      showToast('error', tr('Failed to update verification'));
     }
   };
 
@@ -105,7 +106,7 @@ export const UserManagement: React.FC = () => {
       region: 'Rajshahi (Bogura)',
       nationalIdNumber: '',
     });
-    showToast('success', 'New user account registered and verified');
+    showToast('success', tr('New user account registered and verified'));
   };
 
   const filteredUsers = useMemo(() => {
@@ -139,10 +140,8 @@ export const UserManagement: React.FC = () => {
       {/* Top Banner */}
       <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-lg font-bold text-slate-900">User Identity & Role Access Governance</h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Managing {users.length} registered farmers, agronomists, extension officers, and platform operators.
-          </p>
+          <h2 className="text-lg font-bold text-slate-900">{tr('User Identity & Role Access Governance')}</h2>
+          <p className="text-xs text-slate-500 mt-0.5">{tr('Managing')}{users.length}{tr('registered farmers, agronomists, extension officers, and platform operators.')}</p>
         </div>
 
         <Button
@@ -150,9 +149,7 @@ export const UserManagement: React.FC = () => {
           size="sm"
           icon={Plus}
           onClick={() => setIsAddModalOpen(true)}
-        >
-          Provision New Account
-        </Button>
+        >{tr('Provision New Account')}</Button>
       </div>
 
       {/* Filters Bar */}
@@ -161,7 +158,7 @@ export const UserManagement: React.FC = () => {
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="Search by name, email, NID, or phone..."
+            placeholder={tr('Search by name, email, NID, or phone...')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-9 pr-4 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500 text-slate-900 placeholder:text-slate-400"
@@ -174,11 +171,11 @@ export const UserManagement: React.FC = () => {
             onChange={(e) => setRoleFilter(e.target.value)}
             className="px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-800 focus:outline-none"
           >
-            <option value="All">All Roles</option>
-            <option value="Farmer">Farmers</option>
-            <option value="Agronomist">Agronomists</option>
-            <option value="Extension Officer">Extension Officers</option>
-            <option value="Platform Admin">Platform Admins</option>
+            <option value="All">{tr('All Roles')}</option>
+            <option value="Farmer">{tr('Farmers')}</option>
+            <option value="Agronomist">{tr('Agronomists')}</option>
+            <option value="Extension Officer">{tr('Extension Officers')}</option>
+            <option value="Platform Admin">{tr('Platform Admins')}</option>
           </select>
 
           <select
@@ -186,10 +183,10 @@ export const UserManagement: React.FC = () => {
             onChange={(e) => setStatusFilter(e.target.value)}
             className="px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-800 focus:outline-none"
           >
-            <option value="All">All Statuses</option>
-            <option value="Active">Active</option>
-            <option value="Pending Verification">Pending Verification</option>
-            <option value="Suspended">Suspended</option>
+            <option value="All">{tr('All Statuses')}</option>
+            <option value="Active">{tr('Active')}</option>
+            <option value="Pending Verification">{tr('Pending Verification')}</option>
+            <option value="Suspended">{tr('Suspended')}</option>
           </select>
         </div>
       </div>
@@ -200,12 +197,12 @@ export const UserManagement: React.FC = () => {
           <table className="w-full text-left text-xs border-collapse">
             <thead>
               <tr className="border-b border-slate-200 bg-slate-50/80">
-                <th className="p-4 font-bold text-slate-600 uppercase">User Identity</th>
-                <th className="p-4 font-bold text-slate-600 uppercase">Role & Region</th>
-                <th className="p-4 font-bold text-slate-600 uppercase">Contact Details</th>
-                <th className="p-4 font-bold text-slate-600 uppercase">Verification</th>
-                <th className="p-4 font-bold text-slate-600 uppercase">Account Status</th>
-                <th className="p-4 font-bold text-slate-600 uppercase text-right">Actions</th>
+                <th className="p-4 font-bold text-slate-600 uppercase">{tr('User Identity')}</th>
+                <th className="p-4 font-bold text-slate-600 uppercase">{tr('Role & Region')}</th>
+                <th className="p-4 font-bold text-slate-600 uppercase">{tr('Contact Details')}</th>
+                <th className="p-4 font-bold text-slate-600 uppercase">{tr('Verification')}</th>
+                <th className="p-4 font-bold text-slate-600 uppercase">{tr('Account Status')}</th>
+                <th className="p-4 font-bold text-slate-600 uppercase text-right">{tr('Actions')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -218,8 +215,7 @@ export const UserManagement: React.FC = () => {
                       </div>
                       <div>
                         <span className="font-bold text-slate-900 block">{user.name}</span>
-                        <span className="text-[11px] text-slate-400 font-mono">
-                          NID: {user.nationalIdNumber}
+                        <span className="text-[11px] text-slate-400 font-mono">{tr('NID:')}{user.nationalIdNumber}
                         </span>
                       </div>
                     </div>
@@ -295,24 +291,24 @@ export const UserManagement: React.FC = () => {
       <Modal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        title="Provision Platform User Account"
-        subtitle="Create an authorized identity for platform services"
+        title={tr('Provision Platform User Account')}
+        subtitle={tr('Create an authorized identity for platform services')}
         maxWidth="lg"
       >
         <form onSubmit={handleCreateUser} className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <FormInput
               id="name"
-              label="Full Official Name"
-              placeholder="e.g. Dr. Shamsul Huda"
+              label={tr('Full Official Name')}
+              placeholder={tr('e.g. Dr. Shamsul Huda')}
               value={newUser.name}
               onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
               required
             />
             <FormInput
               id="nationalIdNumber"
-              label="National ID (NID)"
-              placeholder="17-digit or 10-digit smart NID"
+              label={tr('National ID (NID)')}
+              placeholder={tr('17-digit or 10-digit smart NID')}
               value={newUser.nationalIdNumber}
               onChange={(e) => setNewUser({ ...newUser, nationalIdNumber: e.target.value })}
               required
@@ -322,16 +318,16 @@ export const UserManagement: React.FC = () => {
           <div className="grid grid-cols-2 gap-3">
             <FormInput
               id="email"
-              label="Email Address"
+              label={tr('Email Address')}
               type="email"
-              placeholder="shamsul@dae.gov.bd"
+              placeholder={tr('shamsul@dae.gov.bd')}
               value={newUser.email}
               onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
               required
             />
             <FormInput
               id="phone"
-              label="Mobile Number"
+              label={tr('Mobile Number')}
               placeholder="+880 1712-000000"
               value={newUser.phone}
               onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })}
@@ -342,21 +338,21 @@ export const UserManagement: React.FC = () => {
           <div className="grid grid-cols-2 gap-3">
             <FormSelect
               id="role"
-              label="Designated Platform Role"
+              label={tr('Designated Platform Role')}
               value={newUser.role}
               onChange={(e) =>
                 setNewUser({ ...newUser, role: e.target.value as AdminUser['role'] })
               }
               options={[
-                { value: 'Farmer', label: 'Farmer (Production)' },
-                { value: 'Agronomist', label: 'Agronomist (Advisory)' },
-                { value: 'Extension Officer', label: 'Extension Officer (DAE Field Officer)' },
-                { value: 'Platform Admin', label: 'Platform Administrator' },
+                { value: 'Farmer', label: tr('Farmer (Production)') },
+                { value: 'Agronomist', label: tr('Agronomist (Advisory)') },
+                { value: 'Extension Officer', label: tr('Extension Officer (DAE Field Officer)') },
+                { value: 'Platform Admin', label: tr('Platform Administrator') },
               ]}
             />
             <FormInput
               id="region"
-              label="Operating Region / Jurisdiction"
+              label={tr('Operating Region / Jurisdiction')}
               value={newUser.region}
               onChange={(e) => setNewUser({ ...newUser, region: e.target.value })}
               required
@@ -369,12 +365,8 @@ export const UserManagement: React.FC = () => {
               variant="outline"
               size="sm"
               onClick={() => setIsAddModalOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" variant="primary" size="sm">
-              Create Account
-            </Button>
+            >{tr('Cancel')}</Button>
+            <Button type="submit" variant="primary" size="sm">{tr('Create Account')}</Button>
           </div>
         </form>
       </Modal>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { tr } from "@/agriplatform/lib/localize";
 import {
   User,
   MapPin,
@@ -20,9 +21,11 @@ import { Skeleton } from '@/components/shared/Skeleton';
 import { useToast } from '@/components/shared/Toast';
 import { getFarmerProfile, updateFarmerProfile } from '@/agriplatform/lib/farmerApi';
 import { FarmerProfile as FarmerProfileType } from '@/agriplatform/types';
+import { useLanguage } from '@/agriplatform/lib/LanguageContext';
 
 export const FarmerProfile: React.FC = () => {
   const { showToast } = useToast();
+  const { language } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<FarmerProfileType | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -56,7 +59,7 @@ export const FarmerProfile: React.FC = () => {
           });
         }
       } catch {
-        showToast('error', 'Failed to fetch farmer profile');
+        showToast('error', tr('Failed to fetch farmer profile'));
       } finally {
         setLoading(false);
       }
@@ -84,10 +87,10 @@ export const FarmerProfile: React.FC = () => {
       if (res.success) {
         setProfile(res.data);
         setIsEditModalOpen(false);
-        showToast('success', 'Profile updated successfully');
+        showToast('success', tr('Profile updated successfully'));
       }
     } catch {
-      showToast('error', 'Failed to update profile');
+      showToast('error', tr('Failed to update profile'));
     }
   };
 
@@ -108,22 +111,23 @@ export const FarmerProfile: React.FC = () => {
       {/* Header Banner */}
       <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-emerald-700 text-white flex items-center justify-center font-bold text-2xl border-2 border-emerald-500/20 shadow-xs">
-            MK
-          </div>
+          <div className="w-16 h-16 rounded-2xl bg-emerald-700 text-white flex items-center justify-center font-bold text-2xl border-2 border-emerald-500/20 shadow-xs">{tr('MK')}</div>
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-xl font-bold text-slate-900">{profile.fullName}</h2>
               <Badge variant="success">
                 <ShieldCheck className="w-3.5 h-3.5 mr-1" />
-                Verified Farmer
+                {language === 'bn' ? 'যাচাইকৃত কৃষক' : 'Verified Farmer'}
               </Badge>
             </div>
             <p className="text-xs text-slate-500 mt-1">
-              Farmer ID: <span className="font-mono font-medium text-slate-700">{profile.id}</span> • NID: {profile.nationalId}
+              {language === 'bn' ? 'কৃষক আইডি: ' : 'Farmer ID: '}
+              <span className="font-mono font-medium text-slate-700">{profile.id}</span>{tr('•')}{language === 'bn' ? 'জাতীয় পরিচয়পত্র: ' : 'NID: '}
+              {profile.nationalId}
             </p>
             <p className="text-xs text-slate-500">
-              Affiliated Club: <span className="text-emerald-700 font-semibold">{profile.farmerClub}</span>
+              {language === 'bn' ? 'সংযুক্ত কৃষক ক্লাব: ' : 'Affiliated Club: '}
+              <span className="text-emerald-700 font-semibold">{profile.farmerClub}</span>
             </p>
           </div>
         </div>
@@ -134,19 +138,23 @@ export const FarmerProfile: React.FC = () => {
           icon={Edit}
           onClick={() => setIsEditModalOpen(true)}
         >
-          Edit Profile Information
+          {language === 'bn' ? 'প্রোফাইল তথ্য সংশোধন' : 'Edit Profile Information'}
         </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Contact & Demographics */}
         <Card>
-          <CardHeader title="Contact & Primary Demographics" />
+          <CardHeader
+            title={language === 'bn' ? 'যোগাযোগ ও ব্যক্তিগত তথ্য' : 'Contact & Primary Demographics'}
+          />
           <div className="space-y-3.5 text-xs">
             <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
               <Phone className="w-4 h-4 text-emerald-600 shrink-0" />
               <div>
-                <p className="text-[10px] text-slate-400 font-medium">Phone Number</p>
+                <p className="text-[10px] text-slate-400 font-medium">
+                  {language === 'bn' ? 'মোবাইল নম্বর' : 'Phone Number'}
+                </p>
                 <p className="text-slate-800 font-semibold">{profile.phoneNumber}</p>
               </div>
             </div>
@@ -154,7 +162,9 @@ export const FarmerProfile: React.FC = () => {
             <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
               <Mail className="w-4 h-4 text-blue-600 shrink-0" />
               <div>
-                <p className="text-[10px] text-slate-400 font-medium">Govt Agri Email</p>
+                <p className="text-[10px] text-slate-400 font-medium">
+                  {language === 'bn' ? 'সরকারি কৃষি ইমেইল' : 'Govt Agri Email'}
+                </p>
                 <p className="text-slate-800 font-semibold">{profile.email}</p>
               </div>
             </div>
@@ -162,9 +172,13 @@ export const FarmerProfile: React.FC = () => {
             <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
               <Calendar className="w-4 h-4 text-purple-600 shrink-0" />
               <div>
-                <p className="text-[10px] text-slate-400 font-medium">Experience & Registered Since</p>
+                <p className="text-[10px] text-slate-400 font-medium">
+                  {language === 'bn' ? 'কৃষি অভিজ্ঞতা ও নিবন্ধনের মেয়াদ' : 'Experience & Registered Since'}
+                </p>
                 <p className="text-slate-800 font-semibold">
-                  {profile.farmingExperienceYears} Years in Agronomy • Member since {profile.registeredSince}
+                  {language === 'bn'
+                    ? `${profile.farmingExperienceYears} বছর কৃষিকাজে যুক্ত • সদস্য সাল: ${profile.registeredSince}`
+                    : `${profile.farmingExperienceYears} Years in Agronomy • Member since ${profile.registeredSince}`}
                 </p>
               </div>
             </div>
@@ -172,12 +186,13 @@ export const FarmerProfile: React.FC = () => {
             <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
               <MapPin className="w-4 h-4 text-rose-600 shrink-0" />
               <div>
-                <p className="text-[10px] text-slate-400 font-medium">Home Location & Coordinates</p>
+                <p className="text-[10px] text-slate-400 font-medium">
+                  {language === 'bn' ? 'খামারের স্থায়ী ঠিকানা' : 'Home Location & Coordinates'}
+                </p>
                 <p className="text-slate-800 font-semibold">
                   {profile.primaryLocation.village}, {profile.primaryLocation.upazila}, {profile.primaryLocation.district} ({profile.primaryLocation.division})
                 </p>
-                <p className="text-[10px] font-mono text-slate-400 mt-0.5">
-                  GPS: {profile.primaryLocation.coordinates.lat}° N, {profile.primaryLocation.coordinates.lng}° E
+                <p className="text-[10px] font-mono text-slate-400 mt-0.5">{tr('GPS:')}{profile.primaryLocation.coordinates.lat}° N, {profile.primaryLocation.coordinates.lng}° E
                 </p>
               </div>
             </div>
@@ -187,8 +202,8 @@ export const FarmerProfile: React.FC = () => {
         {/* Bank & Payout Escrow Details */}
         <Card>
           <CardHeader
-            title="Banking & Marketplace Payout Account"
-            subtitle="Automated disbursement channel for wholesale grain payouts"
+            title={language === 'bn' ? 'ব্যাংক ও পেমেন্ট অ্যাকাউন্ট' : 'Banking & Marketplace Payout Account'}
+            subtitle={language === 'bn' ? 'ফসল বিক্রয়লব্ধ টাকা সরাসরি জমা হওয়ার ব্যাংক হিসাব' : 'Automated disbursement channel for wholesale grain payouts'}
           />
           <div className="space-y-3.5 text-xs">
             <div className="p-4 rounded-xl bg-emerald-50/60 border border-emerald-200/80">
@@ -198,19 +213,27 @@ export const FarmerProfile: React.FC = () => {
               </div>
               <div className="grid grid-cols-2 gap-3 text-xs mt-3">
                 <div>
-                  <span className="text-[10px] text-slate-500 uppercase tracking-wider">Account Name</span>
+                  <span className="text-[10px] text-slate-500 uppercase tracking-wider">
+                    {language === 'bn' ? 'হিসাবধারীর নাম' : 'Account Name'}
+                  </span>
                   <p className="font-semibold text-slate-800">{profile.bankDetails.accountName}</p>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-500 uppercase tracking-wider">Account Number</span>
+                  <span className="text-[10px] text-slate-500 uppercase tracking-wider">
+                    {language === 'bn' ? 'হিসাব নম্বর' : 'Account Number'}
+                  </span>
                   <p className="font-mono font-semibold text-slate-900">{profile.bankDetails.accountNumber}</p>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-500 uppercase tracking-wider">Branch</span>
+                  <span className="text-[10px] text-slate-500 uppercase tracking-wider">
+                    {language === 'bn' ? 'শাখা' : 'Branch'}
+                  </span>
                   <p className="font-semibold text-slate-800">{profile.bankDetails.branchName}</p>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-500 uppercase tracking-wider">Routing Number</span>
+                  <span className="text-[10px] text-slate-500 uppercase tracking-wider">
+                    {language === 'bn' ? 'রাউটিং নম্বর' : 'Routing Number'}
+                  </span>
                   <p className="font-mono font-semibold text-slate-900">{profile.bankDetails.routingNumber}</p>
                 </div>
               </div>
@@ -218,10 +241,14 @@ export const FarmerProfile: React.FC = () => {
 
             <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
               <div>
-                <p className="font-semibold text-slate-800">Mobile Wallet Instant Backup</p>
-                <p className="text-[11px] text-slate-500">Linked to personal bKash/Nagad merchant ID</p>
+                <p className="font-semibold text-slate-800">
+                  {language === 'bn' ? 'মোবাইল ওয়ালেট ব্যাকআপ' : 'Mobile Wallet Instant Backup'}
+                </p>
+                <p className="text-[11px] text-slate-500">
+                  {language === 'bn' ? 'বিকাশ ও নগদ সংযুক্ত' : 'Linked to personal bKash/Nagad merchant ID'}
+                </p>
               </div>
-              <Badge variant="success">Active</Badge>
+              <Badge variant="success">{language === 'bn' ? 'সক্রিয়' : 'Active'}</Badge>
             </div>
           </div>
         </Card>
@@ -230,8 +257,8 @@ export const FarmerProfile: React.FC = () => {
       {/* Certifications & Badges */}
       <Card>
         <CardHeader
-          title="Agricultural Certifications & DAE Accreditations"
-          subtitle="Government and international agricultural research institute recognitions"
+          title={language === 'bn' ? 'কৃষি সনদ ও সরকারি স্বীকৃতি' : 'Agricultural Certifications & DAE Accreditations'}
+          subtitle={language === 'bn' ? 'কৃষি সম্প্রসারণ অধিদপ্তর ও জাতীয় গবেষণা প্রতিষ্ঠানের স্বীকৃতি' : 'Government and international agricultural research institute recognitions'}
         />
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -245,14 +272,14 @@ export const FarmerProfile: React.FC = () => {
                   <div className="p-2 bg-emerald-50 rounded-lg text-emerald-700">
                     <Award className="w-5 h-5" />
                   </div>
-                  <Badge variant="success">Verified</Badge>
+                  <Badge variant="success">{language === 'bn' ? 'যাচাইকৃত' : 'Verified'}</Badge>
                 </div>
                 <h4 className="text-xs font-bold text-slate-900">{cert.name}</h4>
                 <p className="text-[11px] text-slate-500 mt-1">{cert.issuingAuthority}</p>
               </div>
 
               <div className="mt-4 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
-                <span>Accredited Year</span>
+                <span>{language === 'bn' ? 'প্রাপ্তির বছর' : 'Accredited Year'}</span>
                 <span className="font-bold text-slate-700">{cert.issuedYear}</span>
               </div>
             </div>
@@ -264,14 +291,14 @@ export const FarmerProfile: React.FC = () => {
       <Modal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
-        title="Edit Farmer Profile Information"
-        subtitle="Update personal, agronomic, and settlement details"
+        title={language === 'bn' ? 'কৃষক প্রোফাইল তথ্য সংশোধন' : 'Edit Farmer Profile Information'}
+        subtitle={language === 'bn' ? 'ব্যক্তিগত তথ্য, অভিজ্ঞতা ও ব্যাংক হিসাব হালনাগাদ করুন' : 'Update personal, agronomic, and settlement details'}
         maxWidth="lg"
       >
         <form onSubmit={handleSave} className="space-y-4">
           <FormInput
             id="fullName"
-            label="Full Name"
+            label={language === 'bn' ? 'সম্পূর্ণ নাম' : 'Full Name'}
             value={editForm.fullName}
             onChange={(e) => setEditForm({ ...editForm, fullName: e.target.value })}
             required
@@ -279,14 +306,14 @@ export const FarmerProfile: React.FC = () => {
           <div className="grid grid-cols-2 gap-3">
             <FormInput
               id="phoneNumber"
-              label="Phone Number"
+              label={language === 'bn' ? 'মোবাইল নম্বর' : 'Phone Number'}
               value={editForm.phoneNumber}
               onChange={(e) => setEditForm({ ...editForm, phoneNumber: e.target.value })}
               required
             />
             <FormInput
               id="email"
-              label="Email Address"
+              label={language === 'bn' ? 'ইমেইল ঠিকানা' : 'Email Address'}
               type="email"
               value={editForm.email}
               onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
@@ -295,7 +322,7 @@ export const FarmerProfile: React.FC = () => {
           </div>
           <FormInput
             id="experience"
-            label="Farming Experience (Years)"
+            label={language === 'bn' ? 'কৃষি কাজের অভিজ্ঞতা (বছর)' : 'Farming Experience (Years)'}
             type="number"
             value={editForm.farmingExperienceYears}
             onChange={(e) => setEditForm({ ...editForm, farmingExperienceYears: Number(e.target.value) })}
@@ -304,33 +331,33 @@ export const FarmerProfile: React.FC = () => {
 
           <div className="pt-3 border-t border-slate-200">
             <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">
-              Bank Settlement Details
+              {language === 'bn' ? 'ব্যাংক লেনদেন তথ্য' : 'Bank Settlement Details'}
             </h4>
             <div className="grid grid-cols-2 gap-3">
               <FormInput
                 id="bankName"
-                label="Bank Name"
+                label={language === 'bn' ? 'ব্যাংকের নাম' : 'Bank Name'}
                 value={editForm.bankName}
                 onChange={(e) => setEditForm({ ...editForm, bankName: e.target.value })}
                 required
               />
               <FormInput
                 id="accountNumber"
-                label="Account Number"
+                label={language === 'bn' ? 'অ্যাকাউন্ট নম্বর' : 'Account Number'}
                 value={editForm.accountNumber}
                 onChange={(e) => setEditForm({ ...editForm, accountNumber: e.target.value })}
                 required
               />
               <FormInput
                 id="branchName"
-                label="Branch"
+                label={language === 'bn' ? 'শাখা' : 'Branch'}
                 value={editForm.branchName}
                 onChange={(e) => setEditForm({ ...editForm, branchName: e.target.value })}
                 required
               />
               <FormInput
                 id="routingNumber"
-                label="Routing Number"
+                label={language === 'bn' ? 'রাউটিং নম্বর' : 'Routing Number'}
                 value={editForm.routingNumber}
                 onChange={(e) => setEditForm({ ...editForm, routingNumber: e.target.value })}
                 required
@@ -345,10 +372,10 @@ export const FarmerProfile: React.FC = () => {
               size="sm"
               onClick={() => setIsEditModalOpen(false)}
             >
-              Cancel
+              {language === 'bn' ? 'বাতিল' : 'Cancel'}
             </Button>
             <Button type="submit" variant="primary" size="sm" icon={Save}>
-              Save Profile Changes
+              {language === 'bn' ? 'সংরক্ষণ করুন' : 'Save Profile Changes'}
             </Button>
           </div>
         </form>

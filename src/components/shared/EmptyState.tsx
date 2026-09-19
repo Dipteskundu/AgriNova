@@ -1,7 +1,8 @@
-import React from "react";
-import { LucideIcon, PackageOpen } from "@/components/icons";
+import React from 'react';
+import { PackageOpen, LucideIcon } from '@/components/icons';
 
 interface EmptyStateProps {
+  id?: string;
   title: string;
   description?: string;
   icon?: LucideIcon;
@@ -10,22 +11,24 @@ interface EmptyStateProps {
 }
 
 export const EmptyState: React.FC<EmptyStateProps> = ({
+  id,
   title,
   description,
   icon: Icon = PackageOpen,
   action,
-  className = "",
+  className = '',
 }) => {
   return (
-    <div className={`flex flex-col items-center justify-center py-14 px-6 text-center ${className}`}>
-      <div className="w-16 h-16 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center mb-4">
-        <Icon className="w-7 h-7 text-slate-400" />
+    <div
+      id={id}
+      className={`flex flex-col items-center justify-center text-center p-8 rounded-xl border border-dashed border-slate-200 bg-slate-50/50 ${className}`}
+    >
+      <div className="p-3 bg-white rounded-full border border-slate-200 text-slate-400 shadow-xs mb-3">
+        <Icon className="w-6 h-6" />
       </div>
-      <h3 className="text-sm font-semibold text-slate-900">{title}</h3>
-      {description && (
-        <p className="text-xs text-slate-500 mt-1.5 max-w-sm leading-relaxed">{description}</p>
-      )}
-      {action && <div className="mt-5">{action}</div>}
+      <h4 className="text-sm font-semibold text-slate-800 tracking-tight">{title}</h4>
+      {description && <p className="text-xs text-slate-500 max-w-sm mt-1">{description}</p>}
+      {action && <div className="mt-4">{action}</div>}
     </div>
   );
 };

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { tr } from "@/agriplatform/lib/localize";
 import {
   Users,
   ShieldCheck,
@@ -54,7 +55,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
           setPendingVerifications(verifRes.data);
         }
       } catch {
-        showToast('error', 'Failed to load central admin telemetry');
+        showToast('error', tr('Failed to load central admin telemetry'));
       } finally {
         setLoading(false);
       }
@@ -85,13 +86,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
       <div className="bg-slate-900 text-white p-6 rounded-2xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-xs font-semibold mb-2">
-            <Activity className="w-3.5 h-3.5" />
-            Central Agronomy & Platform Governance Network
-          </div>
-          <h2 className="text-xl font-black tracking-tight">Executive Agricultural Oversight Portal</h2>
-          <p className="text-xs text-slate-400 mt-1 max-w-xl">
-            Supervising regional land registries, DAE extension courses, real-time commodity trading, and agro-met advisories across Bangladesh.
-          </p>
+            <Activity className="w-3.5 h-3.5" />{tr('Central Agronomy & Platform Governance Network')}</div>
+          <h2 className="text-xl font-black tracking-tight">{tr('Executive Agricultural Oversight Portal')}</h2>
+          <p className="text-xs text-slate-400 mt-1 max-w-xl">{tr('Supervising regional land registries, DAE extension courses, real-time commodity trading, and agro-met advisories across Bangladesh.')}</p>
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
@@ -100,16 +97,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
             size="sm"
             onClick={() => onNavigate('weather_broadcast')}
             icon={Send}
-          >
-            Emergency Weather Alert
-          </Button>
+          >{tr('Emergency Weather Alert')}</Button>
           <Button
             variant="primary"
             size="sm"
             onClick={() => onNavigate('farm_verification')}
             icon={FileCheck}
-          >
-            Audit Verifications ({pendingVerifications.length})
+          >{tr('Audit Verifications (')}{pendingVerifications.length})
           </Button>
         </div>
       </div>
@@ -117,38 +111,38 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
       {/* Primary KPI Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <MetricCard
-          title="Registered Farmers"
+          title={tr('Registered Farmers')}
           value={kpis.totalRegisteredFarmers.toLocaleString()}
           change="+320 this month"
           trend="up"
-          subtitle="Active farmer accounts"
+          subtitle={tr('Active farmer accounts')}
           icon={Users}
           colorScheme="emerald"
         />
         <MetricCard
-          title="Monitored Acreage"
+          title={tr('Monitored Acreage')}
           value={`${kpis.monitoredAcreage.toLocaleString()} Acres`}
           change="GIS mapped & verified"
           trend="neutral"
-          subtitle="6,140 commercial plots"
+          subtitle={tr('6,140 commercial plots')}
           icon={Sprout}
           colorScheme="blue"
         />
         <MetricCard
-          title="Projected Yield"
+          title={tr('Projected Yield')}
           value={`${(kpis.projectedAnnualYieldTons / 1000).toFixed(0)}k Tons`}
           change="+12% above national average"
           trend="up"
-          subtitle="Boro, Potato & Mustard"
+          subtitle={tr('Boro, Potato & Mustard')}
           icon={TrendingUp}
           colorScheme="indigo"
         />
         <MetricCard
-          title="Pending Verifications"
+          title={tr('Pending Verifications')}
           value={summary.totalPendingVerifications}
           change="Cadastral Porcha deeds"
           trend="neutral"
-          subtitle="Awaiting officer audit"
+          subtitle={tr('Awaiting officer audit')}
           icon={ShieldCheck}
           colorScheme="amber"
         />
@@ -160,12 +154,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
         <div className="lg:col-span-2 space-y-4">
           <Card>
             <CardHeader
-              title="Regional Agro-Ecological Distribution"
-              subtitle="Registered agrarian landholdings and verified farmer density by division"
+              title={tr('Regional Agro-Ecological Distribution')}
+              subtitle={tr('Registered agrarian landholdings and verified farmer density by division')}
               action={
-                <Button variant="ghost" size="sm" onClick={() => onNavigate('platform_analytics')}>
-                  Detailed Analytics
-                </Button>
+                <Button variant="ghost" size="sm" onClick={() => onNavigate('platform_analytics')}>{tr('Detailed Analytics')}</Button>
               }
             />
 
@@ -181,8 +173,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
                       <span className="font-bold text-sm text-slate-900">{region.region}</span>
                     </div>
                     <span className="text-xs font-bold text-slate-800">
-                      {region.farmerCount.toLocaleString()} Farmers ({region.acreage.toLocaleString()} Acres)
-                    </span>
+                      {region.farmerCount.toLocaleString()}{tr('Farmers (')}{region.acreage.toLocaleString()}{tr('Acres)')}</span>
                   </div>
 
                   <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
@@ -203,11 +194,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
         <div className="space-y-4">
           <Card>
             <CardHeader
-              title="Pending Land Approvals"
-              subtitle="Recent deed & GPS submissions"
+              title={tr('Pending Land Approvals')}
+              subtitle={tr('Recent deed & GPS submissions')}
               action={
-                <Button variant="ghost" size="sm" onClick={() => onNavigate('farm_verification')}>
-                  View All ({pendingVerifications.length})
+                <Button variant="ghost" size="sm" onClick={() => onNavigate('farm_verification')}>{tr('View All (')}{pendingVerifications.length})
                 </Button>
               }
             />
@@ -222,10 +212,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
                     <h4 className="font-bold text-slate-900">{item.farmName}</h4>
                     <Badge variant="warning">{item.status}</Badge>
                   </div>
-                  <p className="text-slate-600 font-medium">Owner: {item.farmerName}</p>
+                  <p className="text-slate-600 font-medium">{tr('Owner:')}{item.farmerName}</p>
                   <p className="text-slate-400 text-[11px] mt-0.5">
-                    {item.upazila}, {item.district} • {item.totalAcreage} Acres
-                  </p>
+                    {item.upazila}, {item.district}{tr('•')}{item.totalAcreage}{tr('Acres')}</p>
 
                   <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between">
                     <span className="text-[10px] text-slate-400 font-mono">{item.cadastralPlotNumbers}</span>
@@ -234,9 +223,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
                       size="sm"
                       onClick={() => onNavigate('farm_verification')}
                       className="text-emerald-700 hover:text-emerald-800 p-0 h-auto"
-                    >
-                      Audit Record →
-                    </Button>
+                    >{tr('Audit Record →')}</Button>
                   </div>
                 </div>
               ))}
@@ -248,8 +235,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
       {/* 10 Core Admin Operational Modules Quick Command Matrix */}
       <Card>
         <CardHeader
-          title="Admin Operational Command Matrix (10 Core Modules)"
-          subtitle="Direct executive access to all platform oversight, marketplace, and logistics subsystems"
+          title={tr('Admin Operational Command Matrix (10 Core Modules)')}
+          subtitle={tr('Direct executive access to all platform oversight, marketplace, and logistics subsystems')}
         />
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 p-1">
@@ -260,8 +247,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
             <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
               <Users className="w-4 h-4" />
             </div>
-            <span className="font-bold text-xs text-slate-900 block">1. User Mgmt</span>
-            <span className="text-[10px] text-slate-500">Farmers, Officers, Labs</span>
+            <span className="font-bold text-xs text-slate-900 block">{tr('1. User Mgmt')}</span>
+            <span className="text-[10px] text-slate-500">{tr('Farmers, Officers, Labs')}</span>
           </button>
 
           <button
@@ -271,8 +258,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
             <div className="w-8 h-8 rounded-lg bg-teal-100 text-teal-800 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
               <Store className="w-4 h-4" />
             </div>
-            <span className="font-bold text-xs text-slate-900 block">2. Marketplace</span>
-            <span className="text-[10px] text-slate-500">Listing Approvals</span>
+            <span className="font-bold text-xs text-slate-900 block">{tr('2. Marketplace')}</span>
+            <span className="text-[10px] text-slate-500">{tr('Listing Approvals')}</span>
           </button>
 
           <button
@@ -282,8 +269,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
             <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-800 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
               <ShoppingCart className="w-4 h-4" />
             </div>
-            <span className="font-bold text-xs text-slate-900 block">3. Orders</span>
-            <span className="text-[10px] text-slate-500">Contracts & Escrow</span>
+            <span className="font-bold text-xs text-slate-900 block">{tr('3. Orders')}</span>
+            <span className="text-[10px] text-slate-500">{tr('Contracts & Escrow')}</span>
           </button>
 
           <button
@@ -293,8 +280,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
             <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
               <CreditCard className="w-4 h-4" />
             </div>
-            <span className="font-bold text-xs text-slate-900 block">4. Payments</span>
-            <span className="text-[10px] text-slate-500">BEFTN & bKash Payouts</span>
+            <span className="font-bold text-xs text-slate-900 block">{tr('4. Payments')}</span>
+            <span className="text-[10px] text-slate-500">{tr('BEFTN & bKash Payouts')}</span>
           </button>
 
           <button
@@ -304,8 +291,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
             <div className="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-800 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
               <CheckCircle2 className="w-4 h-4" />
             </div>
-            <span className="font-bold text-xs text-slate-900 block">5. Quality Mgmt</span>
-            <span className="text-[10px] text-slate-500">Lab Moisture & Grades</span>
+            <span className="font-bold text-xs text-slate-900 block">{tr('5. Quality Mgmt')}</span>
+            <span className="text-[10px] text-slate-500">{tr('Lab Moisture & Grades')}</span>
           </button>
 
           <button
@@ -315,8 +302,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
             <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
               <Truck className="w-4 h-4" />
             </div>
-            <span className="font-bold text-xs text-slate-900 block">6. Logistics</span>
-            <span className="text-[10px] text-slate-500">Cold Chain & GPS Fleet</span>
+            <span className="font-bold text-xs text-slate-900 block">{tr('6. Logistics')}</span>
+            <span className="text-[10px] text-slate-500">{tr('Cold Chain & GPS Fleet')}</span>
           </button>
 
           <button
@@ -326,8 +313,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
             <div className="w-8 h-8 rounded-lg bg-purple-100 text-purple-800 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
               <BookOpen className="w-4 h-4" />
             </div>
-            <span className="font-bold text-xs text-slate-900 block">7. Training</span>
-            <span className="text-[10px] text-slate-500">DAE Course Workshops</span>
+            <span className="font-bold text-xs text-slate-900 block">{tr('7. Training')}</span>
+            <span className="text-[10px] text-slate-500">{tr('DAE Course Workshops')}</span>
           </button>
 
           <button
@@ -337,8 +324,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
             <div className="w-8 h-8 rounded-lg bg-cyan-100 text-cyan-800 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
               <FileBarChart className="w-4 h-4" />
             </div>
-            <span className="font-bold text-xs text-slate-900 block">8. Reports</span>
-            <span className="text-[10px] text-slate-500">Macro Agro Intelligence</span>
+            <span className="font-bold text-xs text-slate-900 block">{tr('8. Reports')}</span>
+            <span className="text-[10px] text-slate-500">{tr('Macro Agro Intelligence')}</span>
           </button>
 
           <button
@@ -348,8 +335,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
             <div className="w-8 h-8 rounded-lg bg-rose-100 text-rose-800 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
               <Scale className="w-4 h-4" />
             </div>
-            <span className="font-bold text-xs text-slate-900 block">9. Disputes</span>
-            <span className="text-[10px] text-slate-500">Escrow Arbitration</span>
+            <span className="font-bold text-xs text-slate-900 block">{tr('9. Disputes')}</span>
+            <span className="text-[10px] text-slate-500">{tr('Escrow Arbitration')}</span>
           </button>
 
           <button
@@ -359,8 +346,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
             <div className="w-8 h-8 rounded-lg bg-slate-200 text-slate-800 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
               <FileCheck className="w-4 h-4" />
             </div>
-            <span className="font-bold text-xs text-slate-900 block">10. Land Audit</span>
-            <span className="text-[10px] text-slate-500">Cadastral Deeds</span>
+            <span className="font-bold text-xs text-slate-900 block">{tr('10. Land Audit')}</span>
+            <span className="text-[10px] text-slate-500">{tr('Cadastral Deeds')}</span>
           </button>
         </div>
       </Card>
@@ -368,12 +355,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
       {/* Recent System Audit Logs Activity */}
       <Card>
         <CardHeader
-          title="Recent System & Security Audit Ledger"
-          subtitle="Immutable event logs of administrative approvals, credential changes, and system broadcasts"
+          title={tr('Recent System & Security Audit Ledger')}
+          subtitle={tr('Immutable event logs of administrative approvals, credential changes, and system broadcasts')}
           action={
-            <Button variant="ghost" size="sm" onClick={() => onNavigate('system_audit')}>
-              Full Audit Ledger
-            </Button>
+            <Button variant="ghost" size="sm" onClick={() => onNavigate('system_audit')}>{tr('Full Audit Ledger')}</Button>
           }
         />
 
@@ -392,14 +377,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
                 />
                 <div>
                   <span className="font-bold text-slate-900">{log.actionType}</span>
-                  <span className="text-slate-500 ml-2">by {log.actorName} ({log.actorRole})</span>
+                  <span className="text-slate-500 ml-2">{tr('by')}{log.actorName} ({log.actorRole})</span>
                   <p className="text-slate-600 text-[11px] mt-0.5">{log.details}</p>
                 </div>
               </div>
 
               <div className="text-right shrink-0">
                 <span className="text-slate-400 text-[11px] block">{log.timestamp}</span>
-                <span className="font-mono text-[10px] text-slate-400">IP: {log.ipAddress}</span>
+                <span className="font-mono text-[10px] text-slate-400">{tr('IP:')}{log.ipAddress}</span>
               </div>
             </div>
           ))}

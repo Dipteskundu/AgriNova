@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { tr } from "@/agriplatform/lib/localize";
 import {
   Sprout,
   Plus,
@@ -51,7 +52,7 @@ export const CropCatalog: React.FC = () => {
           setCrops(res.data);
         }
       } catch {
-        showToast('error', 'Failed to load master crop registry');
+        showToast('error', tr('Failed to load master crop registry'));
       } finally {
         setLoading(false);
       }
@@ -80,10 +81,10 @@ export const CropCatalog: React.FC = () => {
       if (res.success) {
         setCrops([res.data, ...crops]);
         setIsModalOpen(false);
-        showToast('success', 'New crop taxon added to national registry');
+        showToast('success', tr('New crop taxon added to national registry'));
       }
     } catch {
-      showToast('error', 'Failed to add crop to registry');
+      showToast('error', tr('Failed to add crop to registry'));
     }
   };
 
@@ -111,10 +112,8 @@ export const CropCatalog: React.FC = () => {
       {/* Top Banner */}
       <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-lg font-bold text-slate-900">National Master Crop & Cultivar Catalog</h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Standardized agronomic benchmarks, seasonal calendars, and pest resistance indices for Bangladesh.
-          </p>
+          <h2 className="text-lg font-bold text-slate-900">{tr('National Master Crop & Cultivar Catalog')}</h2>
+          <p className="text-xs text-slate-500 mt-0.5">{tr('Standardized agronomic benchmarks, seasonal calendars, and pest resistance indices for Bangladesh.')}</p>
         </div>
 
         <Button
@@ -122,9 +121,7 @@ export const CropCatalog: React.FC = () => {
           size="sm"
           icon={Plus}
           onClick={() => setIsModalOpen(true)}
-        >
-          Add Master Crop
-        </Button>
+        >{tr('Add Master Crop')}</Button>
       </div>
 
       {/* Filter Bar */}
@@ -133,7 +130,7 @@ export const CropCatalog: React.FC = () => {
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="Search by crop or scientific name..."
+            placeholder={tr('Search by crop or scientific name...')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-9 pr-4 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-900"
@@ -145,13 +142,13 @@ export const CropCatalog: React.FC = () => {
           onChange={(e) => setCategoryFilter(e.target.value)}
           className="px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-800"
         >
-          <option value="All">All Categories</option>
-          <option value="Cereal">Cereal</option>
-          <option value="Pulse">Pulse</option>
-          <option value="Oilseed">Oilseed</option>
-          <option value="Vegetable">Vegetable</option>
-          <option value="Fruit">Fruit</option>
-          <option value="Cash Crop">Cash Crop</option>
+          <option value="All">{tr('All Categories')}</option>
+          <option value="Cereal">{tr('Cereal')}</option>
+          <option value="Pulse">{tr('Pulse')}</option>
+          <option value="Oilseed">{tr('Oilseed')}</option>
+          <option value="Vegetable">{tr('Vegetable')}</option>
+          <option value="Fruit">{tr('Fruit')}</option>
+          <option value="Cash Crop">{tr('Cash Crop')}</option>
         </select>
       </div>
 
@@ -170,38 +167,38 @@ export const CropCatalog: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-2 p-3 bg-slate-50 rounded-xl text-xs mb-3">
                 <div>
-                  <span className="text-[10px] text-slate-400 block uppercase">Standard Yield</span>
-                  <span className="font-bold text-slate-900">{crop.standardYieldKgPerAcre.toLocaleString()} kg/ac</span>
+                  <span className="text-[10px] text-slate-400 block uppercase">{tr('Standard Yield')}</span>
+                  <span className="font-bold text-slate-900">{crop.standardYieldKgPerAcre.toLocaleString()}{tr('kg/ac')}</span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-400 block uppercase">Maturity Days</span>
-                  <span className="font-bold text-slate-900">{crop.averageMaturityDays} Days</span>
+                  <span className="text-[10px] text-slate-400 block uppercase">{tr('Maturity Days')}</span>
+                  <span className="font-bold text-slate-900">{crop.averageMaturityDays}{tr('Days')}</span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-400 block uppercase">Optimal Soil pH</span>
+                  <span className="text-[10px] text-slate-400 block uppercase">{tr('Optimal Soil pH')}</span>
                   <span className="font-medium text-slate-700">{crop.optimalSoilPhRange}</span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-400 block uppercase">Benchmark Price</span>
-                  <span className="font-bold text-emerald-700">৳{crop.benchmarkPriceBdtPerKg}/kg</span>
+                  <span className="text-[10px] text-slate-400 block uppercase">{tr('Benchmark Price')}</span>
+                  <span className="font-bold text-emerald-700">৳{crop.benchmarkPriceBdtPerKg}{tr('/kg')}</span>
                 </div>
               </div>
 
               <div className="space-y-1 text-xs">
                 <div>
-                  <span className="text-[10px] text-slate-400 block uppercase font-bold">Approved Cultivars</span>
+                  <span className="text-[10px] text-slate-400 block uppercase font-bold">{tr('Approved Cultivars')}</span>
                   <span className="text-slate-700">{crop.approvedVarieties.join(', ')}</span>
                 </div>
                 <div className="pt-1">
-                  <span className="text-[10px] text-slate-400 block uppercase font-bold">Pest Vulnerabilities</span>
+                  <span className="text-[10px] text-slate-400 block uppercase font-bold">{tr('Pest Vulnerabilities')}</span>
                   <span className="text-rose-600 font-medium">{crop.pestVulnerabilities.join(', ')}</span>
                 </div>
               </div>
             </div>
 
             <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
-              <span>Season: <strong>{crop.recommendedSeason}</strong></span>
-              <span>{crop.minRainfallMm}–{crop.maxRainfallMm}mm rain</span>
+              <span>{tr('Season:')}<strong>{crop.recommendedSeason}</strong></span>
+              <span>{crop.minRainfallMm}{tr('–')}{crop.maxRainfallMm}{tr('mm rain')}</span>
             </div>
           </Card>
         ))}
@@ -211,24 +208,24 @@ export const CropCatalog: React.FC = () => {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title="Register Master Crop Variety"
-        subtitle="DAE official agronomic taxon baseline"
+        title={tr('Register Master Crop Variety')}
+        subtitle={tr('DAE official agronomic taxon baseline')}
         maxWidth="lg"
       >
         <form onSubmit={handleCreate} className="space-y-3">
           <div className="grid grid-cols-2 gap-3">
             <FormInput
               id="cropName"
-              label="Crop Name"
-              placeholder="e.g. Maize (Corn)"
+              label={tr('Crop Name')}
+              placeholder={tr('e.g. Maize (Corn)')}
               value={newCrop.cropName}
               onChange={(e) => setNewCrop({ ...newCrop, cropName: e.target.value })}
               required
             />
             <FormInput
               id="scientificName"
-              label="Botanical / Scientific Name"
-              placeholder="e.g. Zea mays"
+              label={tr('Botanical / Scientific Name')}
+              placeholder={tr('e.g. Zea mays')}
               value={newCrop.scientificName}
               onChange={(e) => setNewCrop({ ...newCrop, scientificName: e.target.value })}
               required
@@ -238,24 +235,24 @@ export const CropCatalog: React.FC = () => {
           <div className="grid grid-cols-2 gap-3">
             <FormSelect
               id="category"
-              label="Agronomic Category"
+              label={tr('Agronomic Category')}
               value={newCrop.category}
               onChange={(e) =>
                 setNewCrop({ ...newCrop, category: e.target.value as MasterCrop['category'] })
               }
               options={[
-                { value: 'Cereal', label: 'Cereal' },
-                { value: 'Pulse', label: 'Pulse' },
-                { value: 'Oilseed', label: 'Oilseed' },
-                { value: 'Vegetable', label: 'Vegetable' },
-                { value: 'Fruit', label: 'Fruit' },
-                { value: 'Cash Crop', label: 'Cash Crop' },
+                { value: 'Cereal', label: tr('Cereal') },
+                { value: 'Pulse', label: tr('Pulse') },
+                { value: 'Oilseed', label: tr('Oilseed') },
+                { value: 'Vegetable', label: tr('Vegetable') },
+                { value: 'Fruit', label: tr('Fruit') },
+                { value: 'Cash Crop', label: tr('Cash Crop') },
               ]}
             />
             <FormInput
               id="recommendedSeason"
-              label="Recommended Season"
-              placeholder="e.g. Rabi (Winter)"
+              label={tr('Recommended Season')}
+              placeholder={tr('e.g. Rabi (Winter)')}
               value={newCrop.recommendedSeason}
               onChange={(e) => setNewCrop({ ...newCrop, recommendedSeason: e.target.value })}
               required
@@ -265,7 +262,7 @@ export const CropCatalog: React.FC = () => {
           <div className="grid grid-cols-3 gap-3">
             <FormInput
               id="standardYield"
-              label="Yield (Kg / Acre)"
+              label={tr('Yield (Kg / Acre)')}
               type="number"
               value={newCrop.standardYieldKgPerAcre}
               onChange={(e) =>
@@ -275,7 +272,7 @@ export const CropCatalog: React.FC = () => {
             />
             <FormInput
               id="maturity"
-              label="Maturity (Days)"
+              label={tr('Maturity (Days)')}
               type="number"
               value={newCrop.averageMaturityDays}
               onChange={(e) =>
@@ -297,7 +294,7 @@ export const CropCatalog: React.FC = () => {
 
           <FormInput
             id="varieties"
-            label="Approved Varieties (comma-separated)"
+            label={tr('Approved Varieties (comma-separated)')}
             value={newCrop.approvedVarieties}
             onChange={(e) => setNewCrop({ ...newCrop, approvedVarieties: e.target.value })}
             required
@@ -305,7 +302,7 @@ export const CropCatalog: React.FC = () => {
 
           <FormInput
             id="pests"
-            label="Pest Vulnerabilities (comma-separated)"
+            label={tr('Pest Vulnerabilities (comma-separated)')}
             value={newCrop.pestVulnerabilities}
             onChange={(e) => setNewCrop({ ...newCrop, pestVulnerabilities: e.target.value })}
             required
@@ -317,12 +314,8 @@ export const CropCatalog: React.FC = () => {
               variant="outline"
               size="sm"
               onClick={() => setIsModalOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" variant="primary" size="sm">
-              Save to Catalog
-            </Button>
+            >{tr('Cancel')}</Button>
+            <Button type="submit" variant="primary" size="sm">{tr('Save to Catalog')}</Button>
           </div>
         </form>
       </Modal>

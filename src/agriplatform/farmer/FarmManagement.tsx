@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { tr } from "@/agriplatform/lib/localize";
 import {
   Trees,
   Plus,
@@ -44,7 +45,7 @@ export const FarmManagement: React.FC = () => {
           setFarms(res.data);
         }
       } catch {
-        showToast('error', 'Failed to load farms');
+        showToast('error', tr('Failed to load farms'));
       } finally {
         setLoading(false);
       }
@@ -80,10 +81,10 @@ export const FarmManagement: React.FC = () => {
           longitude: 89.41,
           status: 'active',
         });
-        showToast('success', 'New farm registered successfully');
+        showToast('success', tr('New farm registered successfully'));
       }
     } catch {
-      showToast('error', 'Failed to create farm');
+      showToast('error', tr('Failed to create farm'));
     }
   };
 
@@ -110,10 +111,9 @@ export const FarmManagement: React.FC = () => {
       {/* Top Banner & Action */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
         <div>
-          <h2 className="text-lg font-bold text-slate-900">Farm Estates & Landholdings</h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Total of {farms.length} distinct farm parcels covering{' '}
-            <span className="font-semibold text-emerald-700">{totalAcres} Total Acres</span>.
+          <h2 className="text-lg font-bold text-slate-900">{tr('Farm Estates & Landholdings')}</h2>
+          <p className="text-xs text-slate-500 mt-0.5">{tr('Total of')}{farms.length}{tr('distinct farm parcels covering')}{' '}
+            <span className="font-semibold text-emerald-700">{totalAcres}{tr('Total Acres')}</span>.
           </p>
         </div>
 
@@ -122,9 +122,7 @@ export const FarmManagement: React.FC = () => {
           size="sm"
           icon={Plus}
           onClick={() => setIsAddModalOpen(true)}
-        >
-          Register New Farm
-        </Button>
+        >{tr('Register New Farm')}</Button>
       </div>
 
       {/* Grid of Farms */}
@@ -150,35 +148,29 @@ export const FarmManagement: React.FC = () => {
               <div className="mt-4 pt-3 border-t border-slate-100 space-y-2 text-xs">
                 <div className="flex items-center justify-between">
                   <span className="text-slate-500 flex items-center gap-1.5">
-                    <Layers className="w-3.5 h-3.5 text-slate-400" />
-                    Area
-                  </span>
-                  <span className="font-bold text-slate-800">{farm.totalAreaAcres} Acres</span>
+                    <Layers className="w-3.5 h-3.5 text-slate-400" />{tr('Area')}</span>
+                  <span className="font-bold text-slate-800">{farm.totalAreaAcres}{tr('Acres')}</span>
                 </div>
 
                 <div className="flex items-center justify-between">
                   <span className="text-slate-500 flex items-center gap-1.5">
-                    <Droplets className="w-3.5 h-3.5 text-slate-400" />
-                    Irrigation
-                  </span>
+                    <Droplets className="w-3.5 h-3.5 text-slate-400" />{tr('Irrigation')}</span>
                   <span className="font-semibold text-slate-700">{farm.irrigationType}</span>
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-500">Water Source</span>
+                  <span className="text-slate-500">{tr('Water Source')}</span>
                   <span className="text-slate-600 truncate max-w-[140px]">{farm.waterSource}</span>
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-500">Soil Type</span>
+                  <span className="text-slate-500">{tr('Soil Type')}</span>
                   <span className="text-slate-700 font-medium">{farm.soilClassification}</span>
                 </div>
 
                 <div className="flex items-center justify-between">
                   <span className="text-slate-500 flex items-center gap-1.5">
-                    <Compass className="w-3.5 h-3.5 text-slate-400" />
-                    GPS Coords
-                  </span>
+                    <Compass className="w-3.5 h-3.5 text-slate-400" />{tr('GPS Coords')}</span>
                   <span className="font-mono text-[11px] text-slate-600">
                     {farm.latitude}, {farm.longitude}
                   </span>
@@ -187,11 +179,10 @@ export const FarmManagement: React.FC = () => {
             </div>
 
             <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
-              <span className="text-slate-400 text-[11px]">Since {farm.registeredDate}</span>
+              <span className="text-slate-400 text-[11px]">{tr('Since')}{farm.registeredDate}</span>
               <span className="inline-flex items-center gap-1 text-emerald-700 font-semibold text-xs">
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                {farm.activeFieldsCount} Active Plots
-              </span>
+                {farm.activeFieldsCount}{tr('Active Plots')}</span>
             </div>
           </Card>
         ))}
@@ -201,23 +192,23 @@ export const FarmManagement: React.FC = () => {
       <Modal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        title="Register New Farm Estate"
-        subtitle="Specify land coordinates, irrigation systems, and soil classification"
+        title={tr('Register New Farm Estate')}
+        subtitle={tr('Specify land coordinates, irrigation systems, and soil classification')}
         maxWidth="lg"
       >
         <form onSubmit={handleCreateFarm} className="space-y-4">
           <FormInput
             id="farmName"
-            label="Farm Estate Name"
-            placeholder="e.g. Karatoya South Agro Farm"
+            label={tr('Farm Estate Name')}
+            placeholder={tr('e.g. Karatoya South Agro Farm')}
             value={newFarm.name}
             onChange={(e) => setNewFarm({ ...newFarm, name: e.target.value })}
             required
           />
           <FormInput
             id="farmLocation"
-            label="Geographic Location / Village"
-            placeholder="e.g. Garidaha, Sherpur, Bogura"
+            label={tr('Geographic Location / Village')}
+            placeholder={tr('e.g. Garidaha, Sherpur, Bogura')}
             value={newFarm.location}
             onChange={(e) => setNewFarm({ ...newFarm, location: e.target.value })}
             required
@@ -225,7 +216,7 @@ export const FarmManagement: React.FC = () => {
           <div className="grid grid-cols-2 gap-3">
             <FormInput
               id="totalAreaAcres"
-              label="Total Land Area (Acres)"
+              label={tr('Total Land Area (Acres)')}
               type="number"
               step="0.1"
               value={newFarm.totalAreaAcres}
@@ -234,15 +225,15 @@ export const FarmManagement: React.FC = () => {
             />
             <FormSelect
               id="irrigationType"
-              label="Primary Irrigation Infrastructure"
+              label={tr('Primary Irrigation Infrastructure')}
               value={newFarm.irrigationType}
               onChange={(e) => setNewFarm({ ...newFarm, irrigationType: e.target.value as Farm['irrigationType'] })}
               options={[
-                { value: 'Deep Tube Well', label: 'Deep Tube Well' },
-                { value: 'Drip', label: 'Precision Drip Grid' },
-                { value: 'Canal', label: 'River/Canal Gravity' },
-                { value: 'Sprinkler', label: 'Sprinkler Set' },
-                { value: 'Rainfed', label: 'Rainfed' },
+                { value: 'Deep Tube Well', label: tr('Deep Tube Well') },
+                { value: 'Drip', label: tr('Precision Drip Grid') },
+                { value: 'Canal', label: tr('River/Canal Gravity') },
+                { value: 'Sprinkler', label: tr('Sprinkler Set') },
+                { value: 'Rainfed', label: tr('Rainfed') },
               ]}
             />
           </div>
@@ -250,16 +241,16 @@ export const FarmManagement: React.FC = () => {
           <div className="grid grid-cols-2 gap-3">
             <FormInput
               id="waterSource"
-              label="Water Supply Source"
-              placeholder="e.g. Solar Tube Well / Karatoya Canal"
+              label={tr('Water Supply Source')}
+              placeholder={tr('e.g. Solar Tube Well / Karatoya Canal')}
               value={newFarm.waterSource}
               onChange={(e) => setNewFarm({ ...newFarm, waterSource: e.target.value })}
               required
             />
             <FormInput
               id="soilClassification"
-              label="Soil Classification"
-              placeholder="e.g. Clay Loam / Sandy Alluvium"
+              label={tr('Soil Classification')}
+              placeholder={tr('e.g. Clay Loam / Sandy Alluvium')}
               value={newFarm.soilClassification}
               onChange={(e) => setNewFarm({ ...newFarm, soilClassification: e.target.value })}
               required
@@ -269,7 +260,7 @@ export const FarmManagement: React.FC = () => {
           <div className="grid grid-cols-2 gap-3">
             <FormInput
               id="lat"
-              label="Latitude"
+              label={tr('Latitude')}
               type="number"
               step="0.0001"
               value={newFarm.latitude}
@@ -278,7 +269,7 @@ export const FarmManagement: React.FC = () => {
             />
             <FormInput
               id="lng"
-              label="Longitude"
+              label={tr('Longitude')}
               type="number"
               step="0.0001"
               value={newFarm.longitude}
@@ -293,12 +284,8 @@ export const FarmManagement: React.FC = () => {
               variant="outline"
               size="sm"
               onClick={() => setIsAddModalOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" variant="primary" size="sm">
-              Save Farm Estate
-            </Button>
+            >{tr('Cancel')}</Button>
+            <Button type="submit" variant="primary" size="sm">{tr('Save Farm Estate')}</Button>
           </div>
         </form>
       </Modal>

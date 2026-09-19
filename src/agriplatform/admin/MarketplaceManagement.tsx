@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { tr } from "@/agriplatform/lib/localize";
 import {
   Store,
   CheckCircle2,
@@ -43,7 +44,7 @@ export const MarketplaceManagement: React.FC = () => {
         setListings(res.data);
       }
     } catch {
-      showToast('error', 'Failed to load wholesale marketplace listings');
+      showToast('error', tr('Failed to load wholesale marketplace listings'));
     } finally {
       setLoading(false);
     }
@@ -60,7 +61,7 @@ export const MarketplaceManagement: React.FC = () => {
         }
       }
     } catch {
-      showToast('error', 'Failed to update listing status');
+      showToast('error', tr('Failed to update listing status'));
     }
   };
 
@@ -95,40 +96,36 @@ export const MarketplaceManagement: React.FC = () => {
       {/* Top Banner */}
       <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-lg font-bold text-slate-900">National Wholesale Marketplace Supervision</h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Audit farmer bulk crop listings, regulate floor/ceiling price bands, and moderate trade catalogs.
-          </p>
+          <h2 className="text-lg font-bold text-slate-900">{tr('National Wholesale Marketplace Supervision')}</h2>
+          <p className="text-xs text-slate-500 mt-0.5">{tr('Audit farmer bulk crop listings, regulate floor/ceiling price bands, and moderate trade catalogs.')}</p>
         </div>
 
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" icon={RefreshCw} onClick={loadListings}>
-            Sync Market Feeds
-          </Button>
+          <Button variant="outline" size="sm" icon={RefreshCw} onClick={loadListings}>{tr('Sync Market Feeds')}</Button>
         </div>
       </div>
 
       {/* Summary KPI Pills */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="p-3 bg-white rounded-xl border border-slate-200">
-          <span className="text-[10px] text-slate-400 block uppercase font-bold">Total Traded Volume</span>
-          <span className="text-lg font-black text-slate-900">{(totalVolumeKg / 1000).toFixed(1)} MT</span>
-          <span className="text-[10px] text-emerald-600 block">Across licensed silos</span>
+          <span className="text-[10px] text-slate-400 block uppercase font-bold">{tr('Total Traded Volume')}</span>
+          <span className="text-lg font-black text-slate-900">{(totalVolumeKg / 1000).toFixed(1)}{tr('MT')}</span>
+          <span className="text-[10px] text-emerald-600 block">{tr('Across licensed silos')}</span>
         </div>
         <div className="p-3 bg-white rounded-xl border border-slate-200">
-          <span className="text-[10px] text-slate-400 block uppercase font-bold">Approved Listings</span>
+          <span className="text-[10px] text-slate-400 block uppercase font-bold">{tr('Approved Listings')}</span>
           <span className="text-lg font-black text-emerald-700">{approvedCount}</span>
-          <span className="text-[10px] text-slate-500 block">Active on Buyer Board</span>
+          <span className="text-[10px] text-slate-500 block">{tr('Active on Buyer Board')}</span>
         </div>
         <div className="p-3 bg-white rounded-xl border border-slate-200">
-          <span className="text-[10px] text-slate-400 block uppercase font-bold">Pending Review</span>
+          <span className="text-[10px] text-slate-400 block uppercase font-bold">{tr('Pending Review')}</span>
           <span className="text-lg font-black text-amber-600">{pendingCount}</span>
-          <span className="text-[10px] text-slate-500 block">Awaiting compliance</span>
+          <span className="text-[10px] text-slate-500 block">{tr('Awaiting compliance')}</span>
         </div>
         <div className="p-3 bg-white rounded-xl border border-slate-200">
-          <span className="text-[10px] text-slate-400 block uppercase font-bold">Flagged Price Risks</span>
+          <span className="text-[10px] text-slate-400 block uppercase font-bold">{tr('Flagged Price Risks')}</span>
           <span className="text-lg font-black text-red-600">{flaggedCount}</span>
-          <span className="text-[10px] text-slate-500 block">Out of DAM corridor</span>
+          <span className="text-[10px] text-slate-500 block">{tr('Out of DAM corridor')}</span>
         </div>
       </div>
 
@@ -138,7 +135,7 @@ export const MarketplaceManagement: React.FC = () => {
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="Search produce, farmer, cultivar, or hub..."
+            placeholder={tr('Search produce, farmer, cultivar, or hub...')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-9 pr-4 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-900"
@@ -151,11 +148,11 @@ export const MarketplaceManagement: React.FC = () => {
             onChange={(e) => setStatusFilter(e.target.value)}
             className="px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-800"
           >
-            <option value="All">All Listing Statuses</option>
-            <option value="Approved">Approved</option>
-            <option value="Pending Review">Pending Review</option>
-            <option value="Flagged">Flagged</option>
-            <option value="Sold Out">Sold Out</option>
+            <option value="All">{tr('All Listing Statuses')}</option>
+            <option value="Approved">{tr('Approved')}</option>
+            <option value="Pending Review">{tr('Pending Review')}</option>
+            <option value="Flagged">{tr('Flagged')}</option>
+            <option value="Sold Out">{tr('Sold Out')}</option>
           </select>
         </div>
       </div>
@@ -187,8 +184,7 @@ export const MarketplaceManagement: React.FC = () => {
                         {item.status.toUpperCase()}
                       </Badge>
                     </div>
-                    <p className="text-xs text-slate-500">
-                      Variety: {item.variety} • {item.category}
+                    <p className="text-xs text-slate-500">{tr('Variety:')}{item.variety}{tr('•')}{item.category}
                     </p>
                   </div>
                   <Badge variant="neutral">{item.qualityGrade}</Badge>
@@ -196,38 +192,35 @@ export const MarketplaceManagement: React.FC = () => {
 
                 <div className="p-3 bg-slate-50 rounded-xl my-3 space-y-2 text-xs">
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-500">Available Volume:</span>
+                    <span className="text-slate-500">{tr('Available Volume:')}</span>
                     <strong className="text-slate-900 font-mono text-sm">
-                      {item.quantityAvailableKg.toLocaleString()} kg ({(item.quantityAvailableKg / 1000).toFixed(1)} MT)
-                    </strong>
+                      {item.quantityAvailableKg.toLocaleString()}{tr('kg (')}{(item.quantityAvailableKg / 1000).toFixed(1)}{tr('MT)')}</strong>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-500">Asking Price:</span>
+                    <span className="text-slate-500">{tr('Asking Price:')}</span>
                     <div className="flex items-center gap-2">
-                      <strong className="text-emerald-700 font-bold text-sm">৳{item.askingPricePerKg.toFixed(1)} / kg</strong>
+                      <strong className="text-emerald-700 font-bold text-sm">৳{item.askingPricePerKg.toFixed(1)}{tr('/ kg')}</strong>
                       {isPriceHigh && <span className="text-[10px] text-red-600 font-bold">(Above Ceiling ৳{item.suggestedCeilingPrice})</span>}
                       {isPriceLow && <span className="text-[10px] text-amber-600 font-bold">(Below Floor ৳{item.suggestedFloorPrice})</span>}
                     </div>
                   </div>
                   <div className="flex items-center justify-between text-slate-400 text-[11px] pt-1 border-t border-slate-200">
-                    <span>Govt Benchmark Band:</span>
-                    <span>৳{item.suggestedFloorPrice} - ৳{item.suggestedCeilingPrice} / kg</span>
+                    <span>{tr('Govt Benchmark Band:')}</span>
+                    <span>৳{item.suggestedFloorPrice} - ৳{item.suggestedCeilingPrice}{tr('/ kg')}</span>
                   </div>
                 </div>
 
                 <div className="space-y-1 text-xs text-slate-600">
-                  <p>
-                    Seller: <strong className="text-slate-800">{item.farmerName}</strong> ({item.farmerPhone})
+                  <p>{tr('Seller:')}<strong className="text-slate-800">{item.farmerName}</strong> ({item.farmerPhone})
                   </p>
                   <p className="flex items-center gap-1 text-slate-500">
-                    <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                    Hub: {item.locationHub}
+                    <MapPin className="w-3.5 h-3.5 text-slate-400" />{tr('Hub:')}{item.locationHub}
                   </p>
                 </div>
               </div>
 
               <div className="pt-4 border-t border-slate-100 flex items-center justify-between mt-3">
-                <span className="text-[11px] text-slate-400">Listed: {item.listedDate}</span>
+                <span className="text-[11px] text-slate-400">{tr('Listed:')}{item.listedDate}</span>
                 <div className="flex items-center gap-2">
                   {item.status !== 'Approved' && (
                     <Button
@@ -235,9 +228,7 @@ export const MarketplaceManagement: React.FC = () => {
                       variant="primary"
                       icon={Check}
                       onClick={() => handleStatusChange(item.id, 'Approved')}
-                    >
-                      Approve
-                    </Button>
+                    >{tr('Approve')}</Button>
                   )}
                   {item.status !== 'Flagged' && (
                     <Button
@@ -245,18 +236,14 @@ export const MarketplaceManagement: React.FC = () => {
                       variant="danger"
                       icon={AlertTriangle}
                       onClick={() => handleStatusChange(item.id, 'Flagged')}
-                    >
-                      Flag
-                    </Button>
+                    >{tr('Flag')}</Button>
                   )}
                   <Button
                     size="sm"
                     variant="outline"
                     icon={Eye}
                     onClick={() => setSelectedListing(item)}
-                  >
-                    Details
-                  </Button>
+                  >{tr('Details')}</Button>
                 </div>
               </div>
             </Card>
@@ -276,45 +263,40 @@ export const MarketplaceManagement: React.FC = () => {
           <div className="space-y-4 text-xs">
             <div className="p-3 bg-slate-50 rounded-xl space-y-2">
               <div className="flex justify-between">
-                <span className="text-slate-500">Lot Code:</span>
+                <span className="text-slate-500">{tr('Lot Code:')}</span>
                 <span className="font-mono font-bold text-slate-800">{selectedListing.id}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Produce:</span>
+                <span className="text-slate-500">{tr('Produce:')}</span>
                 <span className="font-bold text-slate-800">{selectedListing.produceName} ({selectedListing.variety})</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Certified Grade:</span>
+                <span className="text-slate-500">{tr('Certified Grade:')}</span>
                 <span className="font-bold text-emerald-700">{selectedListing.qualityGrade}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Quantity:</span>
-                <span className="font-bold text-slate-800">{selectedListing.quantityAvailableKg.toLocaleString()} kg</span>
+                <span className="text-slate-500">{tr('Quantity:')}</span>
+                <span className="font-bold text-slate-800">{selectedListing.quantityAvailableKg.toLocaleString()}{tr('kg')}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Asking Rate:</span>
-                <span className="font-bold text-slate-800">৳{selectedListing.askingPricePerKg} / kg</span>
+                <span className="text-slate-500">{tr('Asking Rate:')}</span>
+                <span className="font-bold text-slate-800">৳{selectedListing.askingPricePerKg}{tr('/ kg')}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Total Lot Value:</span>
+                <span className="text-slate-500">{tr('Total Lot Value:')}</span>
                 <span className="font-bold text-emerald-800 font-mono">
-                  ৳{(selectedListing.quantityAvailableKg * selectedListing.askingPricePerKg).toLocaleString()} BDT
-                </span>
+                  ৳{(selectedListing.quantityAvailableKg * selectedListing.askingPricePerKg).toLocaleString()}{tr('BDT')}</span>
               </div>
             </div>
 
             <div className="flex justify-end gap-2 pt-2">
-              <Button variant="outline" size="sm" onClick={() => setSelectedListing(null)}>
-                Close
-              </Button>
+              <Button variant="outline" size="sm" onClick={() => setSelectedListing(null)}>{tr('Close')}</Button>
               {selectedListing.status !== 'Approved' && (
                 <Button
                   variant="primary"
                   size="sm"
                   onClick={() => handleStatusChange(selectedListing.id, 'Approved')}
-                >
-                  Approve for Trading
-                </Button>
+                >{tr('Approve for Trading')}</Button>
               )}
             </div>
           </div>

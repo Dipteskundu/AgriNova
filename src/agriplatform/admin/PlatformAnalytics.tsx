@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { tr } from "@/agriplatform/lib/localize";
 import {
   TrendingUp,
   PieChart,
@@ -32,7 +33,7 @@ export const PlatformAnalytics: React.FC = () => {
           setSummary(res.data);
         }
       } catch {
-        showToast('error', 'Failed to load platform analytics telemetry');
+        showToast('error', tr('Failed to load platform analytics telemetry'));
       } finally {
         setLoading(false);
       }
@@ -61,47 +62,45 @@ export const PlatformAnalytics: React.FC = () => {
     <div className="space-y-6">
       {/* Top Banner */}
       <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
-        <h2 className="text-lg font-bold text-slate-900">National Agronomic Platform & Macro Analytics</h2>
-        <p className="text-xs text-slate-500 mt-0.5">
-          Macro telemetry encompassing national crop yields, fertilizer optimization index, and regional soil chemistry.
-        </p>
+        <h2 className="text-lg font-bold text-slate-900">{tr('National Agronomic Platform & Macro Analytics')}</h2>
+        <p className="text-xs text-slate-500 mt-0.5">{tr('Macro telemetry encompassing national crop yields, fertilizer optimization index, and regional soil chemistry.')}</p>
       </div>
 
       {/* KPI Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <MetricCard
-          title="Total Farmers Enrolled"
+          title={tr('Total Farmers Enrolled')}
           value={kpis.totalRegisteredFarmers.toLocaleString()}
           change="+24% YoY"
           trend="up"
-          subtitle="Across 8 administrative divisions"
+          subtitle={tr('Across 8 administrative divisions')}
           icon={Users}
           colorScheme="emerald"
         />
         <MetricCard
-          title="Monitored Cropland"
+          title={tr('Monitored Cropland')}
           value={`${kpis.monitoredAcreage.toLocaleString()} Ac`}
           change="+12,400 Ac this cycle"
           trend="up"
-          subtitle="Precision satellite mapped"
+          subtitle={tr('Precision satellite mapped')}
           icon={Sprout}
           colorScheme="blue"
         />
         <MetricCard
-          title="Crop Yield Index"
+          title={tr('Crop Yield Index')}
           value={`${summary.averageCropYieldIndex}%`}
           change="+6.1% vs Q2 target"
           trend="up"
-          subtitle="Farms adhering to NPK dosage"
+          subtitle={tr('Farms adhering to NPK dosage')}
           icon={TrendingUp}
           colorScheme="amber"
         />
         <MetricCard
-          title="Weekly Market Volume"
+          title={tr('Weekly Market Volume')}
           value={`${summary.totalWeeklyMarketVolumeTons.toLocaleString()} MT`}
           change="DAM Audited"
           trend="up"
-          subtitle="Through licensed mokams"
+          subtitle={tr('Through licensed mokams')}
           icon={Activity}
           colorScheme="indigo"
         />
@@ -112,8 +111,8 @@ export const PlatformAnalytics: React.FC = () => {
         {/* National Crop Distribution */}
         <Card>
           <CardHeader
-            title="National Crop Acreage Allocation"
-            subtitle="Current season acreage breakdown by cereal, oilseed, and pulse"
+            title={tr('National Crop Acreage Allocation')}
+            subtitle={tr('Current season acreage breakdown by cereal, oilseed, and pulse')}
           />
 
           <div className="space-y-4 text-xs">
@@ -145,8 +144,8 @@ export const PlatformAnalytics: React.FC = () => {
         {/* Regional Breakdown */}
         <Card>
           <CardHeader
-            title="Regional Productivity & Compliance"
-            subtitle="Farmer density and verified land tenure across divisions"
+            title={tr('Regional Productivity & Compliance')}
+            subtitle={tr('Farmer density and verified land tenure across divisions')}
           />
 
           <div className="space-y-4 text-xs">
@@ -154,11 +153,11 @@ export const PlatformAnalytics: React.FC = () => {
               <div key={region.region} className="p-3 bg-slate-50 rounded-xl border border-slate-100">
                 <div className="flex items-center justify-between mb-1.5">
                   <span className="font-bold text-slate-900">{region.region}</span>
-                  <Badge variant="success">98.4% Active</Badge>
+                  <Badge variant="success">{tr('98.4% Active')}</Badge>
                 </div>
                 <div className="flex items-center justify-between text-slate-600 mb-2">
-                  <span>Enrolled Farmers: <strong>{region.farmerCount.toLocaleString()}</strong></span>
-                  <span>Registered Land: <strong>{region.acreage.toLocaleString()} Acres</strong></span>
+                  <span>{tr('Enrolled Farmers:')}<strong>{region.farmerCount.toLocaleString()}</strong></span>
+                  <span>{tr('Registered Land:')}<strong>{region.acreage.toLocaleString()}{tr('Acres')}</strong></span>
                 </div>
                 <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
                   <div

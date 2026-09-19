@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { tr } from "@/agriplatform/lib/localize";
 import {
   ClipboardList,
   Plus,
@@ -18,9 +19,11 @@ import { Skeleton } from '@/components/shared/Skeleton';
 import { useToast } from '@/components/shared/Toast';
 import { getCropLogs, getCropBatches, addCropLog } from '@/agriplatform/lib/farmerApi';
 import { CropLog, CropBatch } from '@/agriplatform/types';
+import { useLanguage } from '@/agriplatform/lib/LanguageContext';
 
 export const CropLogs: React.FC = () => {
   const { showToast } = useToast();
+  const { language } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [logs, setLogs] = useState<CropLog[]>([]);
   const [cropBatches, setCropBatches] = useState<CropBatch[]>([]);
@@ -50,7 +53,7 @@ export const CropLogs: React.FC = () => {
           }
         }
       } catch {
-        showToast('error', 'Failed to load crop activity logs');
+        showToast('error', tr('Failed to load crop activity logs'));
       } finally {
         setLoading(false);
       }
@@ -92,10 +95,10 @@ export const CropLogs: React.FC = () => {
           operatorName: 'Mohiuddin Khan',
           weatherConditionAtApplication: 'Clear skies, 29°C',
         });
-        showToast('success', 'Crop activity log saved to permanent audit ledger');
+        showToast('success', tr('Crop activity log saved to permanent audit ledger'));
       }
     } catch {
-      showToast('error', 'Failed to save activity log');
+      showToast('error', tr('Failed to save activity log'));
     }
   };
 
@@ -117,25 +120,41 @@ export const CropLogs: React.FC = () => {
       {/* Top Controls */}
       <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-lg font-bold text-slate-900">Crop Activity Logs & Agronomic Journal</h2>
+          <h2 className="text-lg font-bold text-slate-900">
+            {language === 'bn' ? 'কাজের ডায়েরি ও ফিল্ড লগ' : 'Crop Activity Diary & Field Logs'}
+          </h2>
           <p className="text-xs text-slate-500 mt-0.5">
-            {logs.length} logged field actions. Cumulative recorded input expenses:{' '}
-            <span className="font-semibold text-emerald-700">৳{totalCost.toLocaleString()}</span>.
+            {language === 'bn'
+              ? `মোট ${logs.length} টি কাজের হিসাব সংরক্ষিত। মোট ব্যয়: `
+              : `Total ${logs.length} activities logged. Total Expenses: `}
+            <span className="font-bold text-emerald-700">৳{totalCost.toLocaleString()}</span>
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2.5">
           <select
             value={selectedTypeFilter}
             onChange={(e) => setSelectedTypeFilter(e.target.value)}
-            className="px-3 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded-lg text-slate-800 focus:outline-none"
+            className="px-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-xl text-slate-800 font-medium focus:outline-none cursor-pointer"
           >
-            <option value="All">All Operations ({logs.length})</option>
-            <option value="Fertilizer Application">Fertilizer Application</option>
-            <option value="Pest & Disease Spray">Pest & Disease Spray</option>
-            <option value="Weeding">Weeding & Hoeing</option>
-            <option value="Irrigation">Irrigation Runs</option>
-            <option value="Soil Scouting">Soil Scouting</option>
+            <option value="All">
+              {language === 'bn' ? `সব ধরনের কাজ (${logs.length})` : `All Activities (${logs.length})`}
+            </option>
+            <option value="Fertilizer Application">
+              {language === 'bn' ? 'সার প্রয়োগ' : 'Fertilizer Application'}
+            </option>
+            <option value="Pest & Disease Spray">
+              {language === 'bn' ? 'কীটনাশক স্প্রে' : 'Pest & Disease Spray'}
+            </option>
+            <option value="Weeding">
+              {language === 'bn' ? 'আগাছা দমন' : 'Weeding & Hoeing'}
+            </option>
+            <option value="Irrigation">
+              {language === 'bn' ? 'সেচ পরিচালনা' : 'Irrigation'}
+            </option>
+            <option value="Soil Scouting">
+              {language === 'bn' ? 'মাটি ও মাঠ পরিদর্শন' : 'Soil Scouting'}
+            </option>
           </select>
 
           <Button
@@ -144,7 +163,7 @@ export const CropLogs: React.FC = () => {
             icon={Plus}
             onClick={() => setIsAddModalOpen(true)}
           >
-            Record New Log
+            {language === 'bn' ? '+ নতুন কাজ লিখুন' : '+ Log Activity'}
           </Button>
         </div>
       </div>
@@ -167,16 +186,16 @@ export const CropLogs: React.FC = () => {
                     <Badge variant="neutral">{log.date}</Badge>
                   </div>
                   <p className="text-xs text-slate-500 font-medium">
-                    {log.cropName} • <span className="text-slate-700">{log.fieldName}</span>
+                    {log.cropName}{tr('•')}<span className="text-slate-700">{log.fieldName}</span>
                   </p>
                 </div>
               </div>
 
               <div className="text-right sm:self-center">
                 <span className="text-sm font-bold text-emerald-700">
-                  {log.costIncurred > 0 ? `৳${log.costIncurred.toLocaleString()}` : 'Routine Cost-free'}
+                  {log.costIncurred > 0 ? `৳${log.costIncurred.toLocaleString()}` : (language === 'bn' ? 'বিনা খরচে' : 'Cost-free')}
                 </span>
-                <p className="text-[10px] text-slate-400">Expense Incurred</p>
+                <p className="text-[10px] text-slate-400">{language === 'bn' ? 'খরচ হয়েছে' : 'Expense Incurred'}</p>
               </div>
             </div>
 
@@ -186,14 +205,16 @@ export const CropLogs: React.FC = () => {
               <div className="flex items-center gap-1.5">
                 <Layers className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                 <span>
-                  Input: <strong className="text-slate-700">{log.inputUsed || 'None'}</strong>
+                  {language === 'bn' ? 'ব্যবহৃত উপকরণ: ' : 'Input: '}
+                  <strong className="text-slate-700">{log.inputUsed || (language === 'bn' ? 'নেই' : 'None')}</strong>
                   {log.dosageQuantity ? ` (${log.dosageQuantity})` : ''}
                 </span>
               </div>
               <div className="flex items-center gap-1.5">
                 <UserCheck className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                 <span>
-                  Operator: <strong className="text-slate-700">{log.operatorName}</strong>
+                  {language === 'bn' ? 'পরিচালক: ' : 'Operator: '}
+                  <strong className="text-slate-700">{log.operatorName}</strong>
                 </span>
               </div>
               <div className="flex items-center gap-1.5">
@@ -209,14 +230,14 @@ export const CropLogs: React.FC = () => {
       <Modal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        title="Record Field Activity Log"
-        subtitle="Log fertilizer application, spraying, weeding or irrigation"
+        title={language === 'bn' ? 'নতুন কাজের তথ্য সংরক্ষণ করুন' : 'Record Field Activity Log'}
+        subtitle={language === 'bn' ? 'সার প্রয়োগ, স্প্রে, সেচ বা আগাছা দমনের হিসাব লিখে রাখুন' : 'Log fertilizer application, spraying, weeding or irrigation'}
         maxWidth="lg"
       >
         <form onSubmit={handleAddLog} className="space-y-4">
           <FormSelect
             id="batchSelect"
-            label="Target Crop Batch & Field Plot"
+            label={language === 'bn' ? 'ফসল ও জমির প্লট নির্বাচন করুন' : 'Target Crop Batch & Field Plot'}
             value={newLog.cropBatchId}
             onChange={(e) => setNewLog({ ...newLog, cropBatchId: e.target.value })}
             options={cropBatches.map((b) => ({
@@ -227,25 +248,25 @@ export const CropLogs: React.FC = () => {
 
           <FormSelect
             id="activityType"
-            label="Activity Classification"
+            label={language === 'bn' ? 'কাজের ধরণ' : 'Activity Classification'}
             value={newLog.activityType}
             onChange={(e) =>
               setNewLog({ ...newLog, activityType: e.target.value as CropLog['activityType'] })
             }
             options={[
-              { value: 'Fertilizer Application', label: 'Fertilizer Application' },
-              { value: 'Pest & Disease Spray', label: 'Pest & Disease Spray' },
-              { value: 'Weeding', label: 'Weeding & Intercultural Hoeing' },
-              { value: 'Irrigation', label: 'Irrigation Run' },
-              { value: 'Soil Scouting', label: 'Soil Scouting & Root Check' },
-              { value: 'Growth Observation', label: 'Growth Observation & Phenology' },
+              { value: 'Fertilizer Application', label: language === 'bn' ? 'সার প্রয়োগ' : 'Fertilizer Application' },
+              { value: 'Pest & Disease Spray', label: language === 'bn' ? 'কীটনাশক স্প্রে' : 'Pest & Disease Spray' },
+              { value: 'Weeding', label: language === 'bn' ? 'আগাছা দমন' : 'Weeding & Intercultural Hoeing' },
+              { value: 'Irrigation', label: language === 'bn' ? 'সেচ পরিচালনা' : 'Irrigation Run' },
+              { value: 'Soil Scouting', label: language === 'bn' ? 'মাটি ও মাঠ পরিদর্শন' : 'Soil Scouting & Root Check' },
+              { value: 'Growth Observation', label: language === 'bn' ? 'ফসল বৃদ্ধি পর্যবেক্ষণ' : 'Growth Observation & Phenology' },
             ]}
           />
 
           <FormTextarea
             id="details"
-            label="Activity Details & Agronomic Notes"
-            placeholder="Describe method, symptoms observed, or dosage rationale..."
+            label={language === 'bn' ? 'কাজের বিস্তারিত বিবরণ ও মন্তব্য' : 'Activity Details & Agronomic Notes'}
+            placeholder={language === 'bn' ? 'কাজের ধরণ, পর্যবেক্ষণ বা মাত্রা লিখুন...' : 'Describe method, symptoms observed, or dosage rationale...'}
             value={newLog.details}
             onChange={(e) => setNewLog({ ...newLog, details: e.target.value })}
             required
@@ -255,15 +276,15 @@ export const CropLogs: React.FC = () => {
           <div className="grid grid-cols-2 gap-3">
             <FormInput
               id="inputUsed"
-              label="Input Material / Chemical / Bioagent"
-              placeholder="e.g. MOP Fertilizer / Neem extract"
+              label={language === 'bn' ? 'ব্যবহৃত সার / কীটনাশক' : 'Input Material / Chemical'}
+              placeholder={language === 'bn' ? 'যেমন: টিএসপি সার / নিম নির্যাস' : 'e.g. MOP Fertilizer / Neem extract'}
               value={newLog.inputUsed}
               onChange={(e) => setNewLog({ ...newLog, inputUsed: e.target.value })}
             />
             <FormInput
               id="dosageQuantity"
-              label="Dosage / Application Rate"
-              placeholder="e.g. 35 kg/acre"
+              label={language === 'bn' ? 'প্রয়োগের পরিমাণ / মাত্রা' : 'Dosage / Application Rate'}
+              placeholder={language === 'bn' ? 'যেমন: ২৫ কেজি/বিঘা' : 'e.g. 35 kg/acre'}
               value={newLog.dosageQuantity}
               onChange={(e) => setNewLog({ ...newLog, dosageQuantity: e.target.value })}
             />
@@ -272,14 +293,14 @@ export const CropLogs: React.FC = () => {
           <div className="grid grid-cols-2 gap-3">
             <FormInput
               id="costIncurred"
-              label="Direct Cost Incurred (BDT)"
+              label={language === 'bn' ? 'মোট খরচ (টাকা)' : 'Direct Cost Incurred (BDT)'}
               type="number"
               value={newLog.costIncurred}
               onChange={(e) => setNewLog({ ...newLog, costIncurred: Number(e.target.value) })}
             />
             <FormInput
               id="operatorName"
-              label="Applied By / Field Operator"
+              label={language === 'bn' ? 'কাজের দায়িত্বপ্রাপ্ত ব্যক্তি' : 'Applied By / Field Operator'}
               value={newLog.operatorName}
               onChange={(e) => setNewLog({ ...newLog, operatorName: e.target.value })}
               required
@@ -288,8 +309,8 @@ export const CropLogs: React.FC = () => {
 
           <FormInput
             id="weatherCondition"
-            label="Weather Condition at Application Time"
-            placeholder="e.g. Sunny morning, 28°C, low wind"
+            label={language === 'bn' ? 'প্রয়োগকালীন আবহাওয়া' : 'Weather Condition at Application Time'}
+            placeholder={language === 'bn' ? 'যেমন: রোদযুক্ত সকাল, ২৮° সেলসিয়াস' : 'e.g. Sunny morning, 28°C, low wind'}
             value={newLog.weatherConditionAtApplication}
             onChange={(e) =>
               setNewLog({ ...newLog, weatherConditionAtApplication: e.target.value })
@@ -303,10 +324,10 @@ export const CropLogs: React.FC = () => {
               size="sm"
               onClick={() => setIsAddModalOpen(false)}
             >
-              Cancel
+              {language === 'bn' ? 'বাতিল' : 'Cancel'}
             </Button>
             <Button type="submit" variant="primary" size="sm">
-              Save to Crop Log
+              {language === 'bn' ? 'সংরক্ষণ করুন' : 'Save to Crop Log'}
             </Button>
           </div>
         </form>

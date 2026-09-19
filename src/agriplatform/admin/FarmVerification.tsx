@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { tr } from "@/agriplatform/lib/localize";
 import {
   FileCheck,
   CheckCircle2,
@@ -38,7 +39,7 @@ export const FarmVerification: React.FC = () => {
           setRequests(res.data);
         }
       } catch {
-        showToast('error', 'Failed to load farm verification requests');
+        showToast('error', tr('Failed to load farm verification requests'));
       } finally {
         setLoading(false);
       }
@@ -65,7 +66,7 @@ export const FarmVerification: React.FC = () => {
         );
       }
     } catch {
-      showToast('error', 'Failed to update verification status');
+      showToast('error', tr('Failed to update verification status'));
     }
   };
 
@@ -90,10 +91,8 @@ export const FarmVerification: React.FC = () => {
       {/* Top Banner */}
       <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-lg font-bold text-slate-900">Farm Land Registry & Cadastral Verification</h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Audit farmer land tenure records, Porcha deeds, and Union cadastral map plots for DAE certification.
-          </p>
+          <h2 className="text-lg font-bold text-slate-900">{tr('Farm Land Registry & Cadastral Verification')}</h2>
+          <p className="text-xs text-slate-500 mt-0.5">{tr('Audit farmer land tenure records, Porcha deeds, and Union cadastral map plots for DAE certification.')}</p>
         </div>
 
         <div className="flex items-center gap-2">
@@ -102,10 +101,10 @@ export const FarmVerification: React.FC = () => {
             onChange={(e) => setFilterStatus(e.target.value)}
             className="px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-800"
           >
-            <option value="All">All Requests</option>
-            <option value="pending">Pending Audit</option>
-            <option value="verified">Verified</option>
-            <option value="rejected">Rejected</option>
+            <option value="All">{tr('All Requests')}</option>
+            <option value="pending">{tr('Pending Audit')}</option>
+            <option value="verified">{tr('Verified')}</option>
+            <option value="rejected">{tr('Rejected')}</option>
           </select>
         </div>
       </div>
@@ -129,25 +128,23 @@ export const FarmVerification: React.FC = () => {
                   >
                     {req.status.toUpperCase()}
                   </Badge>
-                  <span className="text-xs text-slate-400 font-mono">ID: {req.id}</span>
+                  <span className="text-xs text-slate-400 font-mono">{tr('ID:')}{req.id}</span>
                 </div>
 
-                <p className="text-xs text-slate-600">
-                  Farmer: <strong className="text-slate-800">{req.farmerName}</strong> •{' '}
+                <p className="text-xs text-slate-600">{tr('Farmer:')}<strong className="text-slate-800">{req.farmerName}</strong>{tr('•')}{' '}
                   <span className="text-slate-500">{req.upazila}, {req.district}, {req.division}</span>
                 </p>
 
                 <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 pt-1">
-                  <span>Acreage: <strong className="text-emerald-700">{req.totalAcreage} Acres</strong></span>
-                  <span>Khatian: <strong className="text-slate-700">{req.mouzaKhatianNumber}</strong></span>
-                  <span>Plots: <strong className="text-slate-700">{req.cadastralPlotNumbers}</strong></span>
-                  <span>Submitted: {req.submissionDate}</span>
+                  <span>{tr('Acreage:')}<strong className="text-emerald-700">{req.totalAcreage}{tr('Acres')}</strong></span>
+                  <span>{tr('Khatian:')}<strong className="text-slate-700">{req.mouzaKhatianNumber}</strong></span>
+                  <span>{tr('Plots:')}<strong className="text-slate-700">{req.cadastralPlotNumbers}</strong></span>
+                  <span>{tr('Submitted:')}{req.submissionDate}</span>
                 </div>
 
                 {req.officerNotes && (
                   <div className="mt-2 p-2.5 bg-slate-50 rounded-lg border border-slate-100 text-xs text-slate-600">
-                    <span className="font-bold text-slate-700 block text-[10px] uppercase">
-                      Auditor Notes ({req.assignedOfficerName || 'Officer'})
+                    <span className="font-bold text-slate-700 block text-[10px] uppercase">{tr('Auditor Notes (')}{req.assignedOfficerName || 'Officer'})
                     </span>
                     {req.officerNotes}
                   </div>
@@ -157,7 +154,7 @@ export const FarmVerification: React.FC = () => {
               <div className="flex items-center gap-2 shrink-0">
                 {req.evidenceDocuments?.length > 0 && (
                   <div className="text-xs text-slate-500 mr-2">
-                    <span className="font-semibold text-slate-700">{req.evidenceDocuments.length} Deeds attached</span>
+                    <span className="font-semibold text-slate-700">{req.evidenceDocuments.length}{tr('Deeds attached')}</span>
                   </div>
                 )}
 
@@ -166,17 +163,13 @@ export const FarmVerification: React.FC = () => {
                     variant="primary"
                     size="sm"
                     onClick={() => setSelectedReq(req)}
-                  >
-                    Audit Deeds & Review
-                  </Button>
+                  >{tr('Audit Deeds & Review')}</Button>
                 ) : (
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => setSelectedReq(req)}
-                  >
-                    View Details
-                  </Button>
+                  >{tr('View Details')}</Button>
                 )}
               </div>
             </div>
@@ -196,29 +189,27 @@ export const FarmVerification: React.FC = () => {
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-3 p-3 bg-slate-50 rounded-xl text-xs">
               <div>
-                <span className="text-slate-400 block text-[10px] uppercase">Mouza & Khatian</span>
+                <span className="text-slate-400 block text-[10px] uppercase">{tr('Mouza & Khatian')}</span>
                 <span className="font-bold text-slate-800">{selectedReq.mouzaKhatianNumber}</span>
               </div>
               <div>
-                <span className="text-slate-400 block text-[10px] uppercase">Cadastral Plot Nos.</span>
+                <span className="text-slate-400 block text-[10px] uppercase">{tr('Cadastral Plot Nos.')}</span>
                 <span className="font-bold text-slate-800">{selectedReq.cadastralPlotNumbers}</span>
               </div>
               <div>
-                <span className="text-slate-400 block text-[10px] uppercase">Upazila & District</span>
+                <span className="text-slate-400 block text-[10px] uppercase">{tr('Upazila & District')}</span>
                 <span className="font-bold text-slate-800">
                   {selectedReq.upazila}, {selectedReq.district}
                 </span>
               </div>
               <div>
-                <span className="text-slate-400 block text-[10px] uppercase">Submission Date</span>
+                <span className="text-slate-400 block text-[10px] uppercase">{tr('Submission Date')}</span>
                 <span className="font-bold text-slate-800">{selectedReq.submissionDate}</span>
               </div>
             </div>
 
             <div>
-              <h4 className="text-xs font-bold text-slate-700 uppercase mb-2">
-                Attached Evidence & Land Revenue Receipts
-              </h4>
+              <h4 className="text-xs font-bold text-slate-700 uppercase mb-2">{tr('Attached Evidence & Land Revenue Receipts')}</h4>
               <div className="space-y-2">
                 {selectedReq.evidenceDocuments?.map((doc, idx) => (
                   <div
@@ -230,9 +221,7 @@ export const FarmVerification: React.FC = () => {
                       <span className="font-medium text-slate-800">{doc.name}</span>
                       <Badge variant="neutral">{doc.type}</Badge>
                     </div>
-                    <span className="text-xs text-emerald-600 font-semibold cursor-pointer">
-                      Verify Checksum ✓
-                    </span>
+                    <span className="text-xs text-emerald-600 font-semibold cursor-pointer">{tr('Verify Checksum ✓')}</span>
                   </div>
                 ))}
               </div>
@@ -240,8 +229,8 @@ export const FarmVerification: React.FC = () => {
 
             <FormTextarea
               id="officerNotes"
-              label="Auditor Endorsement / Rejection Remarks"
-              placeholder="Verify against the Land Revenue Portal (e-Namjari & Khatian registry)..."
+              label={tr('Auditor Endorsement / Rejection Remarks')}
+              placeholder={tr('Verify against the Land Revenue Portal (e-Namjari & Khatian registry)...')}
               value={officerNotes}
               onChange={(e) => setOfficerNotes(e.target.value)}
               rows={3}
@@ -253,25 +242,19 @@ export const FarmVerification: React.FC = () => {
                 variant="outline"
                 size="sm"
                 onClick={() => setSelectedReq(null)}
-              >
-                Close
-              </Button>
+              >{tr('Close')}</Button>
               <Button
                 type="button"
                 variant="danger"
                 size="sm"
                 onClick={() => handleReview('rejected')}
-              >
-                Reject Record
-              </Button>
+              >{tr('Reject Record')}</Button>
               <Button
                 type="button"
                 variant="primary"
                 size="sm"
                 onClick={() => handleReview('verified')}
-              >
-                Approve & Certify
-              </Button>
+              >{tr('Approve & Certify')}</Button>
             </div>
           </div>
         </Modal>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { tr } from "@/agriplatform/lib/localize";
 import {
   TrendingUp,
   TrendingDown,
@@ -35,7 +36,7 @@ export const MarketPriceManagement: React.FC = () => {
           setPrices(res.data);
         }
       } catch {
-        showToast('error', 'Failed to load wholesale market indices');
+        showToast('error', tr('Failed to load wholesale market indices'));
       } finally {
         setLoading(false);
       }
@@ -54,10 +55,10 @@ export const MarketPriceManagement: React.FC = () => {
       if (res.success) {
         setPrices((prev) => prev.map((p) => (p.id === id ? res.data : p)));
         setEditingId(null);
-        showToast('success', 'Commodity modal price updated on public board');
+        showToast('success', tr('Commodity modal price updated on public board'));
       }
     } catch {
-      showToast('error', 'Failed to update commodity rate');
+      showToast('error', tr('Failed to update commodity rate'));
     }
   };
 
@@ -77,14 +78,12 @@ export const MarketPriceManagement: React.FC = () => {
       {/* Top Banner */}
       <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-lg font-bold text-slate-900">National Wholesale Commodity Price Benchmarking</h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Administered floor prices, wholesale modal averages, and trading volume across primary district mokams.
-          </p>
+          <h2 className="text-lg font-bold text-slate-900">{tr('National Wholesale Commodity Price Benchmarking')}</h2>
+          <p className="text-xs text-slate-500 mt-0.5">{tr('Administered floor prices, wholesale modal averages, and trading volume across primary district mokams.')}</p>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-slate-600">DAM Feed: Synchronized Today</span>
+          <span className="text-xs font-semibold text-slate-600">{tr('DAM Feed: Synchronized Today')}</span>
         </div>
       </div>
 
@@ -95,7 +94,7 @@ export const MarketPriceManagement: React.FC = () => {
             <div className="flex items-start justify-between gap-2 mb-2">
               <div>
                 <h3 className="text-base font-bold text-slate-900">{p.commodityName}</h3>
-                <span className="text-xs text-slate-500">Cultivar: {p.variety}</span>
+                <span className="text-xs text-slate-500">{tr('Cultivar:')}{p.variety}</span>
               </div>
               <Badge
                 variant={
@@ -106,8 +105,7 @@ export const MarketPriceManagement: React.FC = () => {
                     : 'neutral'
                 }
               >
-                {p.priceTrend.toUpperCase()} TREND
-              </Badge>
+                {p.priceTrend.toUpperCase()}{tr('TREND')}</Badge>
             </div>
 
             <div className="p-3 bg-slate-50 rounded-xl my-3 flex items-center justify-between">
@@ -127,16 +125,14 @@ export const MarketPriceManagement: React.FC = () => {
                       size="sm"
                       variant="primary"
                       onClick={() => handleSavePrice(p.id)}
-                    >
-                      Save
-                    </Button>
+                    >{tr('Save')}</Button>
                   </div>
                 ) : (
                   <div className="flex items-baseline gap-2 mt-0.5">
                     <span className="text-2xl font-black text-slate-900">
                       ৳{p.wholesaleModalPriceBdt.toFixed(1)}
                     </span>
-                    <span className="text-xs text-slate-400">/ kg</span>
+                    <span className="text-xs text-slate-400">{tr('/ kg')}</span>
                   </div>
                 )}
               </div>
@@ -147,32 +143,30 @@ export const MarketPriceManagement: React.FC = () => {
                   variant="outline"
                   icon={Edit2}
                   onClick={() => handleStartEdit(p)}
-                >
-                  Adjust Rate
-                </Button>
+                >{tr('Adjust Rate')}</Button>
               )}
             </div>
 
             <div className="grid grid-cols-3 gap-2 text-xs text-slate-600 mb-3">
               <div>
-                <span className="text-[10px] text-slate-400 block uppercase">Wholesale Range</span>
+                <span className="text-[10px] text-slate-400 block uppercase">{tr('Wholesale Range')}</span>
                 <span className="font-semibold text-slate-800">
                   ৳{p.wholesaleMinPriceBdt} - ৳{p.wholesaleMaxPriceBdt}
                 </span>
               </div>
               <div>
-                <span className="text-[10px] text-slate-400 block uppercase">Retail Price</span>
-                <span className="font-semibold text-slate-800">৳{p.retailPriceBdt} / kg</span>
+                <span className="text-[10px] text-slate-400 block uppercase">{tr('Retail Price')}</span>
+                <span className="font-semibold text-slate-800">৳{p.retailPriceBdt}{tr('/ kg')}</span>
               </div>
               <div>
-                <span className="text-[10px] text-slate-400 block uppercase">Traded Volume</span>
-                <span className="font-semibold text-emerald-700">{p.volumeTradedMetricTons} MT</span>
+                <span className="text-[10px] text-slate-400 block uppercase">{tr('Traded Volume')}</span>
+                <span className="font-semibold text-emerald-700">{p.volumeTradedMetricTons}{tr('MT')}</span>
               </div>
             </div>
 
             <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
-              <span>Mokam: <strong>{p.marketLocation}</strong> ({p.division})</span>
-              <span>Updated: {p.recordedDate}</span>
+              <span>{tr('Mokam:')}<strong>{p.marketLocation}</strong> ({p.division})</span>
+              <span>{tr('Updated:')}{p.recordedDate}</span>
             </div>
           </Card>
         ))}
