@@ -188,7 +188,7 @@ export const FarmerNotifications: React.FC = () => {
 
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <h4 className="font-bold text-slate-900 text-sm">{item.title}</h4>
+                      <h4 className="font-bold text-slate-900 text-sm">{tr(item.title)}</h4>
                       {!item.isRead && (
                         <span className="w-2 h-2 rounded-full bg-emerald-600 inline-block" />
                       )}
@@ -209,7 +209,7 @@ export const FarmerNotifications: React.FC = () => {
                       </Badge>
                     </div>
                     <p className="text-xs text-slate-600 max-w-2xl leading-relaxed">
-                      {item.message}
+                      {tr(item.message)}
                     </p>
                     <span className="text-[11px] text-slate-400 block pt-1">
                       {item.timestamp}

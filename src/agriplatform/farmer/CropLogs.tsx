@@ -182,11 +182,11 @@ export const CropLogs: React.FC = () => {
                 </span>
                 <div>
                   <div className="flex items-center gap-2">
-                    <h3 className="text-sm font-bold text-slate-900">{log.activityType}</h3>
+                    <h3 className="text-sm font-bold text-slate-900">{tr(log.activityType)}</h3>
                     <Badge variant="neutral">{log.date}</Badge>
                   </div>
                   <p className="text-xs text-slate-500 font-medium">
-                    {log.cropName}{tr('•')}<span className="text-slate-700">{log.fieldName}</span>
+                    {tr(log.cropName)}{tr('•')}<span className="text-slate-700">{tr(log.fieldName)}</span>
                   </p>
                 </div>
               </div>
@@ -199,14 +199,14 @@ export const CropLogs: React.FC = () => {
               </div>
             </div>
 
-            <p className="text-xs text-slate-700 mt-3 leading-relaxed">{log.details}</p>
+            <p className="text-xs text-slate-700 mt-3 leading-relaxed">{tr(log.details)}</p>
 
             <div className="mt-4 pt-3 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px] text-slate-500">
               <div className="flex items-center gap-1.5">
                 <Layers className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                 <span>
                   {language === 'bn' ? 'ব্যবহৃত উপকরণ: ' : 'Input: '}
-                  <strong className="text-slate-700">{log.inputUsed || (language === 'bn' ? 'নেই' : 'None')}</strong>
+                  <strong className="text-slate-700">{log.inputUsed ? tr(log.inputUsed) : (language === 'bn' ? 'নেই' : 'None')}</strong>
                   {log.dosageQuantity ? ` (${log.dosageQuantity})` : ''}
                 </span>
               </div>
@@ -214,12 +214,12 @@ export const CropLogs: React.FC = () => {
                 <UserCheck className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                 <span>
                   {language === 'bn' ? 'পরিচালক: ' : 'Operator: '}
-                  <strong className="text-slate-700">{log.operatorName}</strong>
+                  <strong className="text-slate-700">{tr(log.operatorName)}</strong>
                 </span>
               </div>
               <div className="flex items-center gap-1.5">
                 <CloudSun className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                <span className="truncate">{log.weatherConditionAtApplication}</span>
+                <span className="truncate">{tr(log.weatherConditionAtApplication)}</span>
               </div>
             </div>
           </div>
@@ -242,7 +242,7 @@ export const CropLogs: React.FC = () => {
             onChange={(e) => setNewLog({ ...newLog, cropBatchId: e.target.value })}
             options={cropBatches.map((b) => ({
               value: b.id,
-              label: `${b.cropName} (${b.variety}) - ${b.fieldName}`,
+              label: `${tr(b.cropName)} (${tr(b.variety)}) - ${tr(b.fieldName)}`,
             }))}
           />
 

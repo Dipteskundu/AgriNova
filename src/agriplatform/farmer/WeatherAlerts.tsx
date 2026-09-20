@@ -104,7 +104,7 @@ export const WeatherAlerts: React.FC = () => {
               />
               <div className="space-y-1 text-xs">
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-sm">{alert.title}</span>
+                  <span className="font-bold text-sm">{tr(alert.title)}</span>
                   <Badge
                     variant={
                       alert.severity === 'critical'
@@ -114,15 +114,15 @@ export const WeatherAlerts: React.FC = () => {
                         : 'info'
                     }
                   >
-                    {alert.severity.toUpperCase()}
+                    {tr(alert.severity.toUpperCase())}
                   </Badge>
                   <span className="text-[11px] opacity-75">
                     {language === 'bn' ? 'মেয়াদ: ' : 'Valid until: '}{alert.validUntil}
                   </span>
                 </div>
-                <p className="text-slate-700">{alert.message}</p>
+                <p className="text-slate-700">{tr(alert.message)}</p>
                 <p className="font-semibold text-slate-900">{tr('⚡')}{language === 'bn' ? 'কৃষকের করণীয়: ' : 'Agronomic Action Required: '}
-                  <span className="font-normal">{alert.actionRequired}</span>
+                  <span className="font-normal">{tr(alert.actionRequired)}</span>
                 </p>
               </div>
             </div>
@@ -146,7 +146,7 @@ export const WeatherAlerts: React.FC = () => {
               <span className="text-lg text-emerald-200 font-semibold">{tr('C')}</span>
             </div>
             <p className="text-sm text-emerald-100 mt-1">
-              {current.condition} ({language === 'bn' ? `অনুভূত তাপমাত্রা ${current.feelsLike}°C` : `Feels like ${current.feelsLike}°C`})
+              {tr(current.condition)} ({language === 'bn' ? `অনুভূত তাপমাত্রা ${current.feelsLike}°C` : `Feels like ${current.feelsLike}°C`})
             </p>
           </div>
 
@@ -247,7 +247,7 @@ export const WeatherAlerts: React.FC = () => {
           {dailyForecast.map((day) => (
             <div key={day.date} className="p-3.5 bg-slate-50 rounded-xl border border-slate-200/80 flex flex-col justify-between">
               <div>
-                <span className="font-bold text-slate-900 block">{day.dayName}</span>
+                <span className="font-bold text-slate-900 block">{tr(day.dayName)}</span>
                 <span className="text-[11px] text-slate-400 block">{day.date}</span>
 
                 <div className="my-3 flex items-center justify-between">
@@ -259,14 +259,14 @@ export const WeatherAlerts: React.FC = () => {
                   </Badge>
                 </div>
 
-                <p className="text-[11px] text-slate-600 font-medium mb-2">{day.condition}</p>
+                <p className="text-[11px] text-slate-600 font-medium mb-2">{tr(day.condition)}</p>
               </div>
 
               <div className="pt-2 border-t border-slate-200 text-[11px] text-slate-600 bg-white p-2 rounded-lg">
                 <span className="font-bold text-slate-800 block text-[10px] uppercase">
                   {language === 'bn' ? 'পরামর্শ' : 'Advisory'}
                 </span>
-                {day.farmingAdvisory}
+                {tr(day.farmingAdvisory)}
               </div>
             </div>
           ))}

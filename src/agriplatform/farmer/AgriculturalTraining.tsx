@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { tr } from "@/agriplatform/lib/localize";
+import { useLanguage } from '@/agriplatform/lib/LanguageContext';
 import {
   GraduationCap,
   PlayCircle,
@@ -22,6 +23,7 @@ import { TrainingCourse } from '@/agriplatform/types';
 
 export const AgriculturalTraining: React.FC = () => {
   const { showToast } = useToast();
+  const { language } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [courses, setCourses] = useState<TrainingCourse[]>([]);
   const [selectedCourse, setSelectedCourse] = useState<TrainingCourse | null>(null);
@@ -118,7 +120,7 @@ export const AgriculturalTraining: React.FC = () => {
             <Card key={course.id} className="flex flex-col justify-between hover:border-slate-300 transition-all">
               <div>
                 <div className="flex items-start justify-between gap-2 mb-3">
-                  <Badge variant="info">{course.category}</Badge>
+                  <Badge variant="info">{tr(course.category)}</Badge>
                   <div className="flex items-center gap-1 text-amber-500 text-xs font-bold">
                     <Star className="w-3.5 h-3.5 fill-amber-400" />
                     <span>{course.rating.toFixed(1)}</span>
@@ -126,10 +128,10 @@ export const AgriculturalTraining: React.FC = () => {
                 </div>
 
                 <h3 className="font-bold text-slate-900 text-base leading-snug mb-1">
-                  {course.title}
+                  {tr(course.title)}
                 </h3>
                 <p className="text-xs text-slate-500 line-clamp-2 mb-3">
-                  {course.description}
+                  {tr(course.description)}
                 </p>
 
                 <div className="flex items-center gap-3 text-xs text-slate-400 mb-4">
@@ -139,7 +141,7 @@ export const AgriculturalTraining: React.FC = () => {
                   <span className="flex items-center gap-1">
                     <BookOpen className="w-3.5 h-3.5" />
                     {course.lessonsCount}{tr('lessons')}</span>
-                  <Badge variant="neutral">{course.difficulty}</Badge>
+                  <Badge variant="neutral">{tr(course.difficulty)}</Badge>
                 </div>
 
                 {/* Progress bar */}
@@ -162,7 +164,7 @@ export const AgriculturalTraining: React.FC = () => {
               <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
                 <span className="text-[11px] text-slate-500 flex items-center gap-1">
                   <UserCheck className="w-3.5 h-3.5 text-slate-400" />
-                  {course.instructor}
+                  {tr(course.instructor)}
                 </span>
 
                 <Button
@@ -171,7 +173,9 @@ export const AgriculturalTraining: React.FC = () => {
                   icon={progressPercent === 100 ? CheckCircle : PlayCircle}
                   onClick={() => handleStartLesson(course)}
                 >
-                  {progressPercent === 100 ? 'Review Course' : 'Continue Course'}
+                  {progressPercent === 100
+                    ? (language === 'bn' ? 'কোর্সটি রিভিউ করুন' : 'Review Course')
+                    : (language === 'bn' ? 'কোর্স চালিয়ে যান' : 'Continue Course')}
                 </Button>
               </div>
             </Card>
@@ -185,11 +189,11 @@ export const AgriculturalTraining: React.FC = () => {
           isOpen={!!selectedCourse}
           onClose={() => setSelectedCourse(null)}
           title={selectedCourse.title}
-          subtitle={`Instructor: ${selectedCourse.instructor} • ${selectedCourse.category} • ${selectedCourse.durationMinutes} Total Minutes`}
+          subtitle={`${tr('Instructor: ')}${tr(selectedCourse.instructor)} ${tr('•')} ${tr(selectedCourse.category)} ${tr('•')} ${selectedCourse.durationMinutes} ${tr('Total Minutes')}`}
           maxWidth="lg"
         >
           <div className="space-y-4 text-xs">
-            <p className="text-slate-600 leading-relaxed">{selectedCourse.description}</p>
+            <p className="text-slate-600 leading-relaxed">{tr(selectedCourse.description)}</p>
 
             <div className="space-y-2">
               <h4 className="font-bold text-slate-900 text-sm">{tr('Interactive Syllabus & Video Modules')}</h4>
@@ -215,9 +219,9 @@ export const AgriculturalTraining: React.FC = () => {
                             lesson.completed ? 'line-through text-slate-400' : 'text-slate-800'
                           }`}
                         >
-                          {lesson.title}
+                          {tr(lesson.title)}
                         </span>
-                        <span className="text-[11px] text-slate-400">{lesson.duration}</span>
+                        <span className="text-[11px] text-slate-400">{tr(lesson.duration)}</span>
                       </div>
                     </div>
 
@@ -226,7 +230,9 @@ export const AgriculturalTraining: React.FC = () => {
                       variant={lesson.completed ? 'outline' : 'secondary'}
                       onClick={() => handleCompleteLesson(idx)}
                     >
-                      {lesson.completed ? 'Completed' : 'Mark Completed'}
+                      {lesson.completed
+                        ? (language === 'bn' ? 'সম্পন্ন' : 'Completed')
+                        : (language === 'bn' ? 'সম্পন্ন হিসেবে চিহ্নিত করুন' : 'Mark Completed')}
                     </Button>
                   </div>
                 ))}

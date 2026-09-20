@@ -220,16 +220,16 @@ export const CropCalendar: React.FC = () => {
                     task.isCompleted ? 'line-through text-slate-400' : 'text-slate-900'
                   }`}
                 >
-                  {task.taskTitle}
+                  {tr(task.taskTitle)}
                 </h4>
 
                 <p className="text-xs text-slate-500 mt-1">
-                  {task.cropName}{tr('•')}<span className="text-slate-700">{task.fieldName}</span>
+                  {tr(task.cropName)}{tr('•')}<span className="text-slate-700">{tr(task.fieldName)}</span>
                 </p>
 
                 {task.notes && (
                   <p className="text-xs text-slate-600 mt-2 p-2 rounded-lg bg-slate-50 border border-slate-100">
-                    {task.notes}
+                    {tr(task.notes)}
                   </p>
                 )}
               </div>
@@ -273,7 +273,7 @@ export const CropCalendar: React.FC = () => {
             onChange={(e) => setNewTask({ ...newTask, cropBatchId: e.target.value })}
             options={cropBatches.map((b) => ({
               value: b.id,
-              label: `${b.cropName} - ${b.fieldName}`,
+              label: `${tr(b.cropName)} - ${tr(b.fieldName)}`,
             }))}
           />
 

@@ -127,7 +127,7 @@ export const FarmerProfile: React.FC = () => {
             </p>
             <p className="text-xs text-slate-500">
               {language === 'bn' ? 'সংযুক্ত কৃষক ক্লাব: ' : 'Affiliated Club: '}
-              <span className="text-emerald-700 font-semibold">{profile.farmerClub}</span>
+              <span className="text-emerald-700 font-semibold">{tr(profile.farmerClub)}</span>
             </p>
           </div>
         </div>
@@ -190,7 +190,7 @@ export const FarmerProfile: React.FC = () => {
                   {language === 'bn' ? 'খামারের স্থায়ী ঠিকানা' : 'Home Location & Coordinates'}
                 </p>
                 <p className="text-slate-800 font-semibold">
-                  {profile.primaryLocation.village}, {profile.primaryLocation.upazila}, {profile.primaryLocation.district} ({profile.primaryLocation.division})
+                  {tr(profile.primaryLocation.village)}, {tr(profile.primaryLocation.upazila)}, {tr(profile.primaryLocation.district)} ({tr(profile.primaryLocation.division)})
                 </p>
                 <p className="text-[10px] font-mono text-slate-400 mt-0.5">{tr('GPS:')}{profile.primaryLocation.coordinates.lat}° N, {profile.primaryLocation.coordinates.lng}° E
                 </p>
@@ -274,8 +274,8 @@ export const FarmerProfile: React.FC = () => {
                   </div>
                   <Badge variant="success">{language === 'bn' ? 'যাচাইকৃত' : 'Verified'}</Badge>
                 </div>
-                <h4 className="text-xs font-bold text-slate-900">{cert.name}</h4>
-                <p className="text-[11px] text-slate-500 mt-1">{cert.issuingAuthority}</p>
+                <h4 className="text-xs font-bold text-slate-900">{tr(cert.name)}</h4>
+                <p className="text-[11px] text-slate-500 mt-1">{tr(cert.issuingAuthority)}</p>
               </div>
 
               <div className="mt-4 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">

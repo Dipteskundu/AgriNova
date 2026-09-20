@@ -84,7 +84,7 @@ export const AiRecommendationResult: React.FC<AiRecommendationResultProps> = ({
             <span className="text-[11px] text-emerald-200 block uppercase font-medium">{tr('Predicted Yield Potential')}</span>
             <span className="text-2xl font-black text-white">
               {yieldPotentialPrediction.minimumYield} - {yieldPotentialPrediction.maximumYield}{' '}
-              <span className="text-sm font-normal text-emerald-200">{yieldPotentialPrediction.unit}</span>
+              <span className="text-sm font-normal text-emerald-200">{tr(yieldPotentialPrediction.unit)}</span>
             </span>
           </div>
         </div>
@@ -97,7 +97,7 @@ export const AiRecommendationResult: React.FC<AiRecommendationResultProps> = ({
           subtitle={tr('Model diagnosis on soil chemistry, seasonal suitability, and moisture retention')}
         />
         <div className="p-4 bg-emerald-50/70 border border-emerald-100 rounded-xl text-xs text-emerald-950 leading-relaxed">
-          {agronomicRationale}
+          {tr(agronomicRationale)}
         </div>
       </Card>
 
@@ -123,7 +123,7 @@ export const AiRecommendationResult: React.FC<AiRecommendationResultProps> = ({
                 <tr key={item.nutrient} className="hover:bg-slate-50/60">
                   <td className="p-3 font-bold text-slate-900 flex items-center gap-2">
                     <FlaskConical className="w-3.5 h-3.5 text-emerald-600" />
-                    {item.nutrient}
+                    {tr(item.nutrient)}
                   </td>
                   <td className="p-3 font-mono text-slate-700">{item.currentLevel}</td>
                   <td className="p-3 font-mono text-slate-500">{item.optimalLevel}</td>
@@ -137,7 +137,7 @@ export const AiRecommendationResult: React.FC<AiRecommendationResultProps> = ({
                           : 'warning'
                       }
                     >
-                      {item.status}
+                      {tr(item.status)}
                     </Badge>
                   </td>
                 </tr>
@@ -160,13 +160,13 @@ export const AiRecommendationResult: React.FC<AiRecommendationResultProps> = ({
             {recommendedFertilizers.map((fert) => (
               <div key={fert.name} className="p-3.5 bg-slate-50 rounded-xl border border-slate-200/80">
                 <div className="flex items-center justify-between mb-1">
-                  <h4 className="font-bold text-slate-900 text-sm">{fert.name}</h4>
+                  <h4 className="font-bold text-slate-900 text-sm">{tr(fert.name)}</h4>
                   <Badge variant="info">{fert.dosagePerAcre}</Badge>
                 </div>
                 <p className="text-[11px] text-slate-500 mb-1">
-                  <span className="font-semibold text-slate-700">{tr('Application Window:')}</span> {fert.applicationWindow}
+                  <span className="font-semibold text-slate-700">{tr('Application Window:')}</span> {tr(fert.applicationWindow)}
                 </p>
-                <p className="text-[11px] text-slate-600">{fert.purpose}</p>
+                <p className="text-[11px] text-slate-600">{tr(fert.purpose)}</p>
               </div>
             ))}
           </div>
@@ -183,7 +183,7 @@ export const AiRecommendationResult: React.FC<AiRecommendationResultProps> = ({
             {riskFactors.map((risk) => (
               <div key={risk.factor} className="p-3.5 bg-slate-50 rounded-xl border border-slate-200/80">
                 <div className="flex items-center justify-between mb-1.5">
-                  <h4 className="font-bold text-slate-900">{risk.factor}</h4>
+                  <h4 className="font-bold text-slate-900">{tr(risk.factor)}</h4>
                   <Badge
                     variant={
                       risk.impact === 'High'
@@ -193,10 +193,10 @@ export const AiRecommendationResult: React.FC<AiRecommendationResultProps> = ({
                         : 'neutral'
                     }
                   >
-                    {risk.impact}{tr('Risk')}</Badge>
+                    {tr(risk.impact)}{tr('Risk')}</Badge>
                 </div>
                 <p className="text-slate-600 leading-relaxed">
-                  <span className="font-semibold text-slate-800">{tr('Countermeasure:')}</span> {risk.mitigationStrategy}
+                  <span className="font-semibold text-slate-800">{tr('Countermeasure:')}</span> {tr(risk.mitigationStrategy)}
                 </p>
               </div>
             ))}

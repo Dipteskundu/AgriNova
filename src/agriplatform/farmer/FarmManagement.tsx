@@ -18,9 +18,11 @@ import { Skeleton } from '@/components/shared/Skeleton';
 import { useToast } from '@/components/shared/Toast';
 import { getFarms, createFarm } from '@/agriplatform/lib/farmerApi';
 import { Farm } from '@/agriplatform/types';
+import { useLanguage } from '@/agriplatform/lib/LanguageContext';
 
 export const FarmManagement: React.FC = () => {
   const { showToast } = useToast();
+  const { language } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [farms, setFarms] = useState<Farm[]>([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -135,14 +137,16 @@ export const FarmManagement: React.FC = () => {
                   <Trees className="w-5 h-5" />
                 </div>
                 <Badge variant={farm.status === 'active' ? 'success' : 'neutral'}>
-                  {farm.status === 'active' ? 'Active Cultivation' : 'Fallow'}
+                  {farm.status === 'active'
+                    ? (language === 'bn' ? 'সক্রিয় চাষাবাদ' : 'Active Cultivation')
+                    : (language === 'bn' ? 'পতিত' : 'Fallow')}
                 </Badge>
               </div>
 
-              <h3 className="text-base font-bold text-slate-900 tracking-tight">{farm.name}</h3>
+              <h3 className="text-base font-bold text-slate-900 tracking-tight">{tr(farm.name)}</h3>
               <p className="text-xs text-slate-500 flex items-center gap-1.5 mt-1">
                 <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                <span>{farm.location}</span>
+                <span>{tr(farm.location)}</span>
               </p>
 
               <div className="mt-4 pt-3 border-t border-slate-100 space-y-2 text-xs">
@@ -155,17 +159,17 @@ export const FarmManagement: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <span className="text-slate-500 flex items-center gap-1.5">
                     <Droplets className="w-3.5 h-3.5 text-slate-400" />{tr('Irrigation')}</span>
-                  <span className="font-semibold text-slate-700">{farm.irrigationType}</span>
+                  <span className="font-semibold text-slate-700">{tr(farm.irrigationType)}</span>
                 </div>
 
                 <div className="flex items-center justify-between">
                   <span className="text-slate-500">{tr('Water Source')}</span>
-                  <span className="text-slate-600 truncate max-w-[140px]">{farm.waterSource}</span>
+                  <span className="text-slate-600 truncate max-w-[140px]">{tr(farm.waterSource)}</span>
                 </div>
 
                 <div className="flex items-center justify-between">
                   <span className="text-slate-500">{tr('Soil Type')}</span>
-                  <span className="text-slate-700 font-medium">{farm.soilClassification}</span>
+                  <span className="text-slate-700 font-medium">{tr(farm.soilClassification)}</span>
                 </div>
 
                 <div className="flex items-center justify-between">

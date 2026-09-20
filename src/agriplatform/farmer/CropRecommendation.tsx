@@ -219,11 +219,11 @@ export const CropRecommendation: React.FC<CropRecommendationProps> = ({ onNaviga
                     <div className="flex items-center gap-2">
                       <span className="w-6 h-6 rounded-full bg-emerald-700 text-white font-bold text-xs flex items-center justify-center">{tr('#')}{idx + 1}
                       </span>
-                      <h4 className="text-base font-bold text-slate-900">{item.cropName}</h4>
+                      <h4 className="text-base font-bold text-slate-900">{tr(item.cropName)}</h4>
                     </div>
-                    <p className="text-xs text-slate-500 italic mt-0.5">{item.scientificName}</p>
+                    <p className="text-xs text-slate-500 italic mt-0.5">{tr(item.scientificName)}</p>
                     <p className="text-xs text-emerald-800 font-semibold mt-1">
-                      {language === 'bn' ? 'অনুমোদিত জাত: ' : 'Recommended Seed: '}{item.recommendedVariety}
+                      {language === 'bn' ? 'অনুমোদিত জাত: ' : 'Recommended Seed: '}{tr(item.recommendedVariety)}
                     </p>
                   </div>
 
@@ -280,7 +280,7 @@ export const CropRecommendation: React.FC<CropRecommendationProps> = ({ onNaviga
                   {item.keyAdvantages.map((adv, i) => (
                     <div key={i} className="flex items-start gap-1.5 text-xs text-slate-600">
                       <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                      <span>{adv}</span>
+                      <span>{tr(adv)}</span>
                     </div>
                   ))}
                 </div>
@@ -289,7 +289,7 @@ export const CropRecommendation: React.FC<CropRecommendationProps> = ({ onNaviga
                   <span className="font-semibold text-emerald-800">
                     {language === 'bn' ? 'জলবায়ু সহনশীলতা: ' : 'Climate Resilience: '}
                   </span>
-                  {item.climateResilience}
+                  {tr(item.climateResilience)}
                 </div>
               </div>
 

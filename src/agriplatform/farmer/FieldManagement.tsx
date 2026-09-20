@@ -134,7 +134,7 @@ export const FieldManagement: React.FC = () => {
             <option value="All">{language === 'bn' ? `সকল খামার (${fields.length} প্লট)` : `All Farms (${fields.length} plots)`}</option>
             {farms.map((farm) => (
               <option key={farm.id} value={farm.id}>
-                {farm.name}
+                {tr(farm.name)}
               </option>
             ))}
           </select>
@@ -161,8 +161,8 @@ export const FieldManagement: React.FC = () => {
                     <Grid3X3 className="w-4 h-4" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-slate-900">{field.name}</h3>
-                    <p className="text-[11px] text-slate-400">{field.farmName}</p>
+                    <h3 className="text-sm font-bold text-slate-900">{tr(field.name)}</h3>
+                    <p className="text-[11px] text-slate-400">{tr(field.farmName)}</p>
                   </div>
                 </div>
 
@@ -190,7 +190,7 @@ export const FieldManagement: React.FC = () => {
                     {language === 'bn' ? 'বর্তমান ফসল' : 'Current Crop'}
                   </span>
                   <p className="font-semibold text-slate-800">
-                    {field.currentCrop || (language === 'bn' ? 'পরিকল্পনাধীন / খালি জমি' : 'Fallow / Soil Resting')}
+                    {field.currentCrop ? tr(field.currentCrop) : (language === 'bn' ? 'পরিকল্পনাধীন / খালি জমি' : 'Fallow / Soil Resting')}
                   </p>
                 </div>
                 <div className="text-right">
@@ -293,7 +293,7 @@ export const FieldManagement: React.FC = () => {
             label={language === 'bn' ? 'খামার নির্বাচন করুন' : 'Parent Farm Estate'}
             value={newField.farmId}
             onChange={(e) => setNewField({ ...newField, farmId: e.target.value })}
-            options={farms.map((f) => ({ value: f.id, label: `${f.name} (${f.location})` }))}
+            options={farms.map((f) => ({ value: f.id, label: `${tr(f.name)} (${tr(f.location)})` }))}
           />
           <div className="grid grid-cols-2 gap-3">
             <FormInput

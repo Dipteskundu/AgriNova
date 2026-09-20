@@ -126,7 +126,7 @@ export const Profitability: React.FC = () => {
               return (
                 <div key={crop.cropName} className="p-3.5 bg-slate-50 rounded-xl border border-slate-100">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-bold text-slate-900 text-sm">{crop.cropName}</h4>
+                    <h4 className="font-bold text-slate-900 text-sm">{tr(crop.cropName)}</h4>
                     <Badge variant={crop.profit > 0 ? 'success' : 'danger'}>
                       {margin}% {language === 'bn' ? 'মুনাফা' : 'Margin'}
                     </Badge>
@@ -170,15 +170,7 @@ export const Profitability: React.FC = () => {
               <div key={cat.category} className="space-y-1">
                 <div className="flex items-center justify-between">
                   <span className="font-semibold text-slate-800">
-                    {language === 'bn'
-                      ? cat.category === 'Fertilizer & Nutrients' ? 'সার ও পুষ্টি'
-                        : cat.category === 'Labor & Operations' ? 'কৃষি শ্রমিক ও পারিশ্রমিক'
-                        : cat.category === 'Irrigation & Pumping' ? 'সেচ ও জ্বালানি'
-                        : cat.category === 'Pest & Disease Control' ? 'কীটনাশক ও ঔষধ'
-                        : cat.category === 'Seeds & Seedlings' ? 'বীজ ও চারা'
-                        : cat.category === 'Machinery & Fuel' ? 'যন্ত্রপাতি ও জ্বালানি'
-                        : cat.category
-                      : cat.category}
+                    {tr(cat.category)}
                   </span>
                   <div className="flex items-center gap-2">
                     <span className="font-mono text-slate-600 font-bold">
@@ -209,7 +201,7 @@ export const Profitability: React.FC = () => {
         <div className="grid grid-cols-2 sm:grid-cols-6 gap-3 text-xs">
           {metrics.monthlyFinancials.map((m) => (
             <div key={m.month} className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 text-center">
-              <span className="font-bold text-slate-700 block mb-1">{m.month}</span>
+              <span className="font-bold text-slate-700 block mb-1">{tr(m.month)}</span>
               <div className="space-y-0.5">
                 <span className="text-[11px] text-emerald-700 font-bold block">
                   +৳{(m.revenue / 1000).toFixed(0)}{tr('k')}</span>

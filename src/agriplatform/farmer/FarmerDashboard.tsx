@@ -26,6 +26,7 @@ import { getFarmerDashboardSummary, getCropBatches, toggleCalendarTask } from '@
 import { FarmerProfile, CropBatch, CalendarTask, CropLog } from '@/agriplatform/types';
 import { FarmerModuleKey } from '@/agriplatform/layout/AppLayout';
 import { useLanguage } from '@/agriplatform/lib/LanguageContext';
+import { tr } from '@/agriplatform/lib/localize';
 
 interface FarmerDashboardProps {
   onNavigate: (module: FarmerModuleKey) => void;
@@ -520,9 +521,9 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
                           </button>
                           <div className="truncate">
                             <p className={`font-semibold ${task.isCompleted ? 'line-through text-slate-400' : 'text-slate-800'}`}>
-                              {task.taskTitle}
+                              {tr(task.taskTitle)}
                             </p>
-                            <p className="text-[10px] text-slate-500">{task.cropName} • {task.scheduledDate}</p>
+                            <p className="text-[10px] text-slate-500">{tr(task.cropName)} • {task.scheduledDate}</p>
                           </div>
                         </div>
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ${
@@ -729,10 +730,10 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
                       recentLogs.slice(0, 3).map((log) => (
                         <div key={log.id} className="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs">
                           <div className="flex items-center justify-between mb-1">
-                            <span className="font-bold text-slate-800">{log.activityType}</span>
+                            <span className="font-bold text-slate-800">{tr(log.activityType)}</span>
                             <span className="text-[10px] text-slate-400">{log.date}</span>
                           </div>
-                          <p className="text-[11px] text-slate-600 line-clamp-2">{log.details}</p>
+                          <p className="text-[11px] text-slate-600 line-clamp-2">{tr(log.details)}</p>
                         </div>
                       ))
                     ) : (

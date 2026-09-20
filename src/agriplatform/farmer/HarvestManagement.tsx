@@ -143,8 +143,8 @@ export const HarvestManagement: React.FC = () => {
                     <PackageCheck className="w-4 h-4" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-slate-900">{lot.cropName}</h3>
-                    <p className="text-[11px] text-slate-400">{lot.variety}{tr('•')}{lot.fieldName}</p>
+                    <h3 className="text-sm font-bold text-slate-900">{tr(lot.cropName)}</h3>
+                    <p className="text-[11px] text-slate-400">{tr(lot.variety)}{tr('•')}{tr(lot.fieldName)}</p>
                   </div>
                 </div>
 
@@ -198,7 +198,7 @@ export const HarvestManagement: React.FC = () => {
                     <Warehouse className="w-3.5 h-3.5 text-slate-400" />
                     {language === 'bn' ? 'সংরক্ষণাগার / সাইট' : 'Storage Site'}
                   </span>
-                  <span className="font-medium text-slate-800 truncate max-w-[150px]">{lot.storageLocation}</span>
+                  <span className="font-medium text-slate-800 truncate max-w-[150px]">{tr(lot.storageLocation)}</span>
                 </div>
 
                 <div className="flex items-center justify-between">
@@ -251,7 +251,7 @@ export const HarvestManagement: React.FC = () => {
             onChange={(e) => setNewLot({ ...newLot, cropBatchId: e.target.value })}
             options={cropBatches.map((b) => ({
               value: b.id,
-              label: `${b.cropName} (${b.variety}) - ${b.fieldName}`,
+              label: `${tr(b.cropName)} (${tr(b.variety)}) - ${tr(b.fieldName)}`,
             }))}
           />
 

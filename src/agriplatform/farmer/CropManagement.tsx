@@ -152,8 +152,8 @@ export const CropManagement: React.FC<CropManagementProps> = ({ onNavigate }) =>
                     <Sprout className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-base font-bold text-slate-900">{crop.cropName}</h3>
-                    <p className="text-xs text-slate-500">{crop.variety}{tr('•')}{crop.category}</p>
+                    <h3 className="text-base font-bold text-slate-900">{tr(crop.cropName)}</h3>
+                    <p className="text-xs text-slate-500">{tr(crop.variety)}{tr('•')}{tr(crop.category)}</p>
                   </div>
                 </div>
 
@@ -178,11 +178,11 @@ export const CropManagement: React.FC<CropManagementProps> = ({ onNavigate }) =>
               <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 text-xs space-y-1.5">
                 <div className="flex items-center justify-between">
                   <span className="text-slate-500">{language === 'bn' ? 'বরাদ্দকৃত জমি/প্লট:' : 'Allocated Plot:'}</span>
-                  <span className="font-semibold text-slate-800">{crop.fieldName}</span>
+                  <span className="font-semibold text-slate-800">{tr(crop.fieldName)}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-slate-500">{language === 'bn' ? 'বীজের উৎস:' : 'Seed Provenance:'}</span>
-                  <span className="text-slate-700">{crop.seedSource}</span>
+                  <span className="text-slate-700">{tr(crop.seedSource)}</span>
                 </div>
               </div>
 
@@ -191,7 +191,7 @@ export const CropManagement: React.FC<CropManagementProps> = ({ onNavigate }) =>
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-bold text-slate-800">
                     {language === 'bn' ? 'বর্তমান পর্যায়: ' : 'Stage: '}
-                    <span className="text-emerald-700">{crop.growthStage}</span>
+                    <span className="text-emerald-700">{tr(crop.growthStage)}</span>
                   </span>
                   <span className="font-mono font-bold text-slate-700">
                     {crop.growthProgressPercent}% {language === 'bn' ? 'সম্পন্ন' : 'Complete'}
@@ -229,7 +229,7 @@ export const CropManagement: React.FC<CropManagementProps> = ({ onNavigate }) =>
                   <span className="text-[10px] text-slate-400 block uppercase">
                     {language === 'bn' ? 'সর্বশেষ কাজ' : 'Last Activity'}
                   </span>
-                  <span className="text-slate-700 font-medium truncate block">{crop.lastAction}</span>
+                  <span className="text-slate-700 font-medium truncate block">{tr(crop.lastAction)}</span>
                 </div>
               </div>
             </div>
@@ -265,7 +265,7 @@ export const CropManagement: React.FC<CropManagementProps> = ({ onNavigate }) =>
             label={language === 'bn' ? 'জমির প্লট' : 'Field Plot'}
             value={newBatch.fieldId}
             onChange={(e) => setNewBatch({ ...newBatch, fieldId: e.target.value })}
-            options={fields.map((f) => ({ value: f.id, label: `${f.name} (${f.sizeAcres} ${language === 'bn' ? 'একর' : 'Acres'})` }))}
+            options={fields.map((f) => ({ value: f.id, label: `${tr(f.name)} (${f.sizeAcres} ${language === 'bn' ? 'একর' : 'Acres'})` }))}
           />
 
           <div className="grid grid-cols-2 gap-3">

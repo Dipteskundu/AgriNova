@@ -109,7 +109,7 @@ export const CropComparison: React.FC = () => {
               >
                 {isSelected && <Check className="w-3.5 h-3.5 text-emerald-600" />}
                 <span>
-                  {crop.cropName} ({crop.variety})
+                  {tr(crop.cropName)} ({tr(crop.variety)})
                 </span>
               </button>
             );
@@ -129,10 +129,10 @@ export const CropComparison: React.FC = () => {
                 {comparedCrops.map((crop) => (
                   <th key={crop.id} className="p-4 text-slate-900 min-w-[200px] border-l border-slate-200">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-bold">{crop.cropName}</span>
-                      <Badge variant="success">{crop.season}</Badge>
+                      <span className="text-sm font-bold">{tr(crop.cropName)}</span>
+                      <Badge variant="success">{tr(crop.season)}</Badge>
                     </div>
-                    <p className="text-[11px] text-slate-500 font-normal mt-0.5">{crop.variety}</p>
+                    <p className="text-[11px] text-slate-500 font-normal mt-0.5">{tr(crop.variety)}</p>
                   </th>
                 ))}
               </tr>

@@ -288,6 +288,85 @@ export const BN_DATA_DICT: Record<string, string> = {
     "অনুকূল বৃষ্টিপাত ও বারি গম-৩৩ গ্রহণ বৃদ্ধির কারণে ৫ বছরের গড়ের তুলনায় ১৪.৮% বেশি শস্য ফলন প্রক্ষেপণ করা হচ্ছে।",
   "Average settlement time to smallholder accounts reduced from 14 days in legacy wholesale mandis to under 3.2 hours via direct escrow.":
     "প্রচলিত পাইকারি মণ্ডীতে ১৪ দিনের নিষ্পত্তিকাল ডাইরেক্ট এসক্রোর মাধ্যমে ক্ষুদ্র কৃষকের অ্যাকাউন্টে ৩.২ ঘণ্টার নিচে নামিয়ে আনা হয়েছে।",
+
+  // -------- Farm expenses (initialFarmExpenses data values) --------
+  "Fertilizers": "সার ক্রয়",
+  "Pesticides": "কীটনাশক",
+  "Labor Wages": "শ্রমিকের মজুরি",
+  "Irrigation Energy": "সেচ ও বিদ্যুৎ",
+  "Machinery & Fuel": "যন্ত্রপাতি ও জ্বালানি",
+  "Seeds & Seedlings": "বীজ ও চারা",
+  "Transport & Storage": "পরিবহন ও সংরক্ষণ",
+  "Other": "অন্যান্য",
+  "Cash": "নগদ",
+  "Mobile Banking (bKash/Nagad)": "মোবাইল ব্যাংকিং (বিকাশ/নগদ)",
+  "Bank Transfer": "ব্যাংক ট্রান্সফার",
+  "Purchase of 3 bags MOP and 2 bags TSP from BADC authorized dealer":
+    "বিএডিসি অনুমোদিত ডিলার থেকে ৩ বস্তা এমওপি ও ২ বস্তা টিএসপি সার ক্রয়",
+  "Bt Organic suspension and bio-fungicide bottles":
+    "বিটি জৈব সাসপেনশন ও জৈব-ছত্রাকনাশক বোতল",
+  "Labor payment for manual intercultural weeding and ridge reshaping (4 workers)":
+    "হাতে নিড়ানি ও আইল ঠিক করার কাজের মজুরি (৪ শ্রমিক)",
+  "Monthly solar inverter maintenance and grid backup tariff electricity":
+    "মাসিক সোলার ইনভার্টার রক্ষণাবেক্ষণ ও গ্রিড ব্যাকআপ বিদ্যুৎ বিল",
+  "Power tiller diesel and rotary blade servicing for Plot B2 bed preparation":
+    "প্লট বি-২ এর বেড প্রস্তুতিতে পাওয়ার টিলারের ডিজেল ও রোটারি ব্লেড সার্ভিসিং",
+  "BARI Sharisha-14 foundation seed procurement":
+    "বারি সরিষা-১৪ ফাউন্ডেশন বীজ সংগ্রহ",
+
+  // -------- Crop logs (initialCropLogs data values) --------
+  "Fertilizer Application": "সার প্রয়োগ",
+  "Pest & Disease Spray": "কীট ও রোগ নিয়ন্ত্রণ স্প্রে",
+  "Weeding": "আগাছা নিধন ও মাটি খোঁচা",
+  "Irrigation": "সেচ প্রদান",
+  "Soil Scouting": "মাটি পরিদর্শন ও পর্যবেক্ষণ",
+  "Growth Observation": "গাছের বৃদ্ধি পর্যবেক্ষণ",
+  "Applied Muriate of Potash (MOP) to accelerate grain filling panicle firmness.":
+    "শস্য পূরণের সময় কাণ্ড মজবুত করতে মিউরিয়েট অফ পটাশ (এমওপি) প্রয়োগ করা হয়েছে।",
+  "Preventive biocontrol spraying against Fall Armyworm using Bacillus thuringiensis (Bt).":
+    "ফল আর্মিওয়ার্ম (শুঁয়োপোকা) দমনে ব্যাসিলাস থুরিনজিয়েনসিস (বিটি) দিয়ে প্রতিরোধমূলক জৈব-স্প্রে প্রয়োগ।",
+  "Manual hand hoeing and weed removal of broadleaf weeds.":
+    "চওড়া পাতার আগাছা দূর করতে হাত দিয়ে কোদালে মাটি খোঁচা ও আগাছা পরিষ্কার।",
+  "Organic cold-pressed neem oil emulsion applied to prevent early aphid colonies.":
+    "প্রাথমিক এফিড (জাবপোকা) দমনে জৈব কোল্ড-প্রেসড নিম তেল ইমালসন প্রয়োগ।",
+  "Micro-drip irrigation run for 2.5 hours providing targeted root hydration.":
+    "মূল পর্যন্ত পানি পৌঁছাতে ২.৫ ঘণ্টার মাইক্রো-ড্রিপ সেচ চালানো হয়েছে।",
+  "Clear skies, 29°C, mild breeze": "পরিষ্কার আকাশ, ২৯°সে, মৃদু বাতাস",
+  "Overcast, 27°C, low wind speed": "মেঘলা আকাশ, ২৭°সে, কম বাতাসের গতি",
+  "Sunny, 31°C": "রোদেলা দিন, ৩১°সে",
+  "Partly cloudy, 28°C": "আংশিক মেঘলা, ২৮°সে",
+  "Hot, 33°C": "গরম আবহাওয়া, ৩৩°সে",
+
+  // -------- Profitability (initialProfitabilityMetrics data values) --------
+  "Mungbean": "মুগ ডাল",
+  "Fertilizers & Nutrients": "সার ও পুষ্টি উপাদান",
+  "Seeds & Propagation": "বীজ ও চারা-উৎপাদন",
+  "Irrigation & Electricity": "সেচ ও বিদ্যুৎ",
+  "Pest Control & Scouting": "কীটনাশক ও পরিদর্শন",
+  "Apr 2026": "এপ্রিল ২০২৬",
+  "May 2026": "মে ২০২৬",
+  "Jun 2026": "জুন ২০২৬",
+  "Jul 2026": "জুলাই ২০২৬",
+  "Aug 2026": "আগস্ট ২০২৬",
+  "Sep 2026": "সেপ্টেম্বর ২০২৬",
+
+  // -------- Crop calendar task titles (initialCalendarTasks) --------
+  "Monitor Panicle Moisture & Drain Standing Water":
+    "শীষের আর্দ্রতা পর্যবেক্ষণ ও দাঁড়ানো পানি নিষ্কাশন করুন",
+  "Second Nitrogen Side-Dressing (Urea)":
+    "দ্বিতীয় ধাপের নাইট্রোজেন সাইড-ড্রেসিং (ইউরিয়া)",
+  "Flower Bud Inspection & Pollinator Bee Box Check":
+    "ফুলের মুকুল পরিদর্শন ও পরাগায়নকারী মৌমাছির বাক্স পরীক্ষা",
+  "First Batch Bunches Harvesting (Ready Tier)":
+    "প্রথম ব্যাচের থোড় কাটা (পাকা পর্যায়)",
+  "Crown Root Irrigation Stage Check":
+    "মূল—শিকড় গঠনের সেচ ধাপ পরীক্ষা",
+
+  // -------- UI labels (sporadic English literals from module pages) --------
+  "Instructor: ": "প্রশিক্ষক: ",
+  "Total Minutes": "মোট মিনিট",
+  "e.g. Severe Nor'wester (Kalbaishakhi) Storm Warning":
+    "যেমন: তীব্র উত্তর-পশ্চিম (কালবৈশাখী) ঝড় সতর্কতা",
 };
 
 function localizeString(value: string): string {

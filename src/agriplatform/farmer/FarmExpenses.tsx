@@ -236,7 +236,7 @@ export const FarmExpenses: React.FC = () => {
               {filteredExpenses.map((exp) => (
                 <tr key={exp.id} className="hover:bg-slate-50/60 transition-colors">
                   <td className="p-4">
-                    <span className="font-bold text-slate-900 block">{exp.description}</span>
+                    <span className="font-bold text-slate-900 block">{tr(exp.description)}</span>
                     <span className="text-[11px] text-slate-400">
                       {exp.date} {exp.receiptReference && `• Ref: ${exp.receiptReference}`}
                     </span>
@@ -253,19 +253,19 @@ export const FarmExpenses: React.FC = () => {
                           : 'neutral'
                       }
                     >
-                      {exp.category}
+                      {tr(exp.category)}
                     </Badge>
                   </td>
                   <td className="p-4">
-                    <span className="font-medium text-slate-800">{exp.fieldOrFarm}</span>
+                    <span className="font-medium text-slate-800">{tr(exp.fieldOrFarm)}</span>
                     {exp.cropName && (
-                      <span className="text-[11px] text-slate-400 block">{exp.cropName}</span>
+                      <span className="text-[11px] text-slate-400 block">{tr(exp.cropName)}</span>
                     )}
                   </td>
                   <td className="p-4 text-slate-600">
                     <div className="flex items-center gap-1">
                       <CreditCard className="w-3 h-3 text-slate-400" />
-                      <span>{exp.paymentMethod}</span>
+                      <span>{tr(exp.paymentMethod)}</span>
                     </div>
                   </td>
                   <td className="p-4 text-right">
