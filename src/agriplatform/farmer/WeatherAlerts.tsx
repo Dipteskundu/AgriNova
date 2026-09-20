@@ -103,7 +103,7 @@ export const WeatherAlerts: React.FC = () => {
                 }`}
               />
               <div className="space-y-1 text-xs">
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                   <span className="font-bold text-sm">{tr(alert.title)}</span>
                   <Badge
                     variant={

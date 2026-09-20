@@ -132,7 +132,7 @@ export const Profitability: React.FC = () => {
                     </Badge>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-2 text-xs">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
                     <div>
                       <span className="text-[10px] text-slate-400 block uppercase">
                         {language === 'bn' ? 'আয়' : 'Revenue'}

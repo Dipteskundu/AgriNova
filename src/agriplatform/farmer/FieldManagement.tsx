@@ -238,7 +238,7 @@ export const FieldManagement: React.FC = () => {
                   <span className="text-[10px] text-slate-400 uppercase tracking-wider block mb-1.5">
                     {language === 'bn' ? 'বিদ্যমান পুষ্টি উপাদান (কেজি/হেক্টর)' : 'Available Nutrients (kg/ha)'}
                   </span>
-                  <div className="grid grid-cols-3 gap-1.5 text-center text-[11px]">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 text-center text-[11px]">
                     <div className="p-1 rounded bg-slate-100 font-medium">
                       N {language === 'bn' ? '(নাইট্রোজেন)' : '(Nitrogen)'}{tr(':')}<span className="font-bold text-slate-800">{field.nitrogenLevelKgPerHa}</span>
                     </div>
@@ -295,7 +295,7 @@ export const FieldManagement: React.FC = () => {
             onChange={(e) => setNewField({ ...newField, farmId: e.target.value })}
             options={farms.map((f) => ({ value: f.id, label: `${tr(f.name)} (${tr(f.location)})` }))}
           />
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <FormInput
               id="plotName"
               label={language === 'bn' ? 'প্লটের নাম বা নম্বর' : 'Field Plot Name / Number'}
@@ -315,7 +315,7 @@ export const FieldManagement: React.FC = () => {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <FormInput
               id="currentCrop"
               label={language === 'bn' ? 'বর্তমান রোপিত ফসল' : 'Current Planted Crop (Optional)'}
@@ -338,7 +338,7 @@ export const FieldManagement: React.FC = () => {
             <label className="text-xs font-semibold text-slate-700 block mb-1">
               {language === 'bn' ? 'মাটির পুষ্টি উপাদান (কেজি / হেক্টর)' : 'Soil Nutrients (kg / ha)'}
             </label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               <FormInput
                 id="nitrogen"
                 label={language === 'bn' ? 'নাইট্রোজেন (N)' : 'Nitrogen (N)'}
@@ -366,7 +366,7 @@ export const FieldManagement: React.FC = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <FormInput
               id="moisture"
               label={language === 'bn' ? 'আর্দ্রতা (%)' : 'Moisture Level (%)'}

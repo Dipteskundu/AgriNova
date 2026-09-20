@@ -40,4 +40,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# project prompt files (do not publish)
+Mohiuddin_Farmer_Admin_Portal_AI_Prompt.md
+AGENTS.md
+CLAUDE.md
+dev-server.log
+dev-server.err.log
+
 .vercel

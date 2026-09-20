@@ -113,7 +113,7 @@ export const FarmerProfile: React.FC = () => {
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 rounded-2xl bg-emerald-700 text-white flex items-center justify-center font-bold text-2xl border-2 border-emerald-500/20 shadow-xs">{tr('MK')}</div>
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-xl font-bold text-slate-900">{profile.fullName}</h2>
               <Badge variant="success">
                 <ShieldCheck className="w-3.5 h-3.5 mr-1" />
@@ -303,7 +303,7 @@ export const FarmerProfile: React.FC = () => {
             onChange={(e) => setEditForm({ ...editForm, fullName: e.target.value })}
             required
           />
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <FormInput
               id="phoneNumber"
               label={language === 'bn' ? 'মোবাইল নম্বর' : 'Phone Number'}
@@ -333,7 +333,7 @@ export const FarmerProfile: React.FC = () => {
             <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">
               {language === 'bn' ? 'ব্যাংক লেনদেন তথ্য' : 'Bank Settlement Details'}
             </h4>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <FormInput
                 id="bankName"
                 label={language === 'bn' ? 'ব্যাংকের নাম' : 'Bank Name'}

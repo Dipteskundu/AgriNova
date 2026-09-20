@@ -213,7 +213,7 @@ export const CropCatalog: React.FC = () => {
         maxWidth="lg"
       >
         <form onSubmit={handleCreate} className="space-y-3">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <FormInput
               id="cropName"
               label={tr('Crop Name')}
@@ -232,7 +232,7 @@ export const CropCatalog: React.FC = () => {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <FormSelect
               id="category"
               label={tr('Agronomic Category')}
@@ -259,7 +259,7 @@ export const CropCatalog: React.FC = () => {
             />
           </div>
 
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <FormInput
               id="standardYield"
               label={tr('Yield (Kg / Acre)')}

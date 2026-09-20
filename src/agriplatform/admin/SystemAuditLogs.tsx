@@ -71,6 +71,7 @@ export const SystemAuditLogs: React.FC = () => {
       log.actionType.toLowerCase().includes(searchQuery.toLowerCase()) ||
       log.actorName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       log.details.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      tr(log.details).toLowerCase().includes(searchQuery.toLowerCase()) ||
       log.ipAddress.includes(searchQuery);
 
     const matchesStatus = statusFilter === 'All' || log.status === statusFilter;
@@ -151,13 +152,13 @@ export const SystemAuditLogs: React.FC = () => {
                   <td className="p-4 text-slate-500 whitespace-nowrap">{log.timestamp}</td>
                   <td className="p-4 font-sans">
                     <span className="font-bold text-slate-900 block">{log.actorName}</span>
-                    <span className="text-[10px] text-slate-400 font-mono">{log.actorRole}</span>
+                    <span className="text-[10px] text-slate-400 font-mono">{tr(log.actorRole)}</span>
                   </td>
                   <td className="p-4">
-                    <Badge variant="neutral">{log.actionType}</Badge>
+                    <Badge variant="neutral">{tr(log.actionType)}</Badge>
                   </td>
                   <td className="p-4 text-slate-700">
-                    <span>{log.targetEntity}</span>
+                    <span>{tr(log.targetEntity)}</span>
                     <span className="text-slate-400 block text-[10px]">{log.entityId}</span>
                   </td>
                   <td className="p-4 text-slate-500">{log.ipAddress}</td>
@@ -171,10 +172,10 @@ export const SystemAuditLogs: React.FC = () => {
                           : 'warning'
                       }
                     >
-                      {log.status.toUpperCase()}
+                      {tr(log.status === 'success' ? 'Success' : log.status === 'warning' ? 'Warning' : 'Failure')}
                     </Badge>
                   </td>
-                  <td className="p-4 font-sans text-slate-600 max-w-xs">{log.details}</td>
+                  <td className="p-4 font-sans text-slate-600 max-w-xs">{tr(log.details)}</td>
                 </tr>
               ))}
             </tbody>

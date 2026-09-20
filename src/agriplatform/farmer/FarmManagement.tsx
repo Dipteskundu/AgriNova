@@ -217,7 +217,7 @@ export const FarmManagement: React.FC = () => {
             onChange={(e) => setNewFarm({ ...newFarm, location: e.target.value })}
             required
           />
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <FormInput
               id="totalAreaAcres"
               label={tr('Total Land Area (Acres)')}
@@ -242,7 +242,7 @@ export const FarmManagement: React.FC = () => {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <FormInput
               id="waterSource"
               label={tr('Water Supply Source')}
@@ -261,7 +261,7 @@ export const FarmManagement: React.FC = () => {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <FormInput
               id="lat"
               label={tr('Latitude')}

@@ -91,7 +91,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
           <p className="text-xs text-slate-400 mt-1 max-w-xl">{tr('Supervising regional land registries, DAE extension courses, real-time commodity trading, and agro-met advisories across Bangladesh.')}</p>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
           <Button
             variant="secondary"
             size="sm"
@@ -376,9 +376,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
                   }`}
                 />
                 <div>
-                  <span className="font-bold text-slate-900">{log.actionType}</span>
-                  <span className="text-slate-500 ml-2">{tr('by')}{log.actorName} ({log.actorRole})</span>
-                  <p className="text-slate-600 text-[11px] mt-0.5">{log.details}</p>
+                  <span className="font-bold text-slate-900">{tr(log.actionType)}</span>
+                  <span className="text-slate-500 ml-2">{tr('by')}{log.actorName} ({tr(log.actorRole)})</span>
+                  <p className="text-slate-600 text-[11px] mt-0.5">{tr(log.details)}</p>
                 </div>
               </div>
 

@@ -178,7 +178,7 @@ export const TrainingManagement: React.FC = () => {
             required
           />
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <FormInput
               id="instructor"
               label={tr('Assigned Lead Instructor')}

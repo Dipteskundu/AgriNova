@@ -87,7 +87,7 @@ export const CropRecommendation: React.FC<CropRecommendationProps> = ({ onNaviga
         </div>
 
         {onNavigate && (
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Button
               variant="outline"
               size="sm"
@@ -293,7 +293,7 @@ export const CropRecommendation: React.FC<CropRecommendationProps> = ({ onNaviga
                 </div>
               </div>
 
-              <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+              <div className="mt-4 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-xs text-slate-500">
                 <span>{language === 'bn' ? `পাকতে সময়: ${item.maturityPeriodDays} দিন` : `Maturity: ${item.maturityPeriodDays} Days`}</span>
                 <span>{language === 'bn' ? `পানি: ${item.waterRequirementMm} মিমি` : `Water: ${item.waterRequirementMm} mm`}</span>
                 <span className="font-semibold text-slate-800">{language === 'bn' ? `বাজারদর: ৳${item.expectedMarketPricePerKg}/কেজি` : `Mkt: ৳${item.expectedMarketPricePerKg}/kg`}</span>

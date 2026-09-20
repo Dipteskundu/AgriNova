@@ -213,7 +213,7 @@ export const AdvisoryManagement: React.FC = () => {
             required
           />
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <FormSelect
               id="severity"
               label={tr('Severity')}
@@ -251,7 +251,7 @@ export const AdvisoryManagement: React.FC = () => {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <FormInput
               id="targetCrops"
               label={tr('Target Crops (comma-separated)')}

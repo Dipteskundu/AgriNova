@@ -201,7 +201,7 @@ export const HarvestManagement: React.FC = () => {
                   <span className="font-medium text-slate-800 truncate max-w-[150px]">{tr(lot.storageLocation)}</span>
                 </div>
 
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
                   <span className="text-slate-500">{language === 'bn' ? 'বাজারজাতকরণের অবস্থা' : 'Market Readiness'}</span>
                   <Badge
                     variant={
@@ -255,7 +255,7 @@ export const HarvestManagement: React.FC = () => {
             }))}
           />
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <FormInput
               id="quantityKg"
               label={language === 'bn' ? 'মোট ফলন (কেজি)' : 'Net Quantity (kg)'}
@@ -277,7 +277,7 @@ export const HarvestManagement: React.FC = () => {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <FormSelect
               id="qualityGrade"
               label={language === 'bn' ? 'মানের গ্রেড' : 'Quality Grade'}
@@ -314,7 +314,7 @@ export const HarvestManagement: React.FC = () => {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <FormInput
               id="storageLocation"
               label={language === 'bn' ? 'গুদামের নাম / অবস্থান' : 'Storage Location / Warehouse'}

@@ -206,12 +206,12 @@ export const AiRecommendationResult: React.FC<AiRecommendationResultProps> = ({
 
       {/* Action Footer */}
       {onNavigate && (
-        <div className="p-5 bg-white rounded-2xl border border-slate-200/80 flex items-center justify-between gap-4">
+        <div className="p-5 bg-white rounded-2xl border border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h4 className="font-bold text-slate-900 text-sm">{tr('Ready to execute this crop recommendation?')}</h4>
             <p className="text-xs text-slate-500">{tr('Apply this fertilizer regimen directly to your field batch or compare against alternative winter crops.')}</p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Button
               variant="outline"
               size="sm"

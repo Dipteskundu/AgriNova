@@ -273,7 +273,7 @@ export const CropLogs: React.FC = () => {
             rows={3}
           />
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <FormInput
               id="inputUsed"
               label={language === 'bn' ? 'ব্যবহৃত সার / কীটনাশক' : 'Input Material / Chemical'}
@@ -290,7 +290,7 @@ export const CropLogs: React.FC = () => {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <FormInput
               id="costIncurred"
               label={language === 'bn' ? 'মোট খরচ (টাকা)' : 'Direct Cost Incurred (BDT)'}

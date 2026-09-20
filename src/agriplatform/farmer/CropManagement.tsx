@@ -124,7 +124,7 @@ export const CropManagement: React.FC<CropManagementProps> = ({ onNavigate }) =>
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {onNavigate && (
             <Button variant="outline" size="sm" onClick={() => onNavigate('logs')}>
               {language === 'bn' ? 'কাজের ডায়েরি দেখুন' : 'Crop Logs Feed'}
@@ -147,7 +147,7 @@ export const CropManagement: React.FC<CropManagementProps> = ({ onNavigate }) =>
           <Card key={crop.id} className="flex flex-col justify-between hover:border-slate-300 transition-all">
             <div>
               <div className="flex items-start justify-between gap-2 mb-3">
-                <div className="flex items-center gap-2.5">
+                <div className="flex items-center gap-2.5 min-w-0 flex-1">
                   <div className="p-2.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100">
                     <Sprout className="w-5 h-5" />
                   </div>
@@ -165,6 +165,7 @@ export const CropManagement: React.FC<CropManagementProps> = ({ onNavigate }) =>
                       ? 'info'
                       : 'warning'
                   }
+                  className="shrink-0"
                 >
                   <HeartPulse className="w-3.5 h-3.5 mr-1" />
                   {crop.healthRating === 'Excellent'
@@ -268,7 +269,7 @@ export const CropManagement: React.FC<CropManagementProps> = ({ onNavigate }) =>
             options={fields.map((f) => ({ value: f.id, label: `${tr(f.name)} (${f.sizeAcres} ${language === 'bn' ? 'একর' : 'Acres'})` }))}
           />
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <FormInput
               id="cropName"
               label={language === 'bn' ? 'ফসলের নাম' : 'Crop Name'}
@@ -287,7 +288,7 @@ export const CropManagement: React.FC<CropManagementProps> = ({ onNavigate }) =>
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <FormSelect
               id="category"
               label={language === 'bn' ? 'ফসলের শ্রেণি' : 'Crop Category'}
@@ -312,7 +313,7 @@ export const CropManagement: React.FC<CropManagementProps> = ({ onNavigate }) =>
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <FormInput
               id="sowingDate"
               label={language === 'bn' ? 'রোপণের তারিখ' : 'Sowing Date'}

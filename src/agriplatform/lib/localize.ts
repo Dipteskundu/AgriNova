@@ -367,6 +367,28 @@ export const BN_DATA_DICT: Record<string, string> = {
   "Total Minutes": "মোট মিনিট",
   "e.g. Severe Nor'wester (Kalbaishakhi) Storm Warning":
     "যেমন: তীব্র উত্তর-পশ্চিম (কালবৈশাখী) ঝড় সতর্কতা",
+
+  // -------- System audit log (admin dashboard feed + ledger) --------
+  "HARVEST_LOT_RECORDED": "ফসল তোলা লট নথিভুক্ত",
+  "FARM_CADASTRAL_VERIFIED": "খতিয়ান যাচাই সম্পন্ন",
+  "COLD_CHAIN_ALERT_TRIGGERED": "কোল্ড চেইন সতর্কতা সক্রিয়",
+  "ADVISORY_BROADCAST": "পরামর্শ সম্প্রচার",
+  "HarvestRecord": "ফসল তোলার রেকর্ড",
+  "FarmVerification": "খামার যাচাইকরণ",
+  "LogisticsFleet": "লজিস্টিকস বহর",
+  "AgronomicAdvisory": "কৃষি পরামর্শ",
+  "Farmer": "কৃষক",
+  "Extension Officer": "সম্প্রসারণ কর্মকর্তা",
+  "Automated Daemon": "স্বয়ংক্রিয় সিস্টেম",
+  "Agronomist": "কৃষিবিদ",
+  "Logged 4,200 kg Boro Paddy harvest batch at Sherpur Grain Silo B3":
+    "শেরপুর গ্রেইন সাইলো B3-এ ৪,২০০ কেজি বোরো ধান তোলার লট লগ করা হয়েছে",
+  "Verified cadastral deed 304 for farmer Abdul Malek Sarker (12 acres)":
+    "কৃষক আব্দুল মালেক সরকারের (১২ একর) খতিয়ান দলিল ৩০৪ যাচাই করা হয়েছে",
+  "Temperature sensor in Van DHA-11-9021 exceeded threshold (+14.2°C)":
+    "ভ্যান DHA-11-9021-এর তাপমাত্রা সেন্সর নির্ধারিত মাত্রা (+১৪.২°সে) ছাড়িয়ে গেছে",
+  "Dispatched BPH hopper burn alert across Bogura and Naogaon districts":
+    "বগুড়া ও নওগাঁ জেলায় বিএফএইচ হপার বার্ন সতর্কতা প্রেরণ করা হয়েছে",
 };
 
 function localizeString(value: string): string {

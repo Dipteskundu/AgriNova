@@ -201,7 +201,7 @@ export const AgriculturalTraining: React.FC = () => {
                 {selectedCourse.syllabus.map((lesson, idx) => (
                   <div
                     key={lesson.title}
-                    className="p-3.5 flex items-center justify-between hover:bg-slate-50 transition-colors"
+                    className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:bg-slate-50 transition-colors"
                   >
                     <div className="flex items-center gap-3">
                       <div

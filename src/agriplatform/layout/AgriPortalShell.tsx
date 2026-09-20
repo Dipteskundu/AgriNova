@@ -287,7 +287,7 @@ export const AgriPortalShell: React.FC<AgriPortalShellProps> = ({ portal, childr
               <div className="w-8 h-8 rounded-xl bg-emerald-700 flex items-center justify-center text-white font-bold shadow-xs shrink-0">
                 <Sprout className="w-4 h-4" />
               </div>
-              <span className="font-black text-slate-900 tracking-tight text-sm sm:text-base">
+              <span className="hidden sm:inline font-black text-slate-900 tracking-tight text-sm sm:text-base">
                 {tr('AgriPlatform')}
               </span>
             </button>
@@ -299,7 +299,7 @@ export const AgriPortalShell: React.FC<AgriPortalShellProps> = ({ portal, childr
                 className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-emerald-50 hover:text-emerald-800 text-xs font-bold text-slate-700 transition-colors cursor-pointer shrink-0"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
-                <span>{language === "bn" ? "হোম" : "Home"}</span>
+                <span className="hidden sm:inline">{language === "bn" ? "হোম" : "Home"}</span>
               </button>
             )}
 
@@ -313,7 +313,7 @@ export const AgriPortalShell: React.FC<AgriPortalShellProps> = ({ portal, childr
           {/* Right Action: Language Switcher, Services Drawer, Notifications & User */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             {/* Minimal Language Switcher */}
-            <LanguageSwitcher />
+            <LanguageSwitcher responsive />
 
             {/* All Services Drawer Trigger (Icon-driven) */}
             <button

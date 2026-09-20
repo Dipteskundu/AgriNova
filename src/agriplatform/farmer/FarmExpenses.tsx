@@ -289,7 +289,7 @@ export const FarmExpenses: React.FC = () => {
         maxWidth="lg"
       >
         <form onSubmit={handleAddExpense} className="space-y-4">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <FormSelect
               id="category"
               label={language === 'bn' ? 'খরচের খাত' : 'Expense Category'}
@@ -322,7 +322,7 @@ export const FarmExpenses: React.FC = () => {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <FormInput
               id="date"
               label={language === 'bn' ? 'খরচের তারিখ' : 'Transaction Date'}
