@@ -1,6 +1,24 @@
 import { getErrorDetails, getResponseErrorMessage } from "@/lib/errors";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+function resolveApiBase(): string {
+  const raw = process.env.NEXT_PUBLIC_API_URL?.trim();
+  if (!raw) {
+    throw new Error(
+      "NEXT_PUBLIC_API_URL is not set. Define it in .env.local (dev) or Vercel env vars (prod)."
+    );
+  }
+  const base = raw.replace(/\/+$/, "");
+  return base.endsWith("/api") ? base : `${base}/api`;
+}
+
+let cachedApiBase: string | null = null;
+
+function getApiBase(): string {
+  if (cachedApiBase === null) {
+    cachedApiBase = resolveApiBase();
+  }
+  return cachedApiBase;
+}
 
 const TOKEN_KEY = "farmPath_token";
 
