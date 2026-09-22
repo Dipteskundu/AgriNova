@@ -32,6 +32,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+.env.local
 
 # vercel
 .vercel
@@ -39,3 +40,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# project prompt files (do not publish)
+Mohiuddin_Farmer_Admin_Portal_AI_Prompt.md
+AGENTS.md
+CLAUDE.md
+dev-server.log
+dev-server.err.log

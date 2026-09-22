@@ -1,19 +1,292 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Light mode tokens */
+  --bg-base: #f8fafc;
+  --bg-surface-1: #ffffff;
+  --bg-surface-2: #f8fafc;
+  --bg-surface-3: #f1f5f9;
+  --bg-elevated: #ffffff;
+  --border-default: #e2e8f0;
+  --border-subtle: #f1f5f9;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --accent: #059669;
+  --accent-soft: #d1fae5;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  /* Obsidian Noir tokens */
+  --bg-base: #000000;
+  --bg-surface-1: #0a0a0a;
+  --bg-surface-2: #111111;
+  --bg-surface-3: #1a1a1a;
+  --bg-elevated: #222222;
+  --border-default: #222222;
+  --border-subtle: #1a1a1a;
+  --text-primary: #f0f0f0;
+  --text-secondary: #a0a0a0;
+  --text-muted: #666666;
+  --accent: #10b981;
+  --accent-soft: rgba(16, 185, 129, 0.1);
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
+  color: var(--text-primary);
+  background: var(--bg-base);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Smooth theme transition */
+.theme-transitioning,
+.theme-transitioning *,
+.theme-transitioning *::before,
+.theme-transitioning *::after {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+/* Premium dark mode card glow */
+.dark-glow {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06),
+              0 4px 24px rgba(0, 0, 0, 0.5),
+              inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+/* Premium dark mode elevated glow */
+.dark-glow-strong {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08),
+              0 8px 32px rgba(0, 0, 0, 0.6),
+              inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* Dark mode glassmorphism */
+.dark-glass {
+  background: rgba(10, 10, 10, 0.85);
+  backdrop-filter: blur(16px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Dark mode subtle border glow on hover */
+.dark-glow-hover:hover {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08),
+              0 8px 32px rgba(0, 0, 0, 0.5),
+              inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Dark mode accent button glow */
+.dark-accent-glow {
+  box-shadow: 0 0 16px rgba(16, 185, 129, 0.3),
+              0 0 4px rgba(16, 185, 129, 0.2);
+}
+
+/* Dark mode input focus glow */
+.dark-focus-glow:focus {
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25),
+              0 0 12px rgba(16, 185, 129, 0.15);
+}
+
+/* Drawer slide-in animation */
+@keyframes drawer-slide-in {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Drawer slide-out animation */
+@keyframes drawer-slide-out {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+/* Backdrop fade-in animation */
+@keyframes backdrop-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Backdrop fade-out animation */
+@keyframes backdrop-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Animation utility classes */
+.animate-drawer-in {
+  animation: drawer-slide-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-drawer-out {
+  animation: drawer-slide-out 0.25s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+.animate-backdrop-in {
+  animation: backdrop-fade-in 0.2s ease-out forwards;
+}
+
+.animate-backdrop-out {
+  animation: backdrop-fade-out 0.2s ease-in forwards;
+}
+
+/* ===== Error Page Animations ===== */
+
+/* Sway animation for crops/scarecrow */
+@keyframes error-sway {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+
+/* Float animation for clouds/elements */
+@keyframes error-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+
+/* Bounce-in animation for error code */
+@keyframes error-bounce-in {
+  0% { transform: scale(0); opacity: 0; }
+  50% { transform: scale(1.15); }
+  70% { transform: scale(0.95); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Pulse glow for buttons */
+@keyframes error-pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+  50% { box-shadow: 0 0 20px 6px rgba(16, 185, 129, 0.15); }
+}
+
+/* Drift animation for birds flying across */
+@keyframes error-drift {
+  0% { transform: translateX(-60px) scaleX(1); }
+  49% { transform: translateX(calc(100vw + 60px)) scaleX(1); }
+  50% { transform: translateX(calc(100vw + 60px)) scaleX(-1); }
+  100% { transform: translateX(-60px) scaleX(-1); }
+}
+
+/* Smoke rise for tractor */
+@keyframes error-smoke-rise {
+  0% { transform: translateY(0) scale(1); opacity: 0.7; }
+  100% { transform: translateY(-30px) scale(1.8); opacity: 0; }
+}
+
+/* Wilting plant animation */
+@keyframes error-wilt {
+  0%, 100% { transform: rotate(0deg) scaleY(1); }
+  50% { transform: rotate(-8deg) scaleY(0.92); }
+}
+
+/* Subtle shake for error emphasis */
+@keyframes error-shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+  20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+
+/* Fade in up for staggered content */
+@keyframes error-fade-in-up {
+  0% { transform: translateY(20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+/* Grass wave animation */
+@keyframes error-grass-wave {
+  0%, 100% { transform: skewX(0deg); }
+  25% { transform: skewX(3deg); }
+  75% { transform: skewX(-3deg); }
+}
+
+/* Sun ray rotate */
+@keyframes error-sun-rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Animation utility classes for error page */
+.animate-error-sway {
+  animation: error-sway 3s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+.animate-error-float {
+  animation: error-float 3s ease-in-out infinite;
+}
+
+.animate-error-bounce-in {
+  animation: error-bounce-in 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.animate-error-pulse-glow {
+  animation: error-pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-error-drift {
+  animation: error-drift 8s linear infinite;
+}
+
+.animate-error-smoke {
+  animation: error-smoke-rise 2s ease-out infinite;
+}
+
+.animate-error-wilt {
+  animation: error-wilt 4s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+.animate-error-shake {
+  animation: error-shake 0.6s ease-in-out;
+}
+
+.animate-error-fade-in-up {
+  animation: error-fade-in-up 0.6s ease-out forwards;
+}
+
+.animate-error-grass {
+  animation: error-grass-wave 2.5s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+.animate-error-sun {
+  animation: error-sun-rotate 20s linear infinite;
+}
+
+/* Stagger delays for sequential animations */
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }
+.delay-500 { animation-delay: 0.5s; }
+.delay-600 { animation-delay: 0.6s; }
+.delay-700 { animation-delay: 0.7s; }
+.delay-800 { animation-delay: 0.8s; }
+
+/* Override browser autofill background to maintain glassmorphism */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.1) inset !important;
+  -webkit-text-fill-color: #ffffff !important;
+  caret-color: #ffffff !important;
+  transition: background-color 5000s ease-in-out 0s;
 }
