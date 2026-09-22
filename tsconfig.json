@@ -15,11 +15,7 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-<<<<<<< HEAD
     "jsx": "react-jsx",
-=======
-    "jsx": "preserve",
->>>>>>> origin/development
     "incremental": true,
     "plugins": [
       {
