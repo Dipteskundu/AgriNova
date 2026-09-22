@@ -1,0 +1,1 @@
+export { TrainingManagement } from './TrainingManagement';

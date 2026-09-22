@@ -1,44 +1,112 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
-interface RequestOptions {
-  method?: string;
-  headers?: Record<string, string>;
-  body?: unknown;
+const TOKEN_KEY = "farmPath_token";
+
+export function getToken(): string | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem(TOKEN_KEY);
 }
 
-export async function api<T>(
-  endpoint: string,
-  options: RequestOptions = {}
-): Promise<T> {
-  const { method = "GET", headers = {}, body } = options;
+export function setToken(token: string): void {
+  localStorage.setItem(TOKEN_KEY, token);
+}
 
-  const config: RequestInit = {
-    method,
-    headers: {
-      "Content-Type": "application/json",
-      ...headers,
-    },
+export function removeToken(): void {
+  localStorage.removeItem(TOKEN_KEY);
+}
+
+async function request(path: string, options: RequestInit = {}) {
+  const token = getToken();
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    ...(options.headers as Record<string, string>),
   };
 
-  if (body) {
-    config.body = JSON.stringify(body);
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_URL}${endpoint}`, config);
+  try {
+    const res = await fetch(`${API_BASE}${path}`, {
+      ...options,
+      headers,
+    });
 
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || "API request failed");
+    if (res.status === 401) {
+      removeToken();
+      if (typeof window !== "undefined" && !window.location.pathname.startsWith("/login")) {
+        window.location.href = "/login";
+      }
+      throw new Error("Session expired. Please log in again.");
+    }
+
+    if (res.status === 403) {
+      throw new Error("You do not have permission to perform this action.");
+    }
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      const message = data.message || data.errors?.[0]?.message || "Request failed";
+      throw new Error(message);
+    }
+
+    return data;
+  } catch (err: any) {
+    if (err.name === "TypeError" && err.message === "Failed to fetch") {
+      throw new Error("Backend server is not running. Please start the server on port 5000.");
+    }
+    throw err;
   }
-
-  return response.json();
 }
 
-export const apiClient = {
-  get: <T>(endpoint: string) => api<T>(endpoint),
-  post: <T>(endpoint: string, data: unknown) =>
-    api<T>(endpoint, { method: "POST", body: data }),
-  put: <T>(endpoint: string, data: unknown) =>
-    api<T>(endpoint, { method: "PUT", body: data }),
-  delete: <T>(endpoint: string) => api<T>(endpoint, { method: "DELETE" }),
+export function authHeaders(token: string) {
+  return { Authorization: `Bearer ${token}` };
+}
+
+export const api = {
+  post: (path: string, body: any) =>
+    request(path, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+
+  get: (path: string) =>
+    request(path, { method: "GET" }),
+
+  put: (path: string, body: any) =>
+    request(path, {
+      method: "PUT",
+      body: JSON.stringify(body),
+    }),
+
+  patch: (path: string, body: any) =>
+    request(path, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+
+  delete: (path: string) =>
+    request(path, { method: "DELETE" }),
 };
+
+export async function uploadFile(path: string, file: File) {
+  const token = getToken();
+  const formData = new FormData();
+  formData.append("avatar", file);
+  try {
+    const res = await fetch(`${API_BASE}${path}`, {
+      method: "POST",
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: formData,
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || "Upload failed");
+    return data;
+  } catch (err: any) {
+    if (err.name === "TypeError" && err.message === "Failed to fetch") {
+      throw new Error("Backend server is not running. Please start the server on port 5000.");
+    }
+    throw err;
+  }
+}

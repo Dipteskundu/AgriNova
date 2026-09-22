@@ -1,0 +1,1 @@
+export { AgriculturalTraining } from './AgriculturalTraining';

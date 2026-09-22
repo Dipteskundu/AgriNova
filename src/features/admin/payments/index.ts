@@ -1,0 +1,1 @@
+export { PaymentsManagement } from './PaymentsManagement';

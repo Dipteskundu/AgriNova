@@ -1,0 +1,1 @@
+export { QualityManagement } from './QualityManagement';
