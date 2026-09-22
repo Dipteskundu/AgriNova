@@ -1,19 +1,15 @@
-<<<<<<< HEAD
 import { tr } from "@/agriplatform/lib/localize";
+
 export default function AboutPage() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      <h1 className="text-4xl font-bold">{tr('About AgriNova')}</h1>
-      <p className="mt-4 text-xl text-gray-600">{tr('Connecting farmers with buyers through technology')}</p>
-=======
-export default function AboutPage() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      <h1 className="text-4xl font-bold">About AgriNova</h1>
+      <h1 className="text-4xl font-bold">
+        {tr("About AgriNova")}
+      </h1>
+
       <p className="mt-4 text-xl text-gray-600">
-        Connecting farmers with buyers through technology
+        {tr("Connecting farmers with buyers through technology")}
       </p>
->>>>>>> origin/development
     </main>
   );
 }

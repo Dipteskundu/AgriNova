@@ -1,10 +1,4 @@
-<<<<<<< HEAD
-import { redirect } from "next/navigation";
-
-export default function DashboardRedirect() {
-  redirect("/farmer");
-}
-=======
+import React from 'react';
 export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gray-100">
@@ -36,4 +30,4 @@ export default function DashboardPage() {
     </div>
   );
 }
->>>>>>> origin/development
+
