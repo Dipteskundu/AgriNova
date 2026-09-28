@@ -84,13 +84,23 @@ const AuthContext = createContext<AuthContextType>({
 const USER_KEY = 'farmPath_user';
 const PORTAL_KEY = 'farmPath_portal';
 
-function getPortalsForRoles(roles: string[]): PortalType[] {
+function getPortalsForRoles(roles?: string[] | string): PortalType[] {
   const portals = new Set<PortalType>();
-  roles.forEach((role) => {
+
+  // Handle both array and single string, and undefined/null
+  const roleList = Array.isArray(roles)
+    ? roles
+    : typeof roles === 'string'
+      ? [roles]
+      : ['farmer'];
+
+  roleList.forEach((role) => {
     const portal = ROLE_PORTALS[role as UserRole];
     if (portal) portals.add(portal);
   });
-  return Array.from(portals);
+
+  // Ensure we always have at least farmer portal
+  return portals.size > 0 ? Array.from(portals) : ['farmer'];
 }
 
 function makeInitials(name: string): string {
