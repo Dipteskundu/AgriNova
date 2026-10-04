@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" width="480" height="360" role="img" aria-label="Cash Crop">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#d4fc79"/>
+      <stop offset="100%" stop-color="#96e6a1"/>
+    </linearGradient>
+  </defs>
+  <rect width="480" height="360" fill="url(#bg)"/>
+  <g opacity="0.16" fill="#3d6b1f">
+    <circle cx="70" cy="60" r="46"/><circle cx="420" cy="300" r="70"/>
+  </g>
+  <g transform="translate(0 8)">
+    <rect x="164" y="150" width="152" height="86" rx="12" fill="none" stroke="#3d6b1f" stroke-width="9"/>
+    <path d="M164 193 h152 M240 150 v86" stroke="#3d6b1f" stroke-width="8"/>
+    <rect x="196" y="94" width="88" height="52" rx="10" fill="none" stroke="#3d6b1f" stroke-width="9"/></g>
+  <text x="240" y="336" text-anchor="middle" font-family="system-ui,-apple-system,Segoe UI,sans-serif"
+        font-size="20" font-weight="700" fill="#3d6b1f" opacity="0.9">Cash Crop</text>
+</svg>

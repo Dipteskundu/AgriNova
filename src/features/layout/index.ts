@@ -1,5 +1,7 @@
 export { AgriPortalShell } from './AppShell';
 export { RouteGuard } from './RouteGuard';
+export { PortalGate } from './PortalGate';
+export { PortalComingSoon } from './PortalComingSoon';
 export {
   FARMER_ROUTE_MAP,
   ADMIN_ROUTE_MAP,

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" width="480" height="360" role="img" aria-label="No photo available">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#eef7f0"/>
+      <stop offset="100%" stop-color="#dfeee4"/>
+    </linearGradient>
+    <linearGradient id="sprout" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0%" stop-color="#3f9e5e"/>
+      <stop offset="100%" stop-color="#63c17e"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="480" height="360" fill="url(#bg)"/>
+
+  <!-- soft field rows -->
+  <g stroke="#c8e0d0" stroke-width="2" fill="none" opacity="0.7">
+    <path d="M0 300 Q120 282 240 300 T480 300"/>
+    <path d="M0 322 Q120 304 240 322 T480 322"/>
+    <path d="M0 344 Q120 326 240 344 T480 344"/>
+  </g>
+
+  <!-- sprout -->
+  <g transform="translate(240 176)">
+    <path d="M0 62 C0 34 0 14 0 -6" stroke="#4a7c59" stroke-width="7" stroke-linecap="round" fill="none"/>
+    <path d="M0 6 C-10 -22 -40 -34 -66 -30 C-64 -4 -40 14 -6 12 Z" fill="url(#sprout)"/>
+    <path d="M0 -6 C10 -36 42 -50 70 -46 C68 -18 42 2 6 4 Z" fill="url(#sprout)" opacity="0.88"/>
+  </g>
+
+  <text x="240" y="330" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, sans-serif"
+        font-size="15" font-weight="600" fill="#5c7d69" opacity="0.85">Photo coming soon</text>
+</svg>

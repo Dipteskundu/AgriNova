@@ -10,9 +10,17 @@ export default function LoginPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoading && user) {
-      router.replace("/");
-    }
+    if (isLoading || !user) return;
+
+    // `?next=` carries the page that bounced the visitor here — e.g. an
+    // anonymous click through to `/products/:id` or `/inputs/:id`. Only
+    // same-origin paths are honoured: `//evil.example` starts with a slash
+    // too and would otherwise be an open redirect.
+    const next = new URLSearchParams(window.location.search).get("next");
+    const safeNext =
+      next && next.startsWith("/") && !next.startsWith("//") ? next : "/";
+
+    router.replace(safeNext);
   }, [user, isLoading, router]);
 
   if (isLoading) {

@@ -113,7 +113,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
         <MetricCard
           title={tr('Registered Farmers')}
           value={kpis.totalRegisteredFarmers.toLocaleString()}
-          change="+320 this month"
           trend="up"
           subtitle={tr('Active farmer accounts')}
           icon={Users}
@@ -124,14 +123,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
           value={`${kpis.monitoredAcreage.toLocaleString()} Acres`}
           change="GIS mapped & verified"
           trend="neutral"
-          subtitle={tr('6,140 commercial plots')}
+          subtitle={`${kpis.totalActiveFarms} ${tr('active farms registered')}`}
           icon={Sprout}
           colorScheme="blue"
         />
         <MetricCard
           title={tr('Projected Yield')}
           value={`${(kpis.projectedAnnualYieldTons / 1000).toFixed(0)}k Tons`}
-          change="+12% above national average"
           trend="up"
           subtitle={tr('Boro, Potato & Mustard')}
           icon={TrendingUp}

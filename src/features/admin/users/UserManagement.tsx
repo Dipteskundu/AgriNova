@@ -19,7 +19,7 @@ import { Modal } from '@/components/ui/Modal';
 import { FormInput, FormSelect } from '@/components/ui/FormInput';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
-import { getAdminUsers, updateAdminUserStatus } from '@/lib/adminApi';
+import { createAdminUser, getAdminUsers, updateAdminUserStatus } from '@/lib/adminApi';
 import { AdminUser } from '@/types';
 
 export const UserManagement: React.FC = () => {
@@ -82,31 +82,33 @@ export const UserManagement: React.FC = () => {
     }
   };
 
-  const handleCreateUser = (e: React.FormEvent) => {
+  const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
-    const created: AdminUser = {
-      id: `USR-${100 + users.length + 1}`,
-      name: newUser.name,
-      email: newUser.email,
-      phone: newUser.phone,
-      role: newUser.role,
-      region: newUser.region,
-      status: 'Active',
-      registrationDate: new Date().toISOString().split('T')[0],
-      verificationBadge: true,
-      nationalIdNumber: newUser.nationalIdNumber,
-    };
-    setUsers([created, ...users]);
-    setIsAddModalOpen(false);
-    setNewUser({
-      name: '',
-      email: '',
-      phone: '',
-      role: 'Farmer',
-      region: 'Rajshahi (Bogura)',
-      nationalIdNumber: '',
-    });
-    showToast('success', tr('New user account registered and verified'));
+    try {
+      const res = await createAdminUser({
+        name: newUser.name,
+        email: newUser.email,
+        phone: newUser.phone,
+        role: newUser.role,
+        region: newUser.region,
+        nationalIdNumber: newUser.nationalIdNumber,
+      });
+      if (res.success) {
+        setUsers([res.data, ...users]);
+        setIsAddModalOpen(false);
+        setNewUser({
+          name: '',
+          email: '',
+          phone: '',
+          role: 'Farmer',
+          region: 'Rajshahi (Bogura)',
+          nationalIdNumber: '',
+        });
+        showToast('success', tr('New user account registered and verified'));
+      }
+    } catch (err) {
+      showToast('error', err instanceof Error ? err.message : tr('Failed to create user account'));
+    }
   };
 
   const filteredUsers = useMemo(() => {
