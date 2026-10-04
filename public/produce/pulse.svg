@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" width="480" height="360" role="img" aria-label="Pulse">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#a8e063"/>
+      <stop offset="100%" stop-color="#56ab2f"/>
+    </linearGradient>
+  </defs>
+  <rect width="480" height="360" fill="url(#bg)"/>
+  <g opacity="0.16" fill="#2f6b1f">
+    <circle cx="70" cy="60" r="46"/><circle cx="420" cy="300" r="70"/>
+  </g>
+  <g transform="translate(0 8)">
+      <path d="M170 150 q70 -70 150 -40 q10 70 -55 118 q-78 -8 -95 -78z" fill="none" stroke="#2f6b1f" stroke-width="9"/>
+      <circle cx="212" cy="168" r="13" fill="#2f6b1f"/><circle cx="246" cy="186" r="13" fill="#2f6b1f"/>
+      <circle cx="280" cy="200" r="13" fill="#2f6b1f"/><circle cx="228" cy="212" r="13" fill="#2f6b1f"/></g>
+  <text x="240" y="336" text-anchor="middle" font-family="system-ui,-apple-system,Segoe UI,sans-serif"
+        font-size="20" font-weight="700" fill="#2f6b1f" opacity="0.9">Pulse</text>
+</svg>

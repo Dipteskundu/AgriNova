@@ -12,23 +12,14 @@ const PORTAL_CONFIG: Record<
   PortalType,
   { icon: string; label: Record<string, string>; description: Record<string, string>; color: string }
 > = {
-  farmer: {
+  main: {
     icon: "🌾",
-    label: { en: "Farmer", bn: "কৃষক" },
+    label: { en: "Main", bn: "প্রধান" },
     description: {
-      en: "Manage your farms, fields, crops, and harvests",
-      bn: "আপনার খামার, ক্ষেত, ফসল এবং ফসল তোলা পরিচালনা করুন",
+      en: "Farms, crops, orders and the marketplace",
+      bn: "খামার, ফসল, অর্ডার এবং মার্কেটপ্লেস",
     },
     color: "from-emerald-500/20 to-emerald-600/10 border-emerald-500/30 hover:border-emerald-400",
-  },
-  marketplace: {
-    icon: "🛒",
-    label: { en: "Marketplace", bn: "বাজার" },
-    description: {
-      en: "Buy and sell produce and farming inputs",
-      bn: "উৎপাদন এবং কৃষি উপকরণ কিনুন এবং বিক্রি করুন",
-    },
-    color: "from-blue-500/20 to-blue-600/10 border-blue-500/30 hover:border-blue-400",
   },
   operations: {
     icon: "🔍",

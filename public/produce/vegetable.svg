@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" width="480" height="360" role="img" aria-label="Vegetable">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#96e6a1"/>
+      <stop offset="100%" stop-color="#43a047"/>
+    </linearGradient>
+  </defs>
+  <rect width="480" height="360" fill="url(#bg)"/>
+  <g opacity="0.16" fill="#1f5c28">
+    <circle cx="70" cy="60" r="46"/><circle cx="420" cy="300" r="70"/>
+  </g>
+  <g transform="translate(0 8)">
+      <path d="M240 232 q-78 0 -96 -66 q-8 -60 52 -84 q28 -46 84 -30 q64 -14 92 40 q46 34 20 84 q-22 56 -152 56z" fill="none" stroke="#1f5c28" stroke-width="9"/>
+      <path d="M240 96 v134 M198 130 q42 26 84 0 M206 176 q34 24 68 0" stroke="#1f5c28" stroke-width="7" fill="none" stroke-linecap="round"/></g>
+  <text x="240" y="336" text-anchor="middle" font-family="system-ui,-apple-system,Segoe UI,sans-serif"
+        font-size="20" font-weight="700" fill="#1f5c28" opacity="0.9">Vegetable</text>
+</svg>

@@ -13,10 +13,17 @@ import {
   type User as FirebaseUser,
 } from 'firebase/auth';
 
+/**
+ * Which portal a role lands in.
+ *
+ * `farmer`, `buyer` and `supplier` all share `main` — the marketplace is a
+ * section of that sidebar rather than a portal of its own, so there is no
+ * longer a reason to send a buyer somewhere a farmer cannot go.
+ */
 const ROLE_PORTALS: Record<UserRole, PortalType> = {
-  farmer: 'farmer',
-  buyer: 'marketplace',
-  supplier: 'marketplace',
+  farmer: 'main',
+  buyer: 'main',
+  supplier: 'main',
   inspector: 'operations',
   logistics: 'operations',
   support: 'support',
@@ -24,24 +31,21 @@ const ROLE_PORTALS: Record<UserRole, PortalType> = {
 };
 
 const PORTAL_LABELS: Record<PortalType, string> = {
-  farmer: 'Farmer',
-  marketplace: 'Marketplace',
+  main: 'Main',
   operations: 'Operations',
   support: 'Support',
   admin: 'Admin',
 };
 
 const PORTAL_DESCRIPTIONS: Record<PortalType, string> = {
-  farmer: 'Manage your farms, fields, crops, and harvests',
-  marketplace: 'Buy and sell produce and farming inputs',
+  main: 'Farms, crops, orders and the marketplace',
   operations: 'Quality inspections and delivery tracking',
   support: 'Disputes, help desk, and resolution center',
   admin: 'Full platform administration and control',
 };
 
 const PORTAL_ICONS: Record<PortalType, string> = {
-  farmer: '🌾',
-  marketplace: '🛒',
+  main: '🌾',
   operations: '🔍',
   support: '🎧',
   admin: '🛡️',
@@ -99,8 +103,8 @@ function getPortalsForRoles(roles?: string[] | string): PortalType[] {
     if (portal) portals.add(portal);
   });
 
-  // Ensure we always have at least farmer portal
-  return portals.size > 0 ? Array.from(portals) : ['farmer'];
+  // Ensure we always have at least the main portal
+  return portals.size > 0 ? Array.from(portals) : ['main'];
 }
 
 function makeInitials(name: string): string {
