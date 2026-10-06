@@ -1,18 +1,20 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { tr } from "@/lib/localize";
 import {
   Sparkles,
-  
-  
+  TrendingUp,
+  Droplets,
   CheckCircle2,
-  
-  
-  
-  
+  Calendar,
+  Layers,
+  ArrowRight,
+  Filter,
 } from '@/components/icons';
 import { Card, CardHeader } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { FormInput, FormSelect } from '@/components/ui/FormInput';
+import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
 import { getCropRecommendations } from '@/lib/farmerApi';
 import { CropRecommendationItem, CropRecommendationInput } from '@/types';
@@ -39,12 +41,11 @@ export const CropRecommendation: React.FC<CropRecommendationProps> = ({ onNaviga
     season: 'Rabi (Winter)',
     targetLandSizeAcres: 4.2,
   });
-  const initialInput = useRef(inputForm);
 
-  const loadRecommendations = useCallback(async (input: CropRecommendationInput) => {
+  const loadRecommendations = async () => {
     try {
       setLoading(true);
-      const res = await getCropRecommendations(input);
+      const res = await getCropRecommendations(inputForm);
       if (res.success) {
         setRecommendations(res.data);
       }
@@ -53,16 +54,15 @@ export const CropRecommendation: React.FC<CropRecommendationProps> = ({ onNaviga
     } finally {
       setLoading(false);
     }
-  }, [showToast]);
+  };
 
   useEffect(() => {
-    const timer = window.setTimeout(() => void loadRecommendations(initialInput.current), 0);
-    return () => window.clearTimeout(timer);
-  }, [loadRecommendations]);
+    loadRecommendations();
+  }, []);
 
   const handleCalculate = (e: React.FormEvent) => {
     e.preventDefault();
-    void loadRecommendations(inputForm);
+    loadRecommendations();
     showToast('success', tr('Recommendation generated based on soil chemistry'));
   };
 

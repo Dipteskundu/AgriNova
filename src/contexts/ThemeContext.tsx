@@ -21,23 +21,19 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const timer = window.setTimeout(() => {
-      setMounted(true);
-      try {
-        const saved = localStorage.getItem('agri_theme') as Theme | null;
-        if (saved === 'dark' || saved === 'light') {
-          setThemeState(saved);
-          document.documentElement.classList.toggle('dark', saved === 'dark');
-        } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-          setThemeState('dark');
-          document.documentElement.classList.add('dark');
-        }
-      } catch {
-        // ignore
+    setMounted(true);
+    try {
+      const saved = localStorage.getItem('agri_theme') as Theme | null;
+      if (saved === 'dark' || saved === 'light') {
+        setThemeState(saved);
+        document.documentElement.classList.toggle('dark', saved === 'dark');
+      } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        setThemeState('dark');
+        document.documentElement.classList.add('dark');
       }
-    }, 0);
-
-    return () => window.clearTimeout(timer);
+    } catch {
+      // ignore
+    }
   }, []);
 
   const setTheme = useCallback((newTheme: Theme) => {

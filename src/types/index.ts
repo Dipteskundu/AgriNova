@@ -7,7 +7,16 @@
 // COMMON / CORE TYPES
 // ==========================================
 
-export type PortalType = 'farmer' | 'marketplace' | 'operations' | 'support' | 'admin';
+/**
+ * The four in-app portals.
+ *
+ * `main` replaces the old `farmer` key: with the marketplace folded in, this
+ * is the default workspace every non-staff role lands in — farmers, buyers and
+ * suppliers all resolve here and see a sidebar composed from their roles.
+ * `marketplace` is gone as a portal entirely; it is now a section inside
+ * `main` (see `navConfig.ts`).
+ */
+export type PortalType = 'main' | 'operations' | 'support' | 'admin';
 
 export type UserRole = 'farmer' | 'buyer' | 'supplier' | 'inspector' | 'logistics' | 'support' | 'admin';
 
@@ -342,10 +351,19 @@ export interface MarketplaceListingAdminView {
   askingPricePerKg: number;
   suggestedFloorPrice: number;
   suggestedCeilingPrice: number;
-  qualityGrade: 'Grade A' | 'Grade B' | 'Grade C';
+  qualityGrade: 'Grade A' | 'Grade B' | 'Grade C' | 'Rejected' | 'Pending Inspection';
   locationHub: string;
   status: 'Approved' | 'Pending Review' | 'Flagged' | 'Sold Out';
   listedDate: string;
+  /**
+   * The completed inspection attached to this lot, or `""`. This is the
+   * moderation gate: without it the server refuses `status: "Approved"` (409),
+   * so the admin screen renders the Approve button disabled instead of
+   * letting the click fail.
+   */
+  qualityReport: string;
+  /** Non-empty while an inspection request is still open in the queue. */
+  inspectionRequestedAt: string;
 }
 
 export interface OrderAuditAdminView {
@@ -433,15 +451,17 @@ export interface AgritechReportAdminView {
   confidentialityLevel: 'Public Agronomy' | 'Ministry Restricted' | 'Platform Internal';
 }
 
-export interface DisputeCaseAdminView {
+export interface DisputeCase {
   id: string;
   caseNumber: string;
   plaintiff: { name: string; role: 'Farmer' | 'Buyer' | 'Logistics Provider' };
   defendant: { name: string; role: 'Farmer' | 'Buyer' | 'Logistics Provider' };
   relatedOrderCode: string;
-  disputeReason: 'Produce Grade Degradation' | 'Moisture Mismatch' | 'Delivery Transit Spoilage' | 'Payment Delay' | 'Weight Shortage';
+  disputeReason: 'Order Not Received' | 'Produce Grade Degradation' | 'Moisture Mismatch' | 'Delivery Transit Spoilage' | 'Payment Delay' | 'Weight Shortage';
   disputedAmountBdt: number;
   evidenceAttachmentsCount: number;
+  /** What the buyer wrote when they opened the case (the tribunal writes `resolutionNotes`). */
+  openedNote?: string;
   caseStatus: 'Open - Under Review' | 'Mediation In Progress' | 'Resolved - Farmer Compensated' | 'Resolved - Buyer Refunded' | 'Dismissed';
   openedAt: string;
   resolutionNotes?: string;
@@ -533,3 +553,288 @@ export interface AdminDashboardSummary {
   recentAuditLogs: SystemAuditLog[];
 }
 
+// ==========================================
+// NEW ROLE PORTAL TYPES
+// ==========================================
+
+// ── Buyer ────────────────────────────────
+/**
+ * `"Pending Inspection"` — no inspector has graded this lot yet (a seller may
+ * not declare their own). `"Rejected"` is what the quality module writes when
+ * the inspector fails it; it reaches a listing through the same
+ * `POST /api/quality/:id/submit` path as the three passing grades.
+ */
+export type QualityGrade = 'Grade A' | 'Grade B' | 'Grade C' | 'Rejected' | 'Pending Inspection';
+export type OrderStatus = 'placed' | 'confirmed' | 'quality_check' | 'shipped' | 'delivered' | 'cancelled';
+export type PaymentStatus = 'pending' | 'paid' | 'refunded';
+export type DemandStatus = 'open' | 'matched' | 'fulfilled' | 'expired';
+
+export interface ProduceListing {
+  id: string;
+  farmerName: string;
+  farmerPhone: string;
+  farmerLocation: string;
+  farmerAvatar: string;
+  cropName: string;
+  variety: string;
+  category: 'Cereal' | 'Pulse' | 'Oilseed' | 'Vegetable' | 'Fruit' | 'Cash Crop';
+  quantityKg: number;
+  pricePerKgBdt: number;
+  qualityGrade: QualityGrade;
+  isVerified: boolean;
+  harvestDate: string;
+  availableUntil: string;
+  imageUrl: string;
+  description: string;
+  minimumOrderKg: number;
+  location: string;
+  district: string;
+  tags: string[];
+  totalSoldKg: number;
+  listedAt: string;
+  /** Seller-supplied detail — empty string when not declared. */
+  storageCondition: string;
+  lotCode: string;
+  certification: string;
+  sampleAvailable: boolean;
+  availableFrom: string;
+  /**
+   * The report that approved this lot for trading — `""` until an inspector
+   * submits one. Optional because the browse pages never need it; the
+   * seller's manage view and the admin moderation gate do.
+   */
+  qualityReport?: string;
+  /**
+   * Set while an inspection request for this lot is still open, cleared when
+   * the report lands. Drives the Request-inspection button on My Listings.
+   */
+  inspectionRequestedAt?: string;
+}
+
+export interface BuyerOrder {
+  id: string;
+  orderCode: string;
+  listing: {
+    id: string;
+    cropName: string;
+    variety: string;
+    imageUrl: string;
+    qualityGrade: QualityGrade;
+  };
+  farmerName: string;
+  farmerPhone: string;
+  buyerName: string;
+  quantityKg: number;
+  unitPriceBdt: number;
+  totalAmountBdt: number;
+  status: OrderStatus;
+  paymentStatus: PaymentStatus;
+  placedAt: string;
+  deliveryAddress: string;
+  estimatedDelivery: string;
+  deliveredAt?: string;
+  trackingSteps: Array<{ label: string; date: string; done: boolean }>;
+}
+
+export interface BuyerDemand {
+  id: string;
+  buyerName: string;
+  productName: string;
+  variety?: string;
+  quantityKg: number;
+  qualityGrade: QualityGrade | 'Any';
+  maxPricePerKgBdt: number;
+  preferredLocation: string;
+  deliveryMethod: 'pickup' | 'delivery';
+  deadline: string;
+  status: DemandStatus;
+  postedAt: string;
+  matchedFarmers: number;
+  description: string;
+}
+
+export interface BuyerPayment {
+  id: string;
+  transactionRef: string;
+  orderCode: string;
+  produceName: string;
+  amountBdt: number;
+  method: 'bKash' | 'Nagad' | 'Rocket' | 'Card' | 'Bank Transfer';
+  status: 'completed' | 'pending' | 'failed' | 'refunded';
+  paidAt: string;
+}
+
+// ── Supplier ─────────────────────────────
+export interface SupplierProduct {
+  id: string;
+  supplierId: string;
+  supplierName: string;
+  productName: string;
+  category: 'Seeds' | 'Fertilizers' | 'Pesticides' | 'Tools' | 'Equipment' | 'Irrigation' | 'Packaging';
+  description: string;
+  pricePerUnitBdt: number;
+  unit: 'kg' | 'liter' | 'piece' | 'bag' | 'set';
+  stockQuantity: number;
+  minimumOrderQuantity: number;
+  imageUrl: string;
+  isAvailable: boolean;
+  listedAt: string;
+}
+
+export interface SupplierOrder {
+  id: string;
+  orderCode: string;
+  buyerName: string;
+  buyerPhone: string;
+  productName: string;
+  quantity: number;
+  unit: string;
+  unitPriceBdt: number;
+  totalAmountBdt: number;
+  status: 'new' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  paymentStatus: 'pending' | 'received';
+  orderedAt: string;
+  deliveryAddress: string;
+}
+
+export interface SupplierEarningSummary {
+  totalRevenueBdt: number;
+  pendingPayoutBdt: number;
+  completedOrdersCount: number;
+  activeListingsCount: number;
+  monthlyRevenue: Array<{ month: string; revenueBdt: number }>;
+}
+
+// ── Quality Inspector ─────────────────────
+export interface InspectionRequest {
+  id: string;
+  harvestBatchCode: string;
+  farmerName: string;
+  farmerPhone: string;
+  farmLocation: string;
+  cropName: string;
+  variety: string;
+  quantityKg: number;
+  requestedAt: string;
+  scheduledDate: string;
+  status: 'assigned' | 'in_progress' | 'completed' | 'cancelled';
+  priority: 'normal' | 'urgent';
+  notes: string;
+}
+
+export interface InspectionReport {
+  id: string;
+  inspectionRequestId: string;
+  harvestBatchCode: string;
+  farmerName: string;
+  cropName: string;
+  inspectorName: string;
+  inspectionDate: string;
+  grade: QualityGrade | 'Rejected';
+  moistureContentPercent: number;
+  foreignMatterPercent: number;
+  aflatoxinPpm: number;
+  visualCondition: 'Excellent' | 'Good' | 'Fair' | 'Poor';
+  recommendedAction: string;
+  verdict: 'Passed' | 'Conditional Pass' | 'Rejected';
+  certificateNumber: string;
+  findings: string;
+  photoUrls: string[];
+  submittedAt: string;
+}
+
+export interface InspectorScheduleEntry {
+  id: string;
+  date: string;
+  time: string;
+  farmerName: string;
+  location: string;
+  cropName: string;
+  status: 'upcoming' | 'in_progress' | 'done' | 'cancelled';
+}
+
+// ── Logistics ────────────────────────────
+export interface DeliveryAssignment {
+  id: string;
+  consignmentCode: string;
+  orderCode: string;
+  farmerName: string;
+  pickupAddress: string;
+  buyerName: string;
+  deliveryAddress: string;
+  cargoDescription: string;
+  cargoWeightKg: number;
+  vehicleType: string;
+  status: 'assigned' | 'picked_up' | 'in_transit' | 'delivered' | 'failed';
+  scheduledPickup: string;
+  estimatedDelivery: string;
+  actualDelivery?: string;
+  temperatureCelsius?: number;
+  specialInstructions: string;
+}
+
+export interface FleetVehicle {
+  id: string;
+  vehicleNumber: string;
+  type: 'Refrigerated' | 'Insulated Van' | 'Open Truck' | 'Electric Van';
+  capacityKg: number;
+  currentStatus: 'available' | 'on_route' | 'maintenance' | 'idle';
+  lastServiceDate: string;
+  nextServiceDate: string;
+  currentDriverName: string;
+  currentDriverPhone: string;
+}
+
+export interface LogisticsEarning {
+  id: string;
+  consignmentCode: string;
+  deliveryDate: string;
+  distanceKm: number;
+  feeAmountBdt: number;
+  paymentStatus: 'pending' | 'paid';
+  paidAt?: string;
+}
+
+// ── Support Staff ────────────────────────
+export interface SupportDisputeCase {
+  id: string;
+  caseNumber: string;
+  plaintiff: { name: string; role: string; phone: string };
+  defendant: { name: string; role: string; phone: string };
+  relatedOrderCode: string;
+  disputeType: string;
+  disputedAmountBdt: number;
+  status: 'open' | 'under_review' | 'mediation' | 'resolved' | 'dismissed';
+  openedAt: string;
+  assignedAgentName: string;
+  evidenceCount: number;
+  resolutionNotes?: string;
+}
+
+export interface HelpTicket {
+  id: string;
+  ticketNumber: string;
+  requesterName: string;
+  requesterRole: string;
+  subject: string;
+  description: string;
+  category: 'Account' | 'Order' | 'Payment' | 'Technical' | 'Other';
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  status: 'open' | 'in_progress' | 'waiting_user' | 'resolved' | 'closed';
+  openedAt: string;
+  lastUpdatedAt: string;
+  assignedAgentName: string;
+  messages: Array<{ sender: string; message: string; timestamp: string }>;
+}
+
+export interface EscalationRecord {
+  id: string;
+  caseType: 'dispute' | 'ticket';
+  relatedId: string;
+  caseNumber: string;
+  escalatedBy: string;
+  escalatedTo: string;
+  reason: string;
+  status: 'pending' | 'acknowledged' | 'resolved';
+  escalatedAt: string;
+}

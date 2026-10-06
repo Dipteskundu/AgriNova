@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { tr } from "@/lib/localize";
 import {
   Sparkles,
-  
-  
-  
+  CheckCircle2,
+  AlertCircle,
+  TrendingUp,
   FlaskConical,
-  
-  
-  
+  Sprout,
+  ShieldCheck,
+  ChevronRight,
   ArrowRight,
 } from '@/components/icons';
 import { Card, CardHeader } from '@/components/ui/Card';

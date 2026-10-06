@@ -3,11 +3,11 @@ import { tr } from "@/lib/localize";
 import {
   Send,
   AlertTriangle,
-  
-  
+  Radio,
+  MapPin,
   Clock,
-  
-  
+  ShieldAlert,
+  CheckCircle2,
   Trash2,
 } from '@/components/icons';
 import { Card, CardHeader } from '@/components/ui/Card';
@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/Button';
 import { FormInput, FormSelect, FormTextarea } from '@/components/ui/FormInput';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
-import { getWeatherData } from '@/lib/farmerApi';
+import { broadcastWeatherAlert, deleteWeatherAlert, getWeatherAlerts } from '@/lib/adminApi';
 import { WeatherData } from '@/types';
 
 type MicroclimateAlert = WeatherData['microclimateAlerts'][number];
@@ -37,9 +37,9 @@ export const WeatherAlertBroadcast: React.FC = () => {
     async function load() {
       try {
         setLoading(true);
-        const res = await getWeatherData();
+        const res = await getWeatherAlerts();
         if (res.success) {
-          setActiveAlerts(res.data.microclimateAlerts);
+          setActiveAlerts(res.data);
         }
       } catch {
         showToast('error', tr('Failed to load meteorological broadcasts'));
@@ -50,33 +50,51 @@ export const WeatherAlertBroadcast: React.FC = () => {
     load();
   }, [showToast]);
 
-  const handleSendBroadcast = (e: React.FormEvent) => {
+  const handleSendBroadcast = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newAlert: MicroclimateAlert = {
-      id: `ALERT-${Date.now().toString().slice(-4)}`,
-      title: broadcastForm.title,
-      severity: broadcastForm.severity,
-      message: broadcastForm.message,
-      actionRequired: broadcastForm.actionRequired,
-      validUntil: broadcastForm.validUntil,
-    };
-    setActiveAlerts([newAlert, ...activeAlerts]);
-    setBroadcastForm({
-      title: '',
-      severity: 'warning',
-      message: '',
-      actionRequired: '',
-      validUntil: 'Tomorrow 18:00 BST',
-    });
-    showToast(
-      'success',
-      `Emergency Weather Advisory dispatched across Northern divisions!`
-    );
+    try {
+      const res = await broadcastWeatherAlert({
+        title: broadcastForm.title,
+        severity: broadcastForm.severity,
+        message: broadcastForm.message,
+        actionRequired: broadcastForm.actionRequired,
+        validUntil: broadcastForm.validUntil,
+      });
+      if (res.success) {
+        setActiveAlerts([res.data, ...activeAlerts]);
+        setBroadcastForm({
+          title: '',
+          severity: 'warning',
+          message: '',
+          actionRequired: '',
+          validUntil: 'Tomorrow 18:00 BST',
+        });
+        showToast(
+          'success',
+          `Emergency Weather Advisory dispatched across Northern divisions!`
+        );
+      }
+    } catch (err) {
+      showToast(
+        'error',
+        err instanceof Error ? err.message : tr('Failed to dispatch broadcast')
+      );
+    }
   };
 
-  const handleDismiss = (id: string) => {
-    setActiveAlerts((prev) => prev.filter((a) => a.id !== id));
-    showToast('info', tr('Advisory bulletin expired'));
+  const handleDismiss = async (id: string) => {
+    try {
+      const res = await deleteWeatherAlert(id);
+      if (res.success) {
+        setActiveAlerts((prev) => prev.filter((a) => a.id !== id));
+        showToast('info', tr('Advisory bulletin expired'));
+      }
+    } catch (err) {
+      showToast(
+        'error',
+        err instanceof Error ? err.message : tr('Failed to withdraw bulletin')
+      );
+    }
   };
 
   if (loading) {

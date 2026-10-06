@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { tr } from "@/lib/localize";
 import {
-  
+  User,
   MapPin,
   Landmark,
   Award,

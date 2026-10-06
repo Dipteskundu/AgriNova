@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" width="480" height="360" role="img" aria-label="Fruit">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ff9a9e"/>
+      <stop offset="100%" stop-color="#e53935"/>
+    </linearGradient>
+  </defs>
+  <rect width="480" height="360" fill="url(#bg)"/>
+  <g opacity="0.16" fill="#8b1f1f">
+    <circle cx="70" cy="60" r="46"/><circle cx="420" cy="300" r="70"/>
+  </g>
+  <g transform="translate(0 8)">
+      <circle cx="240" cy="192" r="76" fill="none" stroke="#8b1f1f" stroke-width="9"/>
+      <path d="M240 116 q4 -34 -26 -46" stroke="#8b1f1f" stroke-width="8" fill="none" stroke-linecap="round"/>
+      <path d="M244 96 q34 -30 66 -20 q-10 34 -46 36z" fill="#8b1f1f"/></g>
+  <text x="240" y="336" text-anchor="middle" font-family="system-ui,-apple-system,Segoe UI,sans-serif"
+        font-size="20" font-weight="700" fill="#8b1f1f" opacity="0.9">Fruit</text>
+</svg>

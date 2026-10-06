@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { tr } from "@/lib/localize";
 import {
-  
+  FileBarChart,
   Download,
   Search,
-  
-  
-  
-  
+  Filter,
+  FileText,
+  Calendar,
+  Layers,
   Sparkles,
-  
-  
+  Lock,
+  Globe,
   Eye,
 } from '@/components/icons';
-import { Card } from '@/components/ui/Card';
+import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';

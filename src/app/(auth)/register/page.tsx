@@ -8,7 +8,6 @@ import { PublicNavbar } from "@/components/public/PublicNavbar";
 import { User, Mail, Phone, Lock, ArrowRight } from "@/components/icons";
 import { useToast } from "@/components/ui/Toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { getErrorDetails, getErrorMessage } from "@/lib/errors";
 
 const ROLE_OPTIONS = [
   { value: "farmer", labelEn: "Farmer", labelBn: "কৃষক" },
@@ -58,8 +57,8 @@ function RegisterForm() {
         language === "bn" ? "সফলভাবে নিবন্ধন হয়েছে। এখন লগিন করুন।" : "Registration successful. Please sign in."
       );
       router.push("/login");
-    } catch (err: unknown) {
-      showToast("error", getErrorMessage(err, "Registration failed. Please try again."));
+    } catch (err: any) {
+      showToast("error", err.message || "Registration failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -70,10 +69,9 @@ function RegisterForm() {
     try {
       await loginWithGoogle();
       showToast("success", language === "bn" ? "সফলভাবে নিবন্ধন হয়েছে।" : "Signed up successfully.");
-    } catch (err: unknown) {
-      const { code } = getErrorDetails(err);
-      if (code !== "auth/popup-closed-by-user") {
-        showToast("error", getErrorMessage(err, "Google sign-up failed."));
+    } catch (err: any) {
+      if (err.code !== "auth/popup-closed-by-user") {
+        showToast("error", err.message || "Google sign-up failed.");
       }
     } finally {
       setSocialLoading(false);
@@ -85,10 +83,9 @@ function RegisterForm() {
     try {
       await loginWithGitHub();
       showToast("success", language === "bn" ? "সফলভাবে নিবন্ধন হয়েছে।" : "Signed up successfully.");
-    } catch (err: unknown) {
-      const { code } = getErrorDetails(err);
-      if (code !== "auth/popup-closed-by-user") {
-        showToast("error", getErrorMessage(err, "GitHub sign-up failed."));
+    } catch (err: any) {
+      if (err.code !== "auth/popup-closed-by-user") {
+        showToast("error", err.message || "GitHub sign-up failed.");
       }
     } finally {
       setSocialLoading(false);

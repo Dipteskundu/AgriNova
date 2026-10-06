@@ -4,10 +4,10 @@ import {
   TrendingUp,
   DollarSign,
   PieChart,
-  
-  
-  
-  
+  BarChart3,
+  Calendar,
+  Layers,
+  ArrowUpRight,
   Receipt,
 } from '@/components/icons';
 import { Card, CardHeader } from '@/components/ui/Card';

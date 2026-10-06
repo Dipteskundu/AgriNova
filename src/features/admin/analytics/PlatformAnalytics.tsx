@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { tr } from "@/lib/localize";
 import {
   TrendingUp,
-  
-  
+  PieChart,
+  BarChart2,
   Users,
   Sprout,
   Activity,
-  
-  
-  
+  Layers,
+  ArrowUpRight,
+  ShieldCheck,
 } from '@/components/icons';
 import { Card, CardHeader } from '@/components/ui/Card';
 import { MetricCard } from '@/components/ui/MetricCard';
@@ -71,7 +71,6 @@ export const PlatformAnalytics: React.FC = () => {
         <MetricCard
           title={tr('Total Farmers Enrolled')}
           value={kpis.totalRegisteredFarmers.toLocaleString()}
-          change="+24% YoY"
           trend="up"
           subtitle={tr('Across 8 administrative divisions')}
           icon={Users}
@@ -80,7 +79,6 @@ export const PlatformAnalytics: React.FC = () => {
         <MetricCard
           title={tr('Monitored Cropland')}
           value={`${kpis.monitoredAcreage.toLocaleString()} Ac`}
-          change="+12,400 Ac this cycle"
           trend="up"
           subtitle={tr('Precision satellite mapped')}
           icon={Sprout}
@@ -89,7 +87,6 @@ export const PlatformAnalytics: React.FC = () => {
         <MetricCard
           title={tr('Crop Yield Index')}
           value={`${summary.averageCropYieldIndex}%`}
-          change="+6.1% vs Q2 target"
           trend="up"
           subtitle={tr('Farms adhering to NPK dosage')}
           icon={TrendingUp}

@@ -1,19 +1,19 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { tr } from "@/lib/localize";
 import {
-  
+  Scale,
   Search,
-  
-  
-  
-  
-  
-  
-  
+  Filter,
+  AlertTriangle,
+  CheckCircle2,
+  XCircle,
+  FileText,
+  Clock,
+  ArrowRight,
   Gavel,
-  
+  ShieldAlert,
 } from '@/components/icons';
-import { Card } from '@/components/ui/Card';
+import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
@@ -21,19 +21,23 @@ import { FormTextarea } from '@/components/ui/FormInput';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
 import { getDisputesAdmin, resolveDisputeAdmin } from '@/lib/adminApi';
-import { DisputeCaseAdminView } from '@/types';
+import { DisputeCase } from '@/types';
 
 export const DisputesManagement: React.FC = () => {
   const { showToast } = useToast();
   const [loading, setLoading] = useState(true);
-  const [disputes, setDisputes] = useState<DisputeCaseAdminView[]>([]);
+  const [disputes, setDisputes] = useState<DisputeCase[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
-  const [selectedCase, setSelectedCase] = useState<DisputeCaseAdminView | null>(null);
+  const [selectedCase, setSelectedCase] = useState<DisputeCase | null>(null);
   const [resolutionNotes, setResolutionNotes] = useState('');
   const [resolving, setResolving] = useState(false);
 
-  const loadDisputes = useCallback(async () => {
+  useEffect(() => {
+    loadDisputes();
+  }, []);
+
+  const loadDisputes = async () => {
     try {
       setLoading(true);
       const res = await getDisputesAdmin();
@@ -45,14 +49,9 @@ export const DisputesManagement: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [showToast]);
+  };
 
-  useEffect(() => {
-    const timer = window.setTimeout(() => void loadDisputes(), 0);
-    return () => window.clearTimeout(timer);
-  }, [loadDisputes]);
-
-  const handleResolve = async (newStatus: DisputeCaseAdminView['caseStatus']) => {
+  const handleResolve = async (newStatus: DisputeCase['caseStatus']) => {
     if (!selectedCase) return;
     try {
       setResolving(true);
@@ -211,6 +210,13 @@ export const DisputesManagement: React.FC = () => {
                   <span>{tr('Opened:')}{d.openedAt}</span>
                 </div>
 
+                {d.openedNote && (
+                  <div className="p-2.5 bg-blue-50/60 dark:bg-blue-950/20 rounded-lg text-xs text-slate-600 dark:text-[#a0a0a0] border border-blue-100 dark:border-blue-900/40">
+                    <span className="font-bold text-slate-700 dark:text-[#999999] block text-[10px] uppercase">{tr('Buyer Report:')}</span>
+                    {d.openedNote}
+                  </div>
+                )}
+
                 {d.resolutionNotes && (
                   <div className="p-2.5 bg-slate-50 dark:bg-[#111111]/60 rounded-lg text-xs text-slate-600 dark:text-[#a0a0a0] border border-slate-100">
                     <span className="font-bold text-slate-700 dark:text-[#999999] block text-[10px] uppercase">{tr('Tribunal Findings & Resolution:')}</span>
@@ -252,6 +258,12 @@ export const DisputesManagement: React.FC = () => {
                 <span className="text-slate-500 dark:text-[#a0a0a0]">{tr('Allegation:')}</span>
                 <span className="font-bold text-red-700">{selectedCase.disputeReason}</span>
               </div>
+              {selectedCase.openedNote && (
+                <div className="pt-1 border-t border-slate-200 dark:border-[#2a2a2a]">
+                  <span className="text-slate-500 dark:text-[#a0a0a0] block">{tr('Buyer Report:')}</span>
+                  <span className="text-slate-700 dark:text-[#e0e0e0]">{selectedCase.openedNote}</span>
+                </div>
+              )}
               <div className="flex justify-between">
                 <span className="text-slate-500 dark:text-[#a0a0a0]">{tr('Plaintiff:')}</span>
                 <span className="font-bold text-slate-800 dark:text-[#e0e0e0]">{selectedCase.plaintiff.name} ({selectedCase.plaintiff.role})</span>

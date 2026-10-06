@@ -4,7 +4,7 @@ import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect } from 'react';
-import { ROUTE_MAP } from '@/features/layout/navConfig';
+import { isRouteAllowed } from '@/features/layout/navConfig';
 import { PortalType } from '@/types';
 
 export function RouteGuard({ children }: { children: React.ReactNode }) {
@@ -27,12 +27,12 @@ export function RouteGuard({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    const routeMap = ROUTE_MAP[selectedPortal as PortalType];
-    if (routeMap) {
-      const validPaths = Object.values(routeMap);
-      if (pathname !== '/dashboard' && !validPaths.includes(pathname)) {
-        router.push('/dashboard');
-      }
+    // The allowed set moves with the user's roles: the sidebar is composed
+    // per role, so validation has to be too — a buyer's `/dashboard/demands`
+    // is legitimate, while the same URL for someone with no marketplace
+    // access would be a dead end the API would 403 anyway.
+    if (!isRouteAllowed(selectedPortal as PortalType, pathname, user.roles)) {
+      router.push('/dashboard');
     }
   }, [user, isLoading, selectedPortal, pathname, router]);
 

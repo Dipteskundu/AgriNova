@@ -14,72 +14,143 @@ import {
   PhoneCall,
   Bell,
   User,
-  ArrowRight,
-  Check,
-  X,
   Phone,
-  CheckCircle2,
-  ArrowUpRight,
+  Check,
+  Store,
+  DollarSign,
 } from '@/components/icons';
 import { useToast } from '@/components/ui/Toast';
-import { getFarmerDashboardSummary, getCropBatches, toggleCalendarTask } from '@/lib/farmerApi';
-import { FarmerProfile, CropBatch, CalendarTask, CropLog } from '@/types';
+import {
+  DashboardHero,
+  ServiceGrid,
+  ServiceInfoModal,
+  DashboardSkeleton,
+  ModalSyncedNote,
+  ModalStat,
+  ModalRow,
+  ModalChip,
+  ModalEmpty,
+  type ServiceCardItem,
+} from '@/components/dashboard';
+import {
+  getFarmerDashboardSummary,
+  getCropBatches,
+  toggleCalendarTask,
+  getProfitabilityMetrics,
+  getTrainingCourses,
+  getFarms,
+  getHarvestRecords,
+  getCropComparisonProfiles,
+  getAiRecommendationDiagnostic,
+  getFarmerNotifications,
+  FarmerDashboardSummary,
+} from '@/lib/farmerApi';
+import {
+  FarmerProfile,
+  CropBatch,
+  CalendarTask,
+  CropLog,
+  ProfitabilityMetrics,
+  TrainingCourse,
+  Farm,
+  HarvestRecord,
+  CropComparisonProfile,
+  AiRecommendationDiagnostic,
+  FarmerNotification,
+} from '@/types';
+import { getMyProduceListings, type ProduceListing } from '@/lib/marketplaceApi';
+import { getWallet, type WalletSummary } from '@/lib/walletApi';
 import { FarmerModuleKey } from '@/features/layout';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { tr } from '@/lib/localize';
+import { bnNum, fmtBdt, fmtBdtShort } from '@/lib/format';
+
+async function safeData<T>(p: Promise<{ success: boolean; data: T }>): Promise<T | null> {
+  try {
+    const res = await p;
+    return res.success ? res.data : null;
+  } catch {
+    return null;
+  }
+}
 
 interface FarmerDashboardProps {
   onNavigate: (module: FarmerModuleKey) => void;
-}
-
-interface FeatureCardItem {
-  id: string;
-  moduleKey?: FarmerModuleKey;
-  icon: React.ElementType;
-  titleBn: string;
-  titleEn: string;
-  badgeBn: string;
-  badgeEn: string;
-  descBn: string;
-  descEn: string;
-  colorBg: string;
-  colorText: string;
-  colorBorder: string;
-  isHelpline?: boolean;
 }
 
 export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) => {
   const { showToast } = useToast();
   const { language, t } = useLanguage();
   const [loading, setLoading] = useState(true);
+  const [summaryData, setSummaryData] = useState<FarmerDashboardSummary | null>(null);
   const [profile, setProfile] = useState<FarmerProfile | null>(null);
   const [cropBatches, setCropBatches] = useState<CropBatch[]>([]);
   const [upcomingTasks, setUpcomingTasks] = useState<CalendarTask[]>([]);
   const [recentLogs, setRecentLogs] = useState<CropLog[]>([]);
-  const [selectedCard, setSelectedCard] = useState<FeatureCardItem | null>(null);
+  const [profit, setProfit] = useState<ProfitabilityMetrics | null>(null);
+  const [trainingCourses, setTrainingCourses] = useState<TrainingCourse[]>([]);
+  const [farmsList, setFarmsList] = useState<Farm[]>([]);
+  const [harvests, setHarvests] = useState<HarvestRecord[]>([]);
+  const [compareProfiles, setCompareProfiles] = useState<CropComparisonProfile[]>([]);
+  const [notifList, setNotifList] = useState<FarmerNotification[]>([]);
+  const [listings, setListings] = useState<ProduceListing[]>([]);
+  const [wallet, setWallet] = useState<WalletSummary | null>(null);
+  const [diagnostic, setDiagnostic] = useState<AiRecommendationDiagnostic | null>(null);
+  const [selectedCard, setSelectedCard] = useState<ServiceCardItem | null>(null);
 
   useEffect(() => {
     async function loadData() {
       try {
         setLoading(true);
-        const [summaryRes, batchesRes] = await Promise.all([
+        const [
+          summaryRes,
+          batchesRes,
+          profitData,
+          trainingData,
+          farmsData,
+          harvestData,
+          compareData,
+          notifData,
+          diagData,
+          listingsData,
+          walletData,
+        ] = await Promise.all([
           getFarmerDashboardSummary(),
           getCropBatches(),
+          safeData(getProfitabilityMetrics()),
+          safeData(getTrainingCourses()),
+          safeData(getFarms()),
+          safeData(getHarvestRecords()),
+          safeData(getCropComparisonProfiles()),
+          safeData(getFarmerNotifications()),
+          safeData(getAiRecommendationDiagnostic()),
+          safeData(getMyProduceListings()),
+          safeData(getWallet()),
         ]);
         if (summaryRes.success && batchesRes.success) {
+          setSummaryData(summaryRes.data);
           setProfile(summaryRes.data.profile);
           setUpcomingTasks(summaryRes.data.upcomingTasks);
           setRecentLogs(summaryRes.data.recentLogs);
           setCropBatches(batchesRes.data);
         }
+        setProfit(profitData);
+        setTrainingCourses(trainingData ?? []);
+        setFarmsList(farmsData ?? []);
+        setHarvests(harvestData ?? []);
+        setCompareProfiles(compareData ?? []);
+        setNotifList(notifData ?? []);
+        setDiagnostic(diagData);
+        setListings(listingsData ?? []);
+        setWallet(walletData);
       } catch {
-        showToast('error', language === 'bn' ? 'ড্যাশবোর্ড তথ্য লোড হতে সমস্যা হয়েছে' : 'Error loading dashboard data');
+        showToast('error', language === 'bn' ? 'ড্যাশবোর্ড তথ্য লোড হতে সমস্যা হয়েছে' : 'Error loading dashboard data');
       } finally {
         setLoading(false);
       }
     }
     loadData();
-  }, [language, showToast]);
+  }, [showToast]);
 
   const handleTaskToggle = async (taskId: string) => {
     try {
@@ -97,21 +168,45 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
 
   const pendingTasksCount = upcomingTasks.filter((t) => !t.isCompleted).length;
 
+  const weather = summaryData?.weatherCurrent ?? null;
+  const totalExpensesBdt = profit?.totalExpensesBdt ?? 0;
+  const netProfitBdt = profit?.netProfitBdt ?? 0;
+  const totalRevenueBdt = profit?.totalRevenueBdt ?? 0;
+  const totalHarvestedKg = harvests.reduce((sum, h) => sum + (h.quantityKg || 0), 0);
+  const harvestValuationBdt = harvests.reduce((sum, h) => sum + (h.estimatedValuationBdt || 0), 0);
+  const avgSellPriceBdt = totalHarvestedKg > 0 ? Math.round(harvestValuationBdt / totalHarvestedKg) : 0;
+  const unreadCount = summaryData?.unreadNotificationsCount ?? 0;
+  const totalFarmsCount = summaryData?.totalFarmsCount ?? 0;
+  const totalFieldsCount = summaryData?.totalFieldsCount ?? 0;
+  const topMarginCrop =
+    profit?.revenueByCrop.find((row) => row.revenue > 0) ?? null;
+  const topMarginPercent =
+    topMarginCrop && topMarginCrop.revenue > 0
+      ? Math.round((topMarginCrop.profit / topMarginCrop.revenue) * 1000) / 10
+      : 0;
+  const expenseCategories = (profit?.costBreakdownByCategory ?? []).slice(0, 3);
+  const featuredCourse = trainingCourses[0] ?? null;
+  const primaryFarm = farmsList[0] ?? null;
+  const upcomingHarvestBatch =
+    cropBatches.find((b) => /harvest|ready|মোসম|প্রস্তুত/i.test(b.growthStage || '')) ?? null;
+  const soilInsight = diagnostic?.soilDeficiencies[0] ?? null;
+  const deficientCount = (diagnostic?.soilDeficiencies ?? []).filter((d) => d.status === 'Deficient').length;
+  const approvedListings = listings.filter((l) => l.status === 'Approved');
+  const pendingListings = listings.filter((l) => l.status !== 'Approved');
+
   // Minimalist cards list - pure icons and crisp labels
-  const featureCards: FeatureCardItem[] = [
+  const featureCards: ServiceCardItem[] = [
     {
       id: 'crops',
       moduleKey: 'crops',
       icon: Sprout,
       titleBn: 'আমার ফসল',
       titleEn: 'My Crops',
-      badgeBn: `${cropBatches.length || 5}টি সক্রিয়`,
-      badgeEn: `${cropBatches.length || 5} Active`,
+      badgeBn: `${bnNum(cropBatches.length)}টি সক্রিয়`,
+      badgeEn: `${cropBatches.length} Active`,
       descBn: 'মাঠে চলমান ফসলের সার্বিক অবস্থা ও বৃদ্ধির তথ্য',
       descEn: 'Overall status, variety, and health of standing crops',
-      colorBg: 'bg-emerald-50 dark:bg-emerald-500/15',
-      colorText: 'text-emerald-700 dark:text-emerald-400',
-      colorBorder: 'hover:border-emerald-400',
+      tone: 'emerald',
     },
     {
       id: 'calendar',
@@ -123,9 +218,7 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
       badgeEn: `${pendingTasksCount} Pending`,
       descBn: 'সার, কীটনাশক ও সেচ দেওয়ার তারিখ ও তালিকা',
       descEn: 'Scheduled dates for irrigation, fertilizer, and spray',
-      colorBg: 'bg-indigo-50 dark:bg-indigo-500/15',
-      colorText: 'text-indigo-700 dark:text-indigo-400',
-      colorBorder: 'hover:border-indigo-400',
+      tone: 'indigo',
     },
     {
       id: 'weather',
@@ -133,13 +226,11 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
       icon: CloudSun,
       titleBn: 'আজকের আবহাওয়া',
       titleEn: 'Weather Advisory',
-      badgeBn: '৩০.৫°C রোদ',
-      badgeEn: '30.5°C Sunny',
+      badgeBn: weather ? `${bnNum(weather.tempCelsius)}°C` : '—',
+      badgeEn: weather ? `${weather.tempCelsius}°C ${weather.condition}` : '—',
       descBn: 'বৃষ্টির পূর্বাভাস, তাপমাত্রা ও কৃষি আবহাওয়া বার্তা',
       descEn: 'Precipitation forecast, temperature, and farm tips',
-      colorBg: 'bg-amber-50 dark:bg-amber-500/15',
-      colorText: 'text-amber-700 dark:text-amber-400',
-      colorBorder: 'hover:border-amber-400',
+      tone: 'amber',
     },
     {
       id: 'farms',
@@ -147,13 +238,11 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
       icon: Trees,
       titleBn: 'খামার ও জমি',
       titleEn: 'Farms & Land',
-      badgeBn: `${profile?.totalAcreage || '18.5'} একর`,
-      badgeEn: `${profile?.totalAcreage || '18.5'} Acres`,
-      descBn: '৩টি খামার, ৭টি জমির প্লট ও মাটির ধরণ',
-      descEn: '3 registered farms, 7 plots, and soil records',
-      colorBg: 'bg-teal-50 dark:bg-teal-500/15',
-      colorText: 'text-teal-700 dark:text-teal-400',
-      colorBorder: 'hover:border-teal-400',
+      badgeBn: `${bnNum(profile?.totalAcreage ?? 0)} একর`,
+      badgeEn: `${profile?.totalAcreage ?? 0} Acres`,
+      descBn: `${bnNum(totalFarmsCount)}টি খামার, ${bnNum(totalFieldsCount)}টি জমির প্লট ও মাটির ধরণ`,
+      descEn: `${totalFarmsCount} registered farms, ${totalFieldsCount} plots, and soil records`,
+      tone: 'teal',
     },
     {
       id: 'expenses',
@@ -161,13 +250,11 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
       icon: Receipt,
       titleBn: 'আয়-ব্যয়ের খাতা',
       titleEn: 'Farm Expenses',
-      badgeBn: '৳৩,১২,৫০০ ব্যয়',
-      badgeEn: '৳312.5k Spent',
+      badgeBn: `${bnNum(fmtBdt(totalExpensesBdt))} ব্যয়`,
+      badgeEn: `${fmtBdtShort(totalExpensesBdt)} Spent`,
       descBn: 'সার, বীজ, ডিজেল ও শ্রমিক খরচের সার্বিক হিসাব',
       descEn: 'Categorized breakdown of inputs, labor, and machinery',
-      colorBg: 'bg-rose-50 dark:bg-rose-500/15',
-      colorText: 'text-rose-700 dark:text-rose-400',
-      colorBorder: 'hover:border-rose-400',
+      tone: 'rose',
     },
     {
       id: 'profitability',
@@ -175,13 +262,11 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
       icon: TrendingUp,
       titleBn: 'লাভ-ক্ষতির হিসাব',
       titleEn: 'Profit & Loss',
-      badgeBn: '৳১,৭২,৫০০ লাভ',
-      badgeEn: '৳172.5k Profit',
+      badgeBn: `${bnNum(fmtBdt(netProfitBdt))} লাভ`,
+      badgeEn: `${fmtBdtShort(netProfitBdt)} Profit`,
       descBn: 'ফসলের বিক্রয়মূল্য, নিট মুনাফা ও লাভ্যাংশের হার',
       descEn: 'Crop-by-crop revenue, profit margin, and ROI',
-      colorBg: 'bg-emerald-50 dark:bg-emerald-500/15',
-      colorText: 'text-emerald-800 dark:text-emerald-400',
-      colorBorder: 'hover:border-emerald-500',
+      tone: 'emeraldDeep',
     },
     {
       id: 'harvest',
@@ -189,13 +274,35 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
       icon: PackageCheck,
       titleBn: 'ফসল তোলা ও মজুত',
       titleEn: 'Harvest & Storage',
-      badgeBn: 'আমন ধান প্রস্তুত',
-      badgeEn: 'Paddy Ready',
+      badgeBn: `${bnNum(totalHarvestedKg)} কেজি উত্তোলিত`,
+      badgeEn: `${totalHarvestedKg} kg Harvested`,
       descBn: 'ফসল কাটার উপযুক্ত সময়, আনুমানিক ফলন ও গুদাম',
       descEn: 'Harvest dates, moisture levels, and expected yield',
-      colorBg: 'bg-orange-50 dark:bg-orange-500/15',
-      colorText: 'text-orange-700 dark:text-orange-400',
-      colorBorder: 'hover:border-orange-400',
+      tone: 'orange',
+    },
+    {
+      id: 'my_listings',
+      moduleKey: 'my_listings',
+      icon: Store,
+      titleBn: 'বিক্রয়ে তালিকাভুক্তি',
+      titleEn: 'List for Sale',
+      badgeBn: `${bnNum(approvedListings.length)}টি অনুমোদিত`,
+      badgeEn: `${approvedListings.length} Approved`,
+      descBn: 'ফসল বাজারে তুলুন — দাম, পরিমাণ ও অনুমোদনের অবস্থা দেখুন',
+      descEn: 'List your produce, set price and quantity, track approval',
+      tone: 'violet',
+    },
+    {
+      id: 'sales',
+      moduleKey: 'sales',
+      icon: DollarSign,
+      titleBn: 'বিক্রয় ও মানি ব্যাগ',
+      titleEn: 'Sales & Wallet',
+      badgeBn: wallet ? `ব্যালেন্স ${bnNum(fmtBdt(wallet.available))}` : 'এসক্রোর অপেক্ষায়',
+      badgeEn: wallet ? `Balance ${fmtBdt(wallet.available)}` : 'Awaiting escrow',
+      descBn: 'এসক্রো ছাড়ার পর টাকা জমা হয়, উত্তোলনের অনুরোধ করে অ্যাডমিন অনুমোদনের অপেক্ষা করুন',
+      descEn: 'Track released escrow, your sales orders, and request a payout',
+      tone: 'emerald',
     },
     {
       id: 'recommendation',
@@ -203,13 +310,11 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
       icon: Sparkles,
       titleBn: 'স্মার্ট AI পরামর্শ',
       titleEn: 'AI Advisory',
-      badgeBn: 'রবি মৌসুমের সেরা',
-      badgeEn: 'Best for Rabi',
+      badgeBn: `${diagnostic ? `${bnNum(deficientCount)}টি সার ঘাটতি` : 'বিশ্লেষণ নেই'}`,
+      badgeEn: `${diagnostic ? `${deficientCount} Nutrient Gaps` : 'Awaiting Analysis'}`,
       descBn: 'মাটি ও আবহাওয়া অনুযায়ী উপযুক্ত ফসল ও জাত নির্বাচন',
       descEn: 'AI-guided crop and seed selection for your soil',
-      colorBg: 'bg-purple-50 dark:bg-purple-500/15',
-      colorText: 'text-purple-700 dark:text-purple-400',
-      colorBorder: 'hover:border-purple-400',
+      tone: 'purple',
     },
     {
       id: 'comparison',
@@ -217,13 +322,11 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
       icon: GitCompare,
       titleBn: 'ফসলের তুলনা',
       titleEn: 'Crop Comparison',
-      badgeBn: '৪টি ফসলের ডাটা',
-      badgeEn: '4 Crop Profiles',
+      badgeBn: `${bnNum(compareProfiles.length)}টি ফসলের ডাটা`,
+      badgeEn: `${compareProfiles.length} Crop Profiles`,
       descBn: 'ধান বনাম ভুট্টা বনাম গম: কোনটিতে লাভ বেশি?',
       descEn: 'Side-by-side ROI, water requirement, and costs',
-      colorBg: 'bg-cyan-50 dark:bg-cyan-500/15',
-      colorText: 'text-cyan-700 dark:text-cyan-400',
-      colorBorder: 'hover:border-cyan-400',
+      tone: 'cyan',
     },
     {
       id: 'logs',
@@ -231,13 +334,11 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
       icon: FileText,
       titleBn: 'কৃষি ডায়েরি',
       titleEn: 'Field Logs',
-      badgeBn: 'সর্বশেষ সার প্রয়োগ',
-      badgeEn: 'Recent Log',
+      badgeBn: `${recentLogs.length ? `সর্বশেষ ${tr(recentLogs[0].activityType)}` : 'কোনো লগ নেই'}`,
+      badgeEn: `${recentLogs.length ? `Latest: ${recentLogs[0].activityType}` : 'No Logs Yet'}`,
       descBn: 'প্রতিদিনের ক্ষেতের কার্যক্রম ও সার-কীটনাশক প্রয়োগের ডায়েরি',
       descEn: 'Daily farm activity logs and operational history',
-      colorBg: 'bg-slate-100 dark:bg-[#1a1a1a]',
-      colorText: 'text-slate-800 dark:text-[#e0e0e0]',
-      colorBorder: 'hover:border-slate-400',
+      tone: 'slate',
     },
     {
       id: 'training',
@@ -245,13 +346,11 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
       icon: GraduationCap,
       titleBn: 'কৃষি প্রশিক্ষণ',
       titleEn: 'Training & Video',
-      badgeBn: '৪টি কোর্স',
-      badgeEn: '4 Courses',
+      badgeBn: `${bnNum(trainingCourses.length)}টি কোর্স`,
+      badgeEn: `${trainingCourses.length} Courses`,
       descBn: 'আধুনিক কৃষি প্রযুক্তি ও ভিডিও প্রশিক্ষণ নির্দেশিকা',
       descEn: 'Video guides on modern farming and disease control',
-      colorBg: 'bg-blue-50 dark:bg-blue-500/15',
-      colorText: 'text-blue-700 dark:text-blue-400',
-      colorBorder: 'hover:border-blue-400',
+      tone: 'blue',
     },
     {
       id: 'helpline',
@@ -262,9 +361,7 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
       badgeEn: 'Toll-Free',
       descBn: 'সরকারি কৃষি বিশেষজ্ঞের সাথে ফোনে সরাসরি কথা বলুন',
       descEn: 'Free telephone advisory from Govt agricultural officers',
-      colorBg: 'bg-emerald-100/70 dark:bg-emerald-500/15',
-      colorText: 'text-emerald-900 dark:text-emerald-400',
-      colorBorder: 'hover:border-emerald-500',
+      tone: 'emeraldStrong',
       isHelpline: true,
     },
     {
@@ -273,13 +370,11 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
       icon: Bell,
       titleBn: 'বিজ্ঞপ্তি ও সতর্কতা',
       titleEn: 'Alerts & Messages',
-      badgeBn: '২টি নতুন সতর্কবার্তা',
-      badgeEn: '2 New Alerts',
+      badgeBn: `${bnNum(unreadCount)}টি নতুন সতর্কবার্তা`,
+      badgeEn: `${unreadCount} New Alerts`,
       descBn: 'পোকামাকড় আক্রমণ, বাজার দর ও জরুরি বার্তা',
       descEn: 'Pest outbreak warnings and market price notices',
-      colorBg: 'bg-rose-50 dark:bg-rose-500/15',
-      colorText: 'text-rose-700 dark:text-rose-400',
-      colorBorder: 'hover:border-rose-400',
+      tone: 'rose',
     },
     {
       id: 'profile',
@@ -287,196 +382,121 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
       icon: User,
       titleBn: 'কৃষক প্রোফাইল',
       titleEn: 'Farmer Profile',
-      badgeBn: 'যাচাইকৃত কৃষক',
-      badgeEn: 'Verified ID',
+      badgeBn: `${profile?.nationalId ? 'যাচাইকৃত কৃষক' : 'তথ্য অসম্পূর্ণ'} `,
+      badgeEn: `${profile?.nationalId ? 'NID Verified' : 'Profile Incomplete'}`,
       descBn: 'জাতীয় পরিচয়পত্র, ব্যাংক হিসাব ও কৃষি কার্ড তথ্য',
       descEn: 'NID, mobile banking, and registered farmer card',
-      colorBg: 'bg-sky-50 dark:bg-sky-500/15',
-      colorText: 'text-sky-700 dark:text-sky-400',
-      colorBorder: 'hover:border-sky-400',
+      tone: 'sky',
     },
   ];
 
   if (loading) {
-    return (
-      <div className="space-y-4 py-4">
-        <div className="h-24 bg-white dark:bg-[#0a0a0a] rounded-2xl border border-slate-200 dark:border-[#222222] animate-pulse" />
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3.5">
-          {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-            <div key={i} className="h-32 bg-white dark:bg-[#0a0a0a] rounded-2xl border border-slate-200 dark:border-[#222222] p-4 animate-pulse" />
-          ))}
-        </div>
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   return (
     <div className="space-y-6">
       {/* 1. Minimalist Warm Greeting Header */}
-      <div className="bg-white dark:bg-[#0a0a0a] rounded-2xl border border-slate-200 dark:border-[#222222]/80 p-4 sm:p-5 shadow-xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="space-y-1">
-            <div className="inline-flex items-center gap-2 text-xs font-semibold text-emerald-700 dark:text-emerald-400">
-              <span className="w-2 h-2 rounded-full bg-emerald-500" />
-              <span>📍 {profile ? `${profile.primaryLocation.upazila}, ${profile.primaryLocation.district}` : 'শেরপুর, বগুড়া'}</span>
-              <span className="text-slate-300">•</span>
-              <span>{language === 'bn' ? 'রবি মৌসুম' : 'Rabi Season'}</span>
-            </div>
-            <h1 className="text-lg sm:text-xl font-black text-slate-900 dark:text-[#f0f0f0] tracking-tight">
-              {language === 'bn'
-                ? `আসসালামু আলাইকুম, ${profile?.fullName || 'মহিউদ্দীন ভাই'}`
-                : `Welcome, ${profile?.fullName || 'Mohiuddin Khan'}`}
-            </h1>
-            <p className="text-xs text-slate-500 dark:text-[#a0a0a0]">
-              {language === 'bn'
-                ? 'আপনার খামারের সকল তথ্য ও সেবা সহজে দেখতে নিচের আইকনটিতে ক্লিক করুন।'
-                : 'Click any service icon below to quickly view details or open the full page.'}
-            </p>
-          </div>
-
-          {/* Quick Helpline Pill Button */}
-          <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+      <DashboardHero
+        meta={<>
+          <span className="w-2 h-2 rounded-full bg-emerald-500" />
+          <span>📍 {profile ? `${profile.primaryLocation.upazila}, ${profile.primaryLocation.district}` : 'শেরপুর, বগুড়া'}</span>
+          <span className="text-slate-300">•</span>
+          <span>{language === 'bn' ? 'রবি মৌসুম' : 'Rabi Season'}</span>
+        </>}
+        title={
+          language === 'bn'
+            ? `আসসালামু আলাইকুম, ${profile?.fullName || 'মহিউদ্দীন ভাই'}`
+            : `Welcome, ${profile?.fullName || 'Mohiuddin Khan'}`
+        }
+        subtitle={
+          language === 'bn'
+            ? 'আপনার খামারের সকল তথ্য ও সেবা সহজে দেখতে নিচের আইকনটিতে ক্লিক করুন।'
+            : 'Click any service icon below to quickly view details or open the full page.'
+        }
+        actions={
+          <>
+            <button
+              type="button"
+              onClick={() => onNavigate('my_listings')}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold transition-colors shadow-xs cursor-pointer"
+            >
+              <Store className="w-3.5 h-3.5" />
+              <span>{language === 'bn' ? 'নতুন তালিকা' : 'New Listing'}</span>
+            </button>
             <a
               href="tel:16123"
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold transition-colors shadow-xs cursor-pointer"
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-emerald-600 text-emerald-700 hover:bg-emerald-50 dark:border-emerald-500/50 dark:text-emerald-400 dark:hover:bg-emerald-500/10 text-xs font-bold transition-colors cursor-pointer"
             >
               <Phone className="w-3.5 h-3.5" />
               <span>{language === 'bn' ? 'হেল্পলাইন ১৬১২৩' : 'Call 16123'}</span>
             </a>
-          </div>
-        </div>
-
-        {/* 4 Minimalist Stat Strip Pills */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-4 mt-4 border-t border-slate-100 dark:border-[#222222]">
-          <div
-            onClick={() => onNavigate('crops')}
-            className="p-2.5 rounded-xl bg-slate-50 dark:bg-[#111111]/60 hover:bg-emerald-50/50 transition-colors cursor-pointer"
-          >
-            <span className="text-[11px] text-slate-500 dark:text-[#a0a0a0] block">{t('statActiveCrops')}</span>
-            <span className="text-base font-black text-slate-900 dark:text-[#f0f0f0]">
-              {cropBatches.length || 5} {language === 'bn' ? 'টি ফসল' : 'Crops'}
-            </span>
-          </div>
-
-          <div
-            onClick={() => onNavigate('farms')}
-            className="p-2.5 rounded-xl bg-slate-50 dark:bg-[#111111]/60 hover:bg-emerald-50/50 transition-colors cursor-pointer"
-          >
-            <span className="text-[11px] text-slate-500 dark:text-[#a0a0a0] block">{t('statTotalLand')}</span>
-            <span className="text-base font-black text-slate-900 dark:text-[#f0f0f0]">
-              {profile?.totalAcreage || '18.5'} {language === 'bn' ? 'একর' : 'Acres'}
-            </span>
-          </div>
-
-          <div
-            onClick={() => onNavigate('calendar')}
-            className="p-2.5 rounded-xl bg-slate-50 dark:bg-[#111111]/60 hover:bg-emerald-50/50 transition-colors cursor-pointer"
-          >
-            <span className="text-[11px] text-slate-500 dark:text-[#a0a0a0] block">{t('statTodayTasks')}</span>
-            <span className="text-base font-black text-slate-900 dark:text-[#f0f0f0]">
-              {pendingTasksCount} {language === 'bn' ? 'টি বাকি' : 'Pending'}
-            </span>
-          </div>
-
-          <div
-            onClick={() => onNavigate('profitability')}
-            className="p-2.5 rounded-xl bg-slate-50 dark:bg-[#111111]/60 hover:bg-emerald-50/50 transition-colors cursor-pointer"
-          >
-            <span className="text-[11px] text-slate-500 dark:text-[#a0a0a0] block">{language === 'bn' ? 'নিট লাভ' : 'Net Profit'}</span>
-            <span className="text-base font-black text-emerald-700 dark:text-emerald-400">৳১,৭২,৫০০</span>
-          </div>
-        </div>
-      </div>
+          </>
+        }
+        stats={[
+          {
+            label: t('statActiveCrops'),
+            value: `${cropBatches.length} ${language === 'bn' ? 'টি ফসল' : 'Crops'}`,
+            onClick: () => onNavigate('crops'),
+          },
+          {
+            label: t('statTotalLand'),
+            value: `${profile?.totalAcreage ?? 0} ${language === 'bn' ? 'একর' : 'Acres'}`,
+            onClick: () => onNavigate('farms'),
+          },
+          {
+            label: t('statTodayTasks'),
+            value: `${pendingTasksCount} ${language === 'bn' ? 'টি বাকি' : 'Pending'}`,
+            onClick: () => onNavigate('calendar'),
+          },
+          {
+            label: language === 'bn' ? 'নিট লাভ' : 'Net Profit',
+            value: bnNum(fmtBdt(netProfitBdt)),
+            accent: true,
+            onClick: () => onNavigate('profitability'),
+          },
+          {
+            label: language === 'bn' ? 'বাজারে তালিকাভুক্ত' : 'Listed for Sale',
+            value: `${listings.length} ${language === 'bn' ? 'টি তালিকা' : 'Listings'}`,
+            onClick: () => onNavigate('my_listings'),
+          },
+          {
+            label: language === 'bn' ? 'উত্তোলনযোগ্য' : 'Withdrawable',
+            value: bnNum(fmtBdt(wallet?.available ?? 0)),
+            accent: true,
+            onClick: () => onNavigate('sales'),
+          },
+        ]}
+      />
 
       {/* 2. Iconic Services Grid (ক্লিক করলে তথ্য দেখাবে) */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between px-1">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-            {language === 'bn' ? 'কৃষি সেবাসমূহ (আইকনে ক্লিক করে তথ্য দেখুন)' : 'Farm Services (Click Icon for Details)'}
-          </h2>
-          <span className="text-xs text-slate-400">
-            {featureCards.length} {language === 'bn' ? 'টি সেবা' : 'Services'}
-          </span>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
-          {featureCards.map((card) => {
-            const Icon = card.icon;
-            return (
-              <div
-                key={card.id}
-                onClick={() => setSelectedCard(card)}
-                className={`bg-white dark:bg-[#0a0a0a] p-4 rounded-2xl border border-slate-200 dark:border-[#222222]/80 shadow-xs hover:shadow-sm transition-all cursor-pointer flex flex-col justify-between group ${card.colorBorder}`}
-              >
-                <div>
-                  {/* Icon Tile & Badge */}
-                  <div className="flex items-start justify-between gap-2 mb-3">
-                    <div
-                      className={`w-11 h-11 rounded-xl ${card.colorBg} ${card.colorText} flex items-center justify-center transition-transform group-hover:scale-110 shadow-xs`}
-                    >
-                      <Icon className="w-5 h-5" />
-                    </div>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-[#1a1a1a] text-slate-600 dark:text-[#a0a0a0] truncate max-w-[90px]">
-                      {language === 'bn' ? card.badgeBn : card.badgeEn}
-                    </span>
-                  </div>
-
-                  {/* Title */}
-                  <h3 className="font-bold text-slate-900 dark:text-[#f0f0f0] text-sm group-hover:text-emerald-700 transition-colors leading-snug">
-                    {language === 'bn' ? card.titleBn : card.titleEn}
-                  </h3>
-                  <p className="text-[11px] text-slate-500 dark:text-[#a0a0a0] mt-1 line-clamp-2 leading-relaxed">
-                    {language === 'bn' ? card.descBn : card.descEn}
-                  </p>
-                </div>
-
-                {/* Subtle Action Footer */}
-                <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-[#222222] flex items-center justify-between text-[11px] font-bold text-slate-500 dark:text-[#a0a0a0] group-hover:text-emerald-700 transition-colors">
-                  <span>{language === 'bn' ? 'তথ্য দেখুন' : 'View Info'}</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+      <ServiceGrid
+        label={
+          language === 'bn'
+            ? 'কৃষি সেবাসমূহ (আইকনে ক্লিক করে তথ্য দেখুন)'
+            : 'Farm Services (Click Icon for Details)'
+        }
+        items={featureCards}
+        onSelect={setSelectedCard}
+      />
 
       {/* 3. Interactive Information Modal */}
       {selectedCard && (
-        <div className="fixed inset-0 z-50 bg-black/60 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-[#0a0a0a] rounded-3xl border border-slate-200 dark:border-[#222222] shadow-2xl max-w-lg w-full overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-            {/* Modal Header */}
-            <div className="p-5 pb-4 border-b border-slate-100 dark:border-[#222222] flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className={`w-12 h-12 rounded-2xl ${selectedCard.colorBg} ${selectedCard.colorText} flex items-center justify-center`}>
-                  <selectedCard.icon className="w-6 h-6" />
-                </div>
-                <div>
-                  <h3 className="text-base font-extrabold text-slate-900 dark:text-[#f0f0f0]">
-                    {language === 'bn' ? selectedCard.titleBn : selectedCard.titleEn}
-                  </h3>
-                  <p className="text-xs text-slate-500 dark:text-[#a0a0a0]">
-                    {language === 'bn' ? selectedCard.descBn : selectedCard.descEn}
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={() => setSelectedCard(null)}
-                className="p-1.5 rounded-full text-slate-400 hover:text-slate-700 dark:text-[#999999] hover:bg-slate-100 dark:hover:bg-[#1a1a1a] dark:bg-[#1a1a1a] transition-colors cursor-pointer"
-                aria-label="Close dialog"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Modal Live Content Body based on Selected Card */}
-            <div className="p-5 max-h-[65vh] overflow-y-auto space-y-4 text-xs">
+        <ServiceInfoModal
+          item={selectedCard}
+          onClose={() => setSelectedCard(null)}
+          onOpenPage={
+            selectedCard.moduleKey
+              ? () => onNavigate(selectedCard.moduleKey as FarmerModuleKey)
+              : undefined
+          }
+        >
               {/* Card-specific Information Details */}
               {selectedCard.id === 'crops' && (
                 <div className="space-y-3">
                   <div className="p-3 bg-emerald-50/70 dark:bg-emerald-500/10 rounded-xl border border-emerald-100 dark:border-emerald-500/20 flex items-center justify-between">
                     <span className="font-semibold text-emerald-900 dark:text-emerald-300">
-                      {language === 'bn' ? `মোট সক্রিয় ফসল: ${cropBatches.length || 5}টি` : `Total Active Crops: ${cropBatches.length || 5}`}
+                      {language === 'bn' ? `মোট সক্রিয় ফসল: ${bnNum(cropBatches.length)}টি` : `Total Active Crops: ${cropBatches.length}`}
                     </span>
                     <span className="px-2 py-0.5 rounded-full bg-emerald-600 text-white font-bold text-[10px]">
                       {language === 'bn' ? 'চমৎকার স্বাস্থ্য' : 'Healthy'}
@@ -541,12 +561,12 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
                 <div className="space-y-3">
                   <div className="p-4 rounded-2xl bg-amber-50/70 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 text-amber-950 dark:text-amber-200 flex items-center justify-between">
                     <div>
-                      <span className="text-2xl font-black block">30.5°C</span>
-                      <span className="text-xs font-bold text-amber-800 dark:text-amber-300">{language === 'bn' ? 'আজ রৌদ্রোজ্জ্বল দিন' : 'Sunny & Clear'}</span>
+                      <span className="text-2xl font-black block">{weather ? `${weather.tempCelsius}°C` : '—'}</span>
+                      <span className="text-xs font-bold text-amber-800 dark:text-amber-300">{weather?.condition ?? '—'}</span>
                     </div>
                     <div className="text-right text-[11px] text-amber-900 dark:text-amber-200 space-y-0.5">
-                      <p>{language === 'bn' ? 'বৃষ্টির সম্ভাবনা:' : 'Rain chance:'} <strong className="text-amber-950 dark:text-amber-100">০%</strong></p>
-                      <p>{language === 'bn' ? 'বাতাসের আর্দ্রতা:' : 'Humidity:'} <strong className="text-amber-950 dark:text-amber-100">৬২%</strong></p>
+                      <p>{language === 'bn' ? 'বৃষ্টির সম্ভাবনা:' : 'Rain chance:'} <strong className="text-amber-950 dark:text-amber-100">{bnNum(weather?.precipitationProbability ?? 0)}%</strong></p>
+                      <p>{language === 'bn' ? 'বাতাসের আর্দ্রতা:' : 'Humidity:'} <strong className="text-amber-950 dark:text-amber-100">{bnNum(weather?.humidityPercent ?? 0)}%</strong></p>
                     </div>
                   </div>
                   <div className="p-3 bg-slate-50 dark:bg-[#111111]/60 rounded-xl border border-slate-200 dark:border-[#222222] text-slate-700 dark:text-[#999999] text-xs leading-relaxed">
@@ -563,20 +583,24 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
                   <div className="grid grid-cols-2 gap-2">
                     <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#111111]/60 border border-slate-200 dark:border-[#222222]">
                       <span className="text-[11px] text-slate-500 dark:text-[#a0a0a0] block">{language === 'bn' ? 'মোট জমি' : 'Total Land'}</span>
-                      <span className="text-base font-black text-slate-900 dark:text-[#f0f0f0]">{profile?.totalAcreage || '18.5'} {language === 'bn' ? 'একর' : 'Acres'}</span>
+                      <span className="text-base font-black text-slate-900 dark:text-[#f0f0f0]">{profile?.totalAcreage ?? 0} {language === 'bn' ? 'একর' : 'Acres'}</span>
                     </div>
                     <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#111111]/60 border border-slate-200 dark:border-[#222222]">
                       <span className="text-[11px] text-slate-500 dark:text-[#a0a0a0] block">{language === 'bn' ? 'নিবন্ধিত প্লট' : 'Registered Plots'}</span>
-                      <span className="text-base font-black text-slate-900 dark:text-[#f0f0f0]">{language === 'bn' ? '৭টি প্লট' : '7 Plots'}</span>
+                      <span className="text-base font-black text-slate-900 dark:text-[#f0f0f0]">{language === 'bn' ? `${bnNum(totalFieldsCount)}টি প্লট` : `${totalFieldsCount} Plots`}</span>
                     </div>
                   </div>
                   <div className="p-3 rounded-xl bg-teal-50/70 dark:bg-teal-500/10 border border-teal-200 dark:border-teal-500/20 text-teal-950 dark:text-teal-200 text-xs">
                     🌾 {language === 'bn'
                       ? <strong>প্রধান খামার:</strong>
                       : <strong>Primary Farm:</strong>}{' '}
-                    {language === 'bn'
-                      ? 'খান এগ্রো শেরপুর (বগুড়া), মাটির ধরণ: দোআঁশ ও এটেল। সেচ সুবিধা: নিজস্ব গভীর নলকূপ।'
-                      : 'Khan Agro Sherpur (Bogura), loamy & clay soil. Own deep tube-well irrigation.'}
+                    {primaryFarm
+                      ? language === 'bn'
+                        ? `${primaryFarm.name} (${primaryFarm.location}), মাটির ধরণ: ${primaryFarm.soilClassification}, সেচ: ${primaryFarm.irrigationType}`
+                        : `${primaryFarm.name} (${primaryFarm.location}), ${primaryFarm.soilClassification}, ${primaryFarm.irrigationType}`
+                      : language === 'bn'
+                        ? 'কোনো খামার এখনো নিবন্ধিত হয়নি।'
+                        : 'No farms registered yet.'}
                   </div>
                 </div>
               )}
@@ -585,21 +609,22 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
                 <div className="space-y-2.5">
                   <div className="p-3 bg-rose-50/70 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 rounded-xl flex items-center justify-between">
                     <span className="font-bold text-rose-900 dark:text-rose-300">{language === 'bn' ? 'চলতি মৌসুমের মোট খরচ:' : 'Total Seasonal Cost:'}</span>
-                    <span className="text-base font-black text-rose-800 dark:text-rose-300">৳৩,১২,৫০০</span>
+                    <span className="text-base font-black text-rose-800 dark:text-rose-300">{bnNum(fmtBdt(totalExpensesBdt))}</span>
                   </div>
                   <div className="space-y-1.5">
-                    <div className="flex justify-between p-2 bg-slate-50 dark:bg-[#111111]/60 rounded-lg text-slate-700 dark:text-[#999999]">
-                      <span>{language === 'bn' ? 'রাসায়নিক ও জৈব সার:' : 'Chemical & Organic Fertilizer:'}</span>
-                      <span className="font-bold">৳৭৫,০০০</span>
-                    </div>
-                    <div className="flex justify-between p-2 bg-slate-50 dark:bg-[#111111]/60 rounded-lg text-slate-700 dark:text-[#999999]">
-                      <span>{language === 'bn' ? 'সেচ ও জ্বালানি ডিজেল:' : 'Irrigation & Fuel:'}</span>
-                      <span className="font-bold">৳৩২,০০০</span>
-                    </div>
-                    <div className="flex justify-between p-2 bg-slate-50 dark:bg-[#111111]/60 rounded-lg text-slate-700 dark:text-[#999999]">
-                      <span>{language === 'bn' ? 'শ্রমিক ও জমি চাষ:' : 'Labor & Tillage:'}</span>
-                      <span className="font-bold">৳৬৫,০০০</span>
-                    </div>
+                    {expenseCategories.length > 0 ? (
+                      expenseCategories.map((cat) => (
+                        <div key={cat.category} className="flex justify-between p-2 bg-slate-50 dark:bg-[#111111]/60 rounded-lg text-slate-700 dark:text-[#999999]">
+                          <span>{tr(cat.category)}</span>
+                          <span className="font-bold">{bnNum(fmtBdt(cat.amount))}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="flex justify-between p-2 bg-slate-50 dark:bg-[#111111]/60 rounded-lg text-slate-700 dark:text-[#999999]">
+                        <span>{language === 'bn' ? 'খরচের কোনো রেকর্ড নেই' : 'No expense records yet'}</span>
+                        <span className="font-bold">{bnNum(fmtBdt(0))}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -609,17 +634,21 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
                   <div className="grid grid-cols-2 gap-2">
                     <div className="p-3 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 rounded-xl">
                       <span className="text-[11px] text-emerald-800 dark:text-emerald-300 block">{language === 'bn' ? 'সম্ভাব্য বিক্রয়মূল্য' : 'Expected Revenue'}</span>
-                      <span className="text-base font-black text-emerald-950 dark:text-emerald-200">৳৪,৮৫,০০০</span>
+                      <span className="text-base font-black text-emerald-950 dark:text-emerald-200">{bnNum(fmtBdt(totalRevenueBdt))}</span>
                     </div>
                     <div className="p-3 bg-emerald-100/60 dark:bg-emerald-500/10 border border-emerald-300 dark:border-emerald-500/20 rounded-xl">
                       <span className="text-[11px] text-emerald-800 dark:text-emerald-300 block">{language === 'bn' ? 'প্রত্যাশিত নিট লাভ' : 'Expected Net Profit'}</span>
-                      <span className="text-base font-black text-emerald-900 dark:text-emerald-200">৳১,৭২,৫০০</span>
+                      <span className="text-base font-black text-emerald-900 dark:text-emerald-200">{bnNum(fmtBdt(netProfitBdt))}</span>
                     </div>
                   </div>
                   <p className="text-[11px] text-slate-500 dark:text-[#a0a0a0] leading-relaxed">
-                    {language === 'bn'
-                      ? 'চলতি মৌসুমে সরিষা ও ভুট্টার ফলনে সর্বোচ্চ মুনাফা (৩৫.৫%) পাওয়ার সম্ভাবনা রয়েছে।'
-                      : 'Highest margin (35.5%) is projected from Mustard and Maize yields this season.'}
+                    {topMarginCrop
+                      ? language === 'bn'
+                        ? `${topMarginCrop.cropName} থেকে সর্বোচ্চ লাভ (${bnNum(topMarginPercent)}%) প্রক্ষেপিত`
+                        : `Highest margin (${topMarginPercent}%) projected from ${topMarginCrop.cropName}`
+                      : language === 'bn'
+                        ? 'এখনো আয়-ব্যয়ের রেকর্ড নেই।'
+                        : 'No revenue or expense records yet.'}
                   </p>
                 </div>
               )}
@@ -654,26 +683,24 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
                 <div className="space-y-3">
                   <div className="p-3 bg-purple-50/80 dark:bg-purple-500/10 border border-purple-200 dark:border-purple-500/20 rounded-xl text-purple-950 dark:text-purple-200">
                     <span className="text-[11px] font-bold text-purple-800 dark:text-purple-300 uppercase tracking-wide block">
-                      {language === 'bn' ? 'রবি মৌসুমের সেরা সুপারিশ' : 'Top Rabi Season Recommendation'}
+                      {language === 'bn' ? 'মাটি বিশ্লেষণ ও সার পরামর্শ' : 'Soil Analysis & Fertilizer Advice'}
                     </span>
                     <p className="text-sm font-bold mt-1 text-purple-950 dark:text-purple-200">
-                      {language === 'bn' ? 'বারি সরিষা-১৪ ও হাইব্রিড ভুট্টা (পায়োনিয়ার ৩৩৫৫)' : 'BARI Mustard-14 & Hybrid Maize'}
+                      {diagnostic ? (language === 'bn' ? `${bnNum(diagnostic.recommendedFertilizers.length)}টি সার পরামর্শ ও ${bnNum(diagnostic.soilDeficiencies.length)}টি মাটি পরীক্ষা` : `${diagnostic.recommendedFertilizers.length} fertilizer recommendations from ${diagnostic.soilDeficiencies.length} soil checks`) : (language === 'bn' ? 'বিশ্লেষণ পাওয়া যায়নি' : 'Diagnostic unavailable')}
                     </p>
                   </div>
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div className="p-2.5 bg-slate-50 dark:bg-[#111111]/60 border border-slate-200 dark:border-[#222222] rounded-xl">
-                      <span className="text-slate-500 dark:text-[#a0a0a0] block text-[11px]">{language === 'bn' ? 'মাটির উপযুক্ততা' : 'Soil Match'}</span>
-                      <span className="font-bold text-emerald-700 dark:text-emerald-400">৯৬% {language === 'bn' ? 'অনুকূল' : 'Optimal'}</span>
+                      <span className="text-slate-500 dark:text-[#a0a0a0] block text-[11px]">{language === 'bn' ? 'মাটির অবস্থা' : 'Soil Status'}</span>
+                      <span className="font-bold text-emerald-700 dark:text-emerald-400">{diagnostic ? (soilInsight?.status === 'Deficient' ? (language === 'bn' ? 'সার ঘাটতি আছে' : 'Nutrient gaps') : (language === 'bn' ? 'সুষম মাটি' : 'Soil balanced')) : '—'}</span>
                     </div>
                     <div className="p-2.5 bg-slate-50 dark:bg-[#111111]/60 border border-slate-200 dark:border-[#222222] rounded-xl">
-                      <span className="text-slate-500 dark:text-[#a0a0a0] block text-[11px]">{language === 'bn' ? 'সেচ চাহিদা' : 'Water Need'}</span>
-                      <span className="font-bold text-slate-800 dark:text-[#e0e0e0]">{language === 'bn' ? 'স্বল্প (২-৩ বার)' : 'Low (2-3x)'}</span>
+                      <span className="text-slate-500 dark:text-[#a0a0a0] block text-[11px]">{language === 'bn' ? 'প্রাক্কলিত ফলন' : 'Yield Potential'}</span>
+                      <span className="font-bold text-slate-800 dark:text-[#e0e0e0]">{diagnostic ? `${bnNum(diagnostic.yieldPotentialPrediction.minimumYield)}-${bnNum(diagnostic.yieldPotentialPrediction.maximumYield)} ${diagnostic.yieldPotentialPrediction.unit}` : '—'}</span>
                     </div>
                   </div>
                   <p className="text-[11px] text-slate-500 dark:text-[#a0a0a0] leading-relaxed">
-                    {language === 'bn'
-                      ? 'দোআঁশ মাটির আর্দ্রতা অনুযায়ী বারি সরিষা-১৪ চাষ করলে সর্বোচ্চ ফলন ও কম খরচে দ্রুত লাভবান হওয়া সম্ভব।'
-                      : 'AI recommends BARI Mustard-14 for high yield and quick turnover with low irrigation requirements.'}
+                    {diagnostic ? diagnostic.agronomicRationale : (language === 'bn' ? 'এইমুহূর্তে কোনো বিশ্লেষণ পাওয়া যায়নি।' : 'No diagnostic available right now.')}
                   </p>
                 </div>
               )}
@@ -681,29 +708,14 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
               {selectedCard.id === 'comparison' && (
                 <div className="space-y-3">
                   <div className="space-y-2">
-                    {[
-                      {
-                        name: language === 'bn' ? 'ব্রি ধান-২৮ (বোরো)' : 'BRRI Dhan-28',
-                        roi: '২৪%',
-                        cost: '৳২২,০০০ / বিঘা',
-                        badge: language === 'bn' ? 'মধ্যম লাভ' : 'Medium Profit',
-                        color: 'border-slate-200 dark:border-[#222222]',
-                      },
-                      {
-                        name: language === 'bn' ? 'বারি সরিষা-১৪ (রবি)' : 'BARI Mustard-14',
-                        roi: '৩৮%',
-                        cost: '৳১২,৫০০ / বিঘা',
-                        badge: language === 'bn' ? 'সর্বোচ্চ লাভ' : 'Max Profit',
-                        color: 'border-emerald-300 dark:border-emerald-500/30 bg-emerald-50/50 dark:bg-emerald-500/10',
-                      },
-                      {
-                        name: language === 'bn' ? 'হাইব্রিড ভুট্টা' : 'Hybrid Maize',
-                        roi: '৩২%',
-                        cost: '৳১৮,০০০ / বিঘা',
-                        badge: language === 'bn' ? 'উচ্চ ফলন' : 'High Yield',
-                        color: 'border-slate-200 dark:border-[#222222]',
-                      },
-                    ].map((item, idx) => (
+                    {compareProfiles.slice(0, 3).map((p) => ({
+                        name: `${p.cropName} (${p.variety})`,
+                        roi: `${p.netMarginPercent}%`,
+                        cost: `${fmtBdt(p.totalInputCostPerAcre)} / ${language === 'bn' ? 'একর' : 'acre'}`,
+                        badge: p.netMarginPercent >= 30 ? (language === 'bn' ? 'সর্বোচ্চ লাভ' : 'Max Profit') : p.netMarginPercent >= 20 ? (language === 'bn' ? 'মধ্যম লাভ' : 'Medium Profit') : (language === 'bn' ? 'কম লাভ' : 'Low Profit'),
+                        color: p.netMarginPercent >= 30 ? 'border-emerald-300 dark:border-emerald-500/30 bg-emerald-50/50 dark:bg-emerald-500/10' : 'border-slate-200 dark:border-[#222222]',
+                      }))
+                      .map((item, idx) => (
                       <div key={idx} className={`p-2.5 rounded-xl border ${item.color} flex items-center justify-between`}>
                         <div>
                           <p className="text-xs font-bold text-slate-900 dark:text-[#f0f0f0]">{item.name}</p>
@@ -738,7 +750,7 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
                       ))
                     ) : (
                       <div className="p-3 bg-slate-50 dark:bg-[#111111]/60 border border-slate-200 dark:border-[#222222] rounded-xl text-xs text-slate-600 dark:text-[#a0a0a0]">
-                        {language === 'bn' ? 'আমন ধানে ইউরিয়া ও ডিএপি সার প্রয়োগ সম্পন্ন।' : 'Applied Urea & DAP fertilizer on Aman paddy.'}
+                        {language === 'bn' ? 'এখনো কোনো ফসল ডায়েরি এন্ট্রি নেই।' : 'No crop log entries yet.'}
                       </div>
                     )}
                   </div>
@@ -752,17 +764,17 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
                       {language === 'bn' ? 'চলমান অডিও ও ভিডিও কোর্স' : 'Featured Course'}
                     </span>
                     <p className="text-sm font-bold mt-1 text-amber-950 dark:text-amber-200">
-                      {language === 'bn' ? 'আধুনিক পদ্ধতিতে সরিষা ও রবি শস্য চাষাবাদ' : 'Modern Mustard & Rabi Cultivation'}
+                      {featuredCourse ? featuredCourse.title : (language === 'bn' ? 'কোনো কোর্স পাওয়া যায়নি' : 'No courses available')}
                     </p>
                   </div>
                   <div className="p-2.5 bg-slate-50 dark:bg-[#111111]/60 border border-slate-200 dark:border-[#222222] rounded-xl text-xs space-y-1">
                     <div className="flex justify-between">
                       <span className="text-slate-500 dark:text-[#a0a0a0]">{language === 'bn' ? 'মোট মডিউল:' : 'Total Modules:'}</span>
-                      <span className="font-bold text-slate-800 dark:text-[#e0e0e0]">{language === 'bn' ? '৫টি অডিও লেকচার' : '5 Audio Lectures'}</span>
+                      <span className="font-bold text-slate-800 dark:text-[#e0e0e0]">{featuredCourse ? (language === 'bn' ? `${bnNum(featuredCourse.lessonsCount)}টি লেকচার` : `${featuredCourse.lessonsCount} Lessons`) : '—'}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-slate-500 dark:text-[#a0a0a0]">{language === 'bn' ? 'সময়কাল:' : 'Duration:'}</span>
-                      <span className="font-bold text-slate-800 dark:text-[#e0e0e0]">{language === 'bn' ? '৩৫ মিনিট' : '35 Minutes'}</span>
+                      <span className="font-bold text-slate-800 dark:text-[#e0e0e0]">{featuredCourse ? (language === 'bn' ? `${bnNum(featuredCourse.durationMinutes)} মিনিট` : `${featuredCourse.durationMinutes} Minutes`) : '—'}</span>
                     </div>
                   </div>
                 </div>
@@ -773,17 +785,19 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div className="p-3 bg-slate-50 dark:bg-[#111111]/60 border border-slate-200 dark:border-[#222222] rounded-xl">
                       <span className="text-slate-500 dark:text-[#a0a0a0] block text-[11px]">{language === 'bn' ? 'মোট উত্তোলন' : 'Total Harvested'}</span>
-                      <span className="text-base font-black text-slate-900 dark:text-[#f0f0f0]">{language === 'bn' ? '১২,৪৫০ কেজি' : '12,450 kg'}</span>
+                      <span className="text-base font-black text-slate-900 dark:text-[#f0f0f0]">{language === 'bn' ? `${bnNum(totalHarvestedKg)} কেজি` : `${totalHarvestedKg} kg`}</span>
                     </div>
                     <div className="p-3 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 rounded-xl">
                       <span className="text-emerald-800 dark:text-emerald-300 block text-[11px]">{language === 'bn' ? 'গড়ে বিক্রয় দর' : 'Avg Sell Price'}</span>
-                      <span className="text-base font-black text-emerald-900 dark:text-emerald-200">৳৩৮ / {language === 'bn' ? 'কেজি' : 'kg'}</span>
+                      <span className="text-base font-black text-emerald-900 dark:text-emerald-200">{avgSellPriceBdt > 0 ? bnNum(fmtBdt(avgSellPriceBdt)) : '—'} / {language === 'bn' ? 'কেজি' : 'kg'}</span>
                     </div>
                   </div>
                   <div className="p-2.5 bg-slate-50 dark:bg-[#111111]/60 border border-slate-200 dark:border-[#222222] rounded-xl text-xs text-slate-600 dark:text-[#a0a0a0]">
-                    🌾 {language === 'bn'
-                      ? 'আসন্ন কর্তন: ব্রি ধান-২৮ (কাটার সম্ভাব্য সময়: ১৫ দিন বাকি)'
-                      : 'Upcoming harvest: BRRI Dhan-28 in 15 days'}
+                    🌾 {upcomingHarvestBatch
+                      ? (language === 'bn'
+                        ? `আসন্ন উত্তোলন: ${upcomingHarvestBatch.cropName} (${upcomingHarvestBatch.growthStage})`
+                        : `Upcoming harvest: ${upcomingHarvestBatch.cropName} (${upcomingHarvestBatch.growthStage})`)
+                      : (language === 'bn' ? 'কাটার উপযুক্ত কোনো ফসল নেই।' : 'No batches ready for harvest yet.')}
                   </div>
                 </div>
               )}
@@ -795,18 +809,18 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
                       {profile?.fullName ? profile.fullName.charAt(0) : 'খ'}
                     </div>
                     <div>
-                      <p className="font-bold text-slate-900 dark:text-[#f0f0f0] text-sm">{profile?.fullName || 'মোহাম্মদ করিম খান'}</p>
-                      <p className="text-[11px] text-slate-500 dark:text-[#a0a0a0]">{profile?.phoneNumber || '০১৭XXXXXXXX'} • {language === 'bn' ? 'বগুড়া, বাংলাদেশ' : 'Bogura, Bangladesh'}</p>
+                      <p className="font-bold text-slate-900 dark:text-[#f0f0f0] text-sm">{profile?.fullName || '—'}</p>
+                      <p className="text-[11px] text-slate-500 dark:text-[#a0a0a0]">{profile?.phoneNumber || '—'} • {language === 'bn' ? `${profile?.primaryLocation?.district || '—'}, বাংলাদেশ` : `${profile?.primaryLocation?.district || '—'}, Bangladesh`}</p>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div className="p-2.5 bg-slate-50 dark:bg-[#111111]/60 border border-slate-200 dark:border-[#222222] rounded-xl">
                       <span className="text-slate-500 dark:text-[#a0a0a0] block text-[11px]">{language === 'bn' ? 'জাতীয় পরিচয়পত্র' : 'NID'}</span>
-                      <span className="font-bold text-emerald-700 dark:text-emerald-400">✓ {language === 'bn' ? 'যাচাইকৃত' : 'Verified'}</span>
+                      <span className="font-bold text-emerald-700 dark:text-emerald-400">{profile?.nationalId ? `✓ ${language === 'bn' ? 'যাচাইকৃত' : 'Verified'}` : (language === 'bn' ? 'NID নেই' : 'No NID')}</span>
                     </div>
                     <div className="p-2.5 bg-slate-50 dark:bg-[#111111]/60 border border-slate-200 dark:border-[#222222] rounded-xl">
                       <span className="text-slate-500 dark:text-[#a0a0a0] block text-[11px]">{language === 'bn' ? 'সদস্যপদ' : 'Membership'}</span>
-                      <span className="font-bold text-slate-800 dark:text-[#e0e0e0]">{language === 'bn' ? 'প্রিমিয়াম কৃষক' : 'Premium Farmer'}</span>
+                      <span className="font-bold text-slate-800 dark:text-[#e0e0e0]">{profile?.farmerClub || (language === 'bn' ? 'কোনো কৃষক ক্লাব নেই' : 'No farmer club')}</span>
                     </div>
                   </div>
                 </div>
@@ -814,62 +828,93 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
 
               {selectedCard.id === 'notifications' && (
                 <div className="space-y-2">
-                  <div className="p-2.5 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 rounded-xl text-xs">
-                    <span className="font-bold text-emerald-900 dark:text-emerald-300 block">{language === 'bn' ? 'সার ভর্তুকি আপডেট' : 'Subsidy Alert'}</span>
-                    <span className="text-[11px] text-emerald-800 dark:text-emerald-200">
-                      {language === 'bn' ? 'ইউরিয়া ও ডিএপি সারের নতুন সরকারি মূল্য তালিকা প্রকাশিত হয়েছে।' : 'New fertilizer subsidy schedule published.'}
-                    </span>
+                  {notifList.length > 0 ? (
+                    notifList.slice(0, 3).map((n) => (
+                      <div
+                        key={n.id}
+                        className={`p-2.5 rounded-xl border text-xs ${
+                          n.priority === 'high'
+                            ? 'bg-amber-50 dark:bg-amber-500/10 border-amber-200 dark:border-amber-500/20'
+                            : 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20'
+                        }`}
+                      >
+                        <span className={`font-bold block ${n.priority === 'high' ? 'text-amber-900 dark:text-amber-300' : 'text-emerald-900 dark:text-emerald-300'}`}>{n.title}</span>
+                        <span className={`text-[11px] ${n.priority === 'high' ? 'text-amber-800 dark:text-amber-200' : 'text-emerald-800 dark:text-emerald-200'}`}>{n.message}</span>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="p-2.5 bg-slate-50 dark:bg-[#111111]/60 border border-slate-200 dark:border-[#222222] rounded-xl text-xs text-slate-600 dark:text-[#a0a0a0]">
+                      {language === 'bn' ? 'কোনো নতুন বিজ্ঞপ্তি নেই।' : 'No new notifications.'}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {selectedCard.id === 'my_listings' && (
+                <div className="space-y-3">
+                  <div className="grid grid-cols-2 gap-2">
+                    <ModalStat
+                      label={language === 'bn' ? 'অনুমোদিত' : 'Approved'}
+                      value={approvedListings.length}
+                      valueClassName="text-emerald-700 dark:text-emerald-400"
+                    />
+                    <ModalStat
+                      label={language === 'bn' ? 'অনুমোদনের অপেক্ষায়' : 'Awaiting Approval'}
+                      value={pendingListings.length}
+                      valueClassName="text-amber-700 dark:text-amber-400"
+                    />
                   </div>
-                  <div className="p-2.5 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 rounded-xl text-xs">
-                    <span className="font-bold text-amber-900 dark:text-amber-300 block">{language === 'bn' ? 'আবহাওয়া পূর্বাভাস' : 'Weather Alert'}</span>
-                    <span className="text-[11px] text-amber-800 dark:text-amber-200">
-                      {language === 'bn' ? 'আগামী ৪৮ ঘণ্টার মধ্যে উত্তরবঙ্গে শুষ্ক আবহাওয়া বজায় থাকবে।' : 'Dry weather expected in next 48 hours.'}
-                    </span>
-                  </div>
+                  {listings.length > 0 ? (
+                    <div className="space-y-2">
+                      {listings.slice(0, 4).map((l) => (
+                        <ModalRow
+                          key={l.id}
+                          title={`${l.cropName}${l.variety ? ` · ${l.variety}` : ''}`}
+                          subtitle={`${l.quantityKg.toLocaleString()} kg · ${fmtBdt(l.pricePerKgBdt)}/kg · ${l.district || l.location || '—'}`}
+                          chip={
+                            <ModalChip
+                              className={
+                                l.status === 'Approved'
+                                  ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-500/15 dark:text-emerald-300'
+                                  : 'bg-amber-100 text-amber-800 dark:bg-amber-500/15 dark:text-amber-300'
+                              }
+                            >
+                              {l.status === 'Approved'
+                                ? (language === 'bn' ? 'অনুমোদিত' : 'Approved')
+                                : (language === 'bn' ? 'অনুমোদন বাকি' : 'Pending')}
+                            </ModalChip>
+                          }
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <ModalEmpty>
+                      {language === 'bn'
+                        ? 'এখনো কোনো ফসল বাজারে তালিকাভুক্ত করা হয়নি — "নতুন তালিকা" চেপে শুরু করুন।'
+                        : 'No produce listed yet — use "New Listing" to get started.'}
+                    </ModalEmpty>
+                  )}
                 </div>
               )}
 
               {/* Fallback for other cards */}
-              {!['crops', 'calendar', 'weather', 'farms', 'expenses', 'profitability', 'helpline', 'recommendation', 'comparison', 'logs', 'training', 'harvest', 'profile', 'notifications'].includes(selectedCard.id) && (
+              {!['crops', 'calendar', 'weather', 'farms', 'expenses', 'profitability', 'helpline', 'recommendation', 'comparison', 'logs', 'training', 'harvest', 'my_listings', 'profile', 'notifications'].includes(selectedCard.id) && (
                 <div className="space-y-3">
                   <p className="text-slate-600 dark:text-[#a0a0a0] leading-relaxed">
                     {language === 'bn'
                       ? `${selectedCard.titleBn} সংক্রান্ত সার্বিক ব্যবস্থাপনা, ডাটা এন্ট্রি ও বিশদ বিশ্লেষণ দেখতে নিচের বাটনে ক্লিক করে মূল পাতায় যান।`
                       : `View and manage all details for ${selectedCard.titleEn} by navigating to the full page below.`}
                   </p>
-                  <div className="p-3 bg-slate-50 dark:bg-[#111111]/60 rounded-xl border border-slate-200 dark:border-[#222222] text-slate-700 dark:text-[#999999] flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                    <span>{language === 'bn' ? 'সিস্টেমে সকল তথ্য প্রস্তুত রয়েছে' : 'All records synchronized'}</span>
-                  </div>
+                  <ModalSyncedNote
+                    label={
+                      language === 'bn'
+                        ? 'সিস্টেমে সকল তথ্য প্রস্তুত রয়েছে'
+                        : 'All records synchronized'
+                    }
+                  />
                 </div>
               )}
-            </div>
-
-            {/* Modal Action Buttons */}
-            <div className="p-4 bg-slate-50 dark:bg-[#111111]/60 border-t border-slate-100 dark:border-[#222222] flex items-center justify-end gap-2">
-              <button
-                onClick={() => setSelectedCard(null)}
-                className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-[#a0a0a0] hover:bg-slate-200/60 transition-colors cursor-pointer"
-              >
-                {language === 'bn' ? 'বন্ধ করুন' : 'Close'}
-              </button>
-
-              {selectedCard.moduleKey && (
-                <button
-                  onClick={() => {
-                    const targetModule = selectedCard.moduleKey;
-                    setSelectedCard(null);
-                    if (targetModule) onNavigate(targetModule);
-                  }}
-                  className="px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
-                >
-                  <span>{language === 'bn' ? 'সম্পূর্ণ পাতা খুলুন' : 'Open Full Page'}</span>
-                  <ArrowUpRight className="w-3.5 h-3.5" />
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
+        </ServiceInfoModal>
       )}
     </div>
   );

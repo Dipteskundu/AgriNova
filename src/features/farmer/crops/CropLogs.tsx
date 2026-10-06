@@ -3,13 +3,14 @@ import { tr } from "@/lib/localize";
 import {
   ClipboardList,
   Plus,
-  
-  
+  Filter,
+  DollarSign,
   CloudSun,
   UserCheck,
-  
+  Calendar,
   Layers,
 } from '@/components/icons';
+import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';

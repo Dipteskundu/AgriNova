@@ -8,9 +8,17 @@ import { Icon, type IconName } from "@/components/icons";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { useAuth } from "@/contexts/AuthContext";
+import { getCart, onCartCountChange } from "@/lib/marketplaceApi";
 
+/**
+ * Marketplace entries sit alongside the site's own pages — the two public
+ * catalogue routes are part of the main application, not a separate area, so
+ * they get the same treatment as About.
+ */
 const NAV_LINKS: { label: string; href: string; icon: IconName }[] = [
   { label: "Home", href: "/", icon: "Sprout" },
+  { label: "Products", href: "/products", icon: "Store" },
+  { label: "Inputs", href: "/inputs", icon: "PackageCheck" },
   { label: "About", href: "/about", icon: "BookOpen" },
 ];
 
@@ -27,6 +35,19 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({ transparent = false 
   const [mounted, setMounted] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
+
+  /**
+   * Shared-basket badge. `onCartCountChange` covers mutations made anywhere
+   * in this tab (adding from a detail page, emptying at checkout); the
+   * `pathname` dep re-reads localStorage when the visitor navigates, in case
+   * the cart changed while this navbar was not mounted.
+   */
+  const [cartCount, setCartCount] = useState(0);
+
+  useEffect(() => {
+    setCartCount(getCart().length);
+    return onCartCountChange(setCartCount);
+  }, [pathname]);
 
   const openMenu = useCallback(() => {
     setMobileOpen(true);
@@ -68,7 +89,12 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({ transparent = false 
   }, [profileOpen]);
 
   const navLinkClass = (href: string) => {
-    const isActive = pathname === href;
+    // Prefix-aware so `/products` stays lit while viewing `/products/:id`.
+    // `/` is excluded, otherwise Home would match every route in the app.
+    const isActive =
+      href === "/"
+        ? pathname === "/"
+        : pathname === href || pathname.startsWith(`${href}/`);
     return `rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
       transparent
         ? isActive
@@ -113,6 +139,19 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({ transparent = false 
           {user && (
             <Link href="/dashboard" className={navLinkClass("/dashboard")}>
               Dashboard
+            </Link>
+          )}
+          {user && (
+            <Link href="/dashboard/cart" className={navLinkClass("/dashboard/cart")}>
+              <span className="inline-flex items-center gap-1.5">
+                <Icon name="ShoppingCart" size={16} />
+                Cart
+                {cartCount > 0 && (
+                  <span className="rounded-full bg-emerald-600 px-1.5 py-0.5 text-[10px] font-bold text-white">
+                    {cartCount}
+                  </span>
+                )}
+              </span>
             </Link>
           )}
         </nav>
@@ -286,6 +325,30 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({ transparent = false 
                       Dashboard
                     </span>
                     <Icon name="ChevronRight" size={16} className="text-slate-300 dark:text-[#444444]" />
+                  </Link>
+                )}
+                {user && (
+                  <Link
+                    href="/dashboard/cart"
+                    onClick={closeMenu}
+                    className={`flex items-center justify-between rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ${
+                      pathname.startsWith("/dashboard/cart")
+                        ? "bg-emerald-50 text-emerald-700 border-l-4 border-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500"
+                        : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-[#a0a0a0] dark:hover:bg-[#111111] dark:hover:text-[#f0f0f0]"
+                    }`}
+                  >
+                    <span className="flex items-center gap-3">
+                      <Icon name="ShoppingCart" size={18} />
+                      Cart
+                    </span>
+                    <span className="flex items-center gap-2">
+                      {cartCount > 0 && (
+                        <span className="rounded-full bg-emerald-600 px-1.5 py-0.5 text-[10px] font-bold text-white">
+                          {cartCount}
+                        </span>
+                      )}
+                      <Icon name="ChevronRight" size={16} className="text-slate-300 dark:text-[#444444]" />
+                    </span>
                   </Link>
                 )}
               </div>

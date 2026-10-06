@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" width="480" height="360" role="img" aria-label="Oilseed">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fddb92"/>
+      <stop offset="100%" stop-color="#d1913c"/>
+    </linearGradient>
+  </defs>
+  <rect width="480" height="360" fill="url(#bg)"/>
+  <g opacity="0.16" fill="#7d5018">
+    <circle cx="70" cy="60" r="46"/><circle cx="420" cy="300" r="70"/>
+  </g>
+  <g transform="translate(0 8)"><path d="M240 74 q-26 -12 -34 -34 q26 4 34 24z" fill="#7d5018"/><path d="M240 74 q26 -12 34 -34 q-26 4 -34 24z" fill="#7d5018"/><path d="M240 100 q-26 -12 -34 -34 q26 4 34 24z" fill="#7d5018"/><path d="M240 100 q26 -12 34 -34 q-26 4 -34 24z" fill="#7d5018"/><path d="M240 126 q-26 -12 -34 -34 q26 4 34 24z" fill="#7d5018"/><path d="M240 126 q26 -12 34 -34 q-26 4 -34 24z" fill="#7d5018"/><path d="M240 152 q-26 -12 -34 -34 q26 4 34 24z" fill="#7d5018"/><path d="M240 152 q26 -12 34 -34 q-26 4 -34 24z" fill="#7d5018"/><path d="M240 178 q-26 -12 -34 -34 q26 4 34 24z" fill="#7d5018"/><path d="M240 178 q26 -12 34 -34 q-26 4 -34 24z" fill="#7d5018"/><path d="M240 60 v168" stroke="#7d5018" stroke-width="7" stroke-linecap="round"/></g>
+  <text x="240" y="336" text-anchor="middle" font-family="system-ui,-apple-system,Segoe UI,sans-serif"
+        font-size="20" font-weight="700" fill="#7d5018" opacity="0.9">Oilseed</text>
+</svg>

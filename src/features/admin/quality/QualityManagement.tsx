@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { tr } from "@/lib/localize";
 import {
-  
-  
-  
-  
+  CheckCircle2,
+  AlertTriangle,
+  XCircle,
+  FileCheck,
   Search,
-  
+  Filter,
   Eye,
-  
-  
+  Microscope,
+  Award,
   Download,
 } from '@/components/icons';
-import { Card } from '@/components/ui/Card';
+import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';

@@ -8,15 +8,22 @@ import { setToken, getToken, removeToken } from '@/lib/api';
 import { auth, googleProvider, githubProvider } from '@/lib/firebase';
 import {
   signInWithPopup,
-  
+  onAuthStateChanged,
   signOut as firebaseSignOut,
   type User as FirebaseUser,
 } from 'firebase/auth';
 
+/**
+ * Which portal a role lands in.
+ *
+ * `farmer`, `buyer` and `supplier` all share `main` — the marketplace is a
+ * section of that sidebar rather than a portal of its own, so there is no
+ * longer a reason to send a buyer somewhere a farmer cannot go.
+ */
 const ROLE_PORTALS: Record<UserRole, PortalType> = {
-  farmer: 'farmer',
-  buyer: 'marketplace',
-  supplier: 'marketplace',
+  farmer: 'main',
+  buyer: 'main',
+  supplier: 'main',
   inspector: 'operations',
   logistics: 'operations',
   support: 'support',
@@ -24,24 +31,21 @@ const ROLE_PORTALS: Record<UserRole, PortalType> = {
 };
 
 const PORTAL_LABELS: Record<PortalType, string> = {
-  farmer: 'Farmer',
-  marketplace: 'Marketplace',
+  main: 'Main',
   operations: 'Operations',
   support: 'Support',
   admin: 'Admin',
 };
 
 const PORTAL_DESCRIPTIONS: Record<PortalType, string> = {
-  farmer: 'Manage your farms, fields, crops, and harvests',
-  marketplace: 'Buy and sell produce and farming inputs',
+  main: 'Farms, crops, orders and the marketplace',
   operations: 'Quality inspections and delivery tracking',
   support: 'Disputes, help desk, and resolution center',
   admin: 'Full platform administration and control',
 };
 
 const PORTAL_ICONS: Record<PortalType, string> = {
-  farmer: '🌾',
-  marketplace: '🛒',
+  main: '🌾',
   operations: '🔍',
   support: '🎧',
   admin: '🛡️',
@@ -84,13 +88,32 @@ const AuthContext = createContext<AuthContextType>({
 const USER_KEY = 'farmPath_user';
 const PORTAL_KEY = 'farmPath_portal';
 
-function getPortalsForRoles(roles: string[]): PortalType[] {
+function getPortalsForRoles(roles?: string[] | string): PortalType[] {
   const portals = new Set<PortalType>();
-  roles.forEach((role) => {
+
+  // Handle both array and single string, and undefined/null
+  const roleList = Array.isArray(roles)
+    ? roles
+    : typeof roles === 'string'
+      ? [roles]
+      : ['farmer'];
+
+  roleList.forEach((role) => {
     const portal = ROLE_PORTALS[role as UserRole];
     if (portal) portals.add(portal);
   });
-  return Array.from(portals);
+
+  // Ensure we always have at least the main portal
+  return portals.size > 0 ? Array.from(portals) : ['main'];
+}
+
+function makeInitials(name: string): string {
+  return name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
 }
 
 async function syncSocialUser(firebaseUser: FirebaseUser): Promise<{ token: string; user: AuthUser }> {

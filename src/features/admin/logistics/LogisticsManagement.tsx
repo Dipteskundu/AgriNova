@@ -1,20 +1,20 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { tr } from "@/lib/localize";
 import {
-  
+  Truck,
   Thermometer,
   MapPin,
   Clock,
-  
-  
-  
+  Phone,
+  AlertTriangle,
+  CheckCircle2,
   Search,
-  
-  
-  
+  Filter,
+  ArrowRight,
+  ShieldCheck,
   RefreshCw,
 } from '@/components/icons';
-import { Card } from '@/components/ui/Card';
+import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
@@ -29,7 +29,11 @@ export const LogisticsManagement: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
 
-  const loadFleet = useCallback(async () => {
+  useEffect(() => {
+    loadFleet();
+  }, []);
+
+  const loadFleet = async () => {
     try {
       setLoading(true);
       const res = await getLogisticsFleetAdmin();
@@ -41,12 +45,7 @@ export const LogisticsManagement: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [showToast]);
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => void loadFleet(), 0);
-    return () => window.clearTimeout(timer);
-  }, [loadFleet]);
+  };
 
   const filtered = fleet.filter((item) => {
     const matchesSearch =

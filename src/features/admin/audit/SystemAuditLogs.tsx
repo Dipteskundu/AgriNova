@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { tr } from "@/lib/localize";
 import {
-  
+  ShieldAlert,
   Search,
-  
+  Filter,
   Download,
-  
-  
-  
-  
-  
-  
+  Clock,
+  User,
+  Activity,
+  CheckCircle2,
+  AlertTriangle,
+  XCircle,
 } from '@/components/icons';
+import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';

@@ -16,6 +16,15 @@ import {
   Store,
   ShoppingCart,
   CreditCard,
+  Search,
+  Truck,
+  CheckCircle,
+  FileBarChart,
+  Scale,
+  Phone,
+  Mail,
+  ClipboardList,
+  Calendar,
 } from "@/components/icons";
 import { FarmerNotification } from "@/types";
 import { getFarmerNotifications, markNotificationAsRead } from "@/lib/farmerApi";
@@ -63,10 +72,10 @@ export const AgriPortalShell: React.FC<AgriPortalShellProps> = ({ children }) =>
   const navigateByModule = useCallback(
     (key: string) => {
       if (!portal) return;
-      const route = getRoute(portal, key);
+      const route = getRoute(portal, key, user?.roles);
       if (route) navigate(route);
     },
-    [portal, navigate]
+    [portal, user, navigate]
   );
 
   const navigateHome = useCallback(() => {
@@ -83,8 +92,8 @@ export const AgriPortalShell: React.FC<AgriPortalShellProps> = ({ children }) =>
   }, []);
 
   useEffect(() => {
-    const timer = window.setTimeout(() => void loadNotifications(), 0);
-    return () => window.clearTimeout(timer);
+    const rafId = requestAnimationFrame(() => loadNotifications());
+    return () => cancelAnimationFrame(rafId);
   }, [loadNotifications, pathname]);
 
   const handleLogout = useCallback(() => {
@@ -100,14 +109,54 @@ export const AgriPortalShell: React.FC<AgriPortalShellProps> = ({ children }) =>
   );
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;
-  const activeModule = portal ? getActiveKey(portal, pathname) : 'dashboard';
+  /**
+   * The sidebar is composed per user, so every read below has to pass their
+   * roles — the same key list `RouteGuard` validates against.
+   */
+  const roles = user?.roles;
+  const activeModule = portal ? getActiveKey(portal, pathname, roles) : 'dashboard';
   const isHomePage = pathname === "/dashboard";
 
-  const navGroups = portal ? getNavGroups(portal) : [];
+  const navGroups = portal ? getNavGroups(portal, roles) : [];
+  const totalModules = navGroups.reduce((n, g) => n + g.items.length, 0);
 
   const activeTitle =
     navGroups.flatMap((g) => g.items).find((i) => i.key === activeModule)?.label ||
-    (portal === "farmer" ? "Farmer Portal" : portal === "admin" ? "Admin Portal" : portal === "marketplace" ? "Marketplace" : portal === "operations" ? "Operations" : "Support");
+    (portal === "admin" ? "Admin Portal" : portal === "operations" ? "Operations" : portal === "support" ? "Support" : "Dashboard");
+
+  const badgeClass = {
+    main:       'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400',
+    admin:      'bg-indigo-100  text-indigo-700  dark:bg-indigo-500/15  dark:text-indigo-400',
+    operations: 'bg-amber-100  text-amber-700   dark:bg-amber-500/15   dark:text-amber-400',
+    support:    'bg-purple-100 text-purple-700  dark:bg-purple-500/15  dark:text-purple-400',
+  }[portal ?? 'main'];
+
+  const activeNavClass = {
+    main:       'bg-emerald-700',
+    admin:      'bg-indigo-700',
+    operations: 'bg-amber-700',
+    support:    'bg-purple-700',
+  }[portal ?? 'main'];
+
+  /**
+   * The `main` portal hosts three roles, so the chip reports the role rather
+   * than the portal — otherwise a buyer logging in sees "Farmer".
+   */
+  const roleLabel = (() => {
+    if (!portal) return '';
+    const userRoles = user?.roles ?? [];
+    if (portal === 'main') {
+      if (userRoles.includes('supplier')) return 'Supplier';
+      if (userRoles.includes('farmer')) return language === 'bn' ? 'কৃষক' : 'Farmer';
+      if (userRoles.includes('buyer')) return 'Buyer';
+      return 'User';
+    }
+    if (portal === 'admin')       return language === 'bn' ? 'এডমিন'  : 'Admin';
+    if (portal === 'support')     return language === 'bn' ? 'সাপোর্ট': 'Support';
+    if (portal === 'operations')
+      return userRoles.includes('logistics') ? 'Logistics' : 'Inspector';
+    return '';
+  })();
 
   const navRenderer = (groups: typeof navGroups) =>
     groups.map((group) => (
@@ -125,9 +174,7 @@ export const AgriPortalShell: React.FC<AgriPortalShellProps> = ({ children }) =>
                 onClick={() => navigateByModule(item.key)}
                 className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all text-left cursor-pointer ${
                   isActive
-                    ? portal === "farmer"
-                      ? "bg-emerald-700 text-white font-semibold shadow-xs"
-                      : "bg-indigo-700 text-white font-semibold shadow-xs"
+                    ? activeNavClass
                     : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-[#a0a0a0] dark:hover:bg-[#111111] dark:hover:text-[#f0f0f0]"
                 }`}
               >
@@ -155,19 +202,25 @@ export const AgriPortalShell: React.FC<AgriPortalShellProps> = ({ children }) =>
       </div>
     ));
 
-  const mobileNavItems = portal === "farmer"
-    ? [
-        { key: "dashboard", label: language === "bn" ? "ড্যাশবোর্ড" : "Dashboard", Icon: LayoutDashboard },
-        { key: "farms", label: language === "bn" ? "খামার" : "Farms", Icon: Trees },
-        { key: "recommendation", label: language === "bn" ? "AI ফসল" : "AI Crop", Icon: Sparkles },
-        { key: "harvest", label: language === "bn" ? "হার্ভেস্ট" : "Harvest", Icon: PackageCheck },
-      ]
-    : [
-        { key: "admin_dashboard", label: language === "bn" ? "কমান্ড" : "Command", Icon: LayoutDashboard },
-        { key: "marketplace", label: language === "bn" ? "মার্কেট" : "Market", Icon: Store },
-        { key: "orders", label: language === "bn" ? "অর্ডার" : "Orders", Icon: ShoppingCart },
-        { key: "payments", label: language === "bn" ? "পেমেন্ট" : "Payments", Icon: CreditCard },
-      ];
+  /**
+   * Quick-launch strip along the bottom of the mobile menu.
+   *
+   * Derived from `navGroups` rather than hard-coded per portal: the sidebar is
+   * composed from the caller's roles, so a fixed list would drift the moment a
+   * buyer (who has no farms) or a supplier (who has no crop planner) opened it.
+   * Account entries are kept but pushed to the back — nobody's quick action is
+   * "open my profile".
+   */
+  const mobileNavItems = (() => {
+    const isAccount = (key: string) => key === "profile" || key === "notifications";
+    const pool = navGroups.flatMap((group) => group.items);
+    return [
+      ...pool.filter((item) => !isAccount(item.key)),
+      ...pool.filter((item) => isAccount(item.key)),
+    ]
+      .slice(0, 4)
+      .map(({ key, label, icon: Icon }) => ({ key, label, Icon }));
+  })();
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#000000] flex flex-col antialiased text-slate-900 dark:text-slate-100">
@@ -198,11 +251,9 @@ export const AgriPortalShell: React.FC<AgriPortalShellProps> = ({ children }) =>
 
             {/* Role Badge */}
             <span className={`hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-              portal === "farmer"
-                ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400"
-                : "bg-indigo-100 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-400"
+              badgeClass
             }`}>
-              {portal === "farmer" ? (language === "bn" ? "কৃষক" : "Farmer") : (language === "bn" ? "এডমিন" : "Admin")}
+              {roleLabel}
             </span>
           </div>
 
@@ -281,7 +332,9 @@ export const AgriPortalShell: React.FC<AgriPortalShellProps> = ({ children }) =>
             {/* Profile Avatar */}
             <button
               onClick={() => {
-                if (portal === "farmer") navigateByModule("profile");
+                if (portal === "main" || portal === "operations" || portal === "support") {
+                  navigateByModule("profile");
+                }
               }}
               className="flex items-center justify-center w-8 h-8 rounded-full bg-emerald-100 border border-emerald-300 text-emerald-800 font-bold text-[11px] hover:ring-2 hover:ring-emerald-400 transition-all cursor-pointer shrink-0"
               title="Profile"
@@ -375,7 +428,7 @@ export const AgriPortalShell: React.FC<AgriPortalShellProps> = ({ children }) =>
             onClick={() => navigateByModule(item.key)}
             className={`flex flex-col items-center justify-center py-1 px-2 rounded-lg text-[10px] font-semibold transition-colors ${
               activeModule === item.key
-                ? portal === "farmer" ? "text-emerald-700 font-bold" : "text-indigo-700 font-bold"
+                  ? activeNavClass
                 : "text-slate-500 dark:text-[#a0a0a0] hover:text-slate-800"
             }`}
           >
@@ -385,14 +438,14 @@ export const AgriPortalShell: React.FC<AgriPortalShellProps> = ({ children }) =>
         ))}
         <button
           onClick={() => setMobileMenuOpen(true)}
-          className={`flex flex-col items-center justify-center py-1 px-2 rounded-lg text-[10px] font-semibold text-slate-500 hover:${portal === "farmer" ? "text-emerald-700" : "text-indigo-700"}`}
+          className={`flex flex-col items-center justify-center py-1 px-2 rounded-lg text-[10px] font-semibold text-slate-500 hover:${portal === "main" ? "text-emerald-700" : "text-indigo-700"}`}
         >
           <div className="relative">
             <Menu className="w-5 h-5 mb-0.5" />
             <span className={`absolute -top-1 -right-2 text-white text-[9px] px-1 rounded-full font-bold ${
-              portal === "farmer" ? "bg-emerald-600" : "bg-indigo-600"
+              portal === "main" ? "bg-emerald-600" : "bg-indigo-600"
             }`}>
-              {portal === "farmer" ? "16" : "17"}
+              {totalModules}
             </span>
           </div>
           <span>{language === "bn" ? "সব মেনু" : "All Menu"}</span>

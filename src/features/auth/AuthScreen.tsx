@@ -13,7 +13,6 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { PublicNavbar } from '@/components/public/PublicNavbar';
 import Link from 'next/link';
-import { getErrorDetails, getErrorMessage } from '@/lib/errors';
 
 export const AuthScreen: React.FC = () => {
   const { showToast } = useToast();
@@ -32,8 +31,8 @@ export const AuthScreen: React.FC = () => {
     try {
       await login(email, password);
       showToast('success', language === 'bn' ? 'সফলভাবে লগিন হয়েছে।' : 'Signed in successfully.');
-    } catch (err: unknown) {
-      showToast('error', getErrorMessage(err, 'Login failed. Please check your credentials.'));
+    } catch (err: any) {
+      showToast('error', err.message || 'Login failed. Please check your credentials.');
     } finally {
       setLoading(false);
     }
@@ -47,8 +46,8 @@ export const AuthScreen: React.FC = () => {
     try {
       await login(demoEmail, demoPassword);
       showToast('success', language === 'bn' ? 'সফলভাবে লগিন হয়েছে।' : 'Signed in successfully.');
-    } catch (err: unknown) {
-      showToast('error', getErrorMessage(err, 'Demo login failed.'));
+    } catch (err: any) {
+      showToast('error', err.message || 'Demo login failed.');
     } finally {
       setLoading(false);
     }
@@ -59,10 +58,9 @@ export const AuthScreen: React.FC = () => {
     try {
       await loginWithGoogle();
       showToast('success', language === 'bn' ? 'সফলভাবে লগিন হয়েছে।' : 'Signed in successfully.');
-    } catch (err: unknown) {
-      const { code } = getErrorDetails(err);
-      if (code !== 'auth/popup-closed-by-user') {
-        showToast('error', getErrorMessage(err, 'Google sign-in failed.'));
+    } catch (err: any) {
+      if (err.code !== 'auth/popup-closed-by-user') {
+        showToast('error', err.message || 'Google sign-in failed.');
       }
     } finally {
       setSocialLoading(false);
@@ -74,10 +72,9 @@ export const AuthScreen: React.FC = () => {
     try {
       await loginWithGitHub();
       showToast('success', language === 'bn' ? 'সফলভাবে লগিন হয়েছে।' : 'Signed in successfully.');
-    } catch (err: unknown) {
-      const { code } = getErrorDetails(err);
-      if (code !== 'auth/popup-closed-by-user') {
-        showToast('error', getErrorMessage(err, 'GitHub sign-in failed.'));
+    } catch (err: any) {
+      if (err.code !== 'auth/popup-closed-by-user') {
+        showToast('error', err.message || 'GitHub sign-in failed.');
       }
     } finally {
       setSocialLoading(false);
@@ -160,41 +157,73 @@ export const AuthScreen: React.FC = () => {
               <p className="text-xs text-white/50 text-center">
                 {language === 'bn' ? 'ডেমো অ্যাকাউন্ট দিয়ে চেষ্টা করুন:' : 'Try a demo account:'}
               </p>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-4 gap-1.5">
                 <button
                   type="button"
                   onClick={() => handleDemoLogin('farmer@demo.com', 'demo123')}
                   disabled={loading}
-                  className="py-2 px-3 border border-white/20 text-white/70 text-xs font-medium rounded-xl hover:bg-white/10 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1.5"
+                  className="py-2 px-2 border border-white/20 text-white/70 text-[11px] font-medium rounded-xl hover:bg-white/10 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1"
                 >
-                  <Sprout className="w-3.5 h-3.5" />
+                  <Sprout className="w-3 h-3 shrink-0" />
                   Farmer
                 </button>
                 <button
                   type="button"
                   onClick={() => handleDemoLogin('multi@demo.com', 'demo123')}
                   disabled={loading}
-                  className="py-2 px-3 border border-white/20 text-white/70 text-xs font-medium rounded-xl hover:bg-white/10 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1.5"
+                  className="py-2 px-2 border border-white/20 text-white/70 text-[11px] font-medium rounded-xl hover:bg-white/10 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1"
                 >
-                  <Sprout className="w-3.5 h-3.5" />
-                  Multi-Role
+                  <Sprout className="w-3 h-3 shrink-0" />
+                  Multi
                 </button>
                 <button
                   type="button"
                   onClick={() => handleDemoLogin('admin@demo.com', 'demo123')}
                   disabled={loading}
-                  className="py-2 px-3 border border-white/20 text-white/70 text-xs font-medium rounded-xl hover:bg-white/10 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1.5"
+                  className="py-2 px-2 border border-white/20 text-white/70 text-[11px] font-medium rounded-xl hover:bg-white/10 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1"
                 >
-                  <ShieldCheck className="w-3.5 h-3.5" />
+                  <ShieldCheck className="w-3 h-3 shrink-0" />
                   Admin
                 </button>
                 <button
                   type="button"
                   onClick={() => handleDemoLogin('buyer@demo.com', 'demo123')}
                   disabled={loading}
-                  className="py-2 px-3 border border-white/20 text-white/70 text-xs font-medium rounded-xl hover:bg-white/10 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1.5"
+                  className="py-2 px-2 border border-white/20 text-white/70 text-[11px] font-medium rounded-xl hover:bg-white/10 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1"
                 >
                   🛒 Buyer
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDemoLogin('supplier@demo.com', 'demo123')}
+                  disabled={loading}
+                  className="py-2 px-2 border border-white/20 text-white/70 text-[11px] font-medium rounded-xl hover:bg-white/10 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1"
+                >
+                  📦 Supplier
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDemoLogin('inspector@demo.com', 'demo123')}
+                  disabled={loading}
+                  className="py-2 px-2 border border-white/20 text-white/70 text-[11px] font-medium rounded-xl hover:bg-white/10 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1"
+                >
+                  🔍 Inspector
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDemoLogin('logistics@demo.com', 'demo123')}
+                  disabled={loading}
+                  className="py-2 px-2 border border-white/20 text-white/70 text-[11px] font-medium rounded-xl hover:bg-white/10 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1"
+                >
+                  🚚 Logistics
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDemoLogin('support@demo.com', 'demo123')}
+                  disabled={loading}
+                  className="py-2 px-2 border border-white/20 text-white/70 text-[11px] font-medium rounded-xl hover:bg-white/10 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1"
+                >
+                  🎧 Support
                 </button>
               </div>
             </div>

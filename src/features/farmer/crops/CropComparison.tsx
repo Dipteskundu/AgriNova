@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { tr } from "@/lib/localize";
 import {
-  
+  GitCompare,
   Droplets,
   Coins,
   Clock,
@@ -10,7 +10,9 @@ import {
   Users,
   Check,
 } from '@/components/icons';
+import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
 import { getCropComparisonProfiles } from '@/lib/farmerApi';

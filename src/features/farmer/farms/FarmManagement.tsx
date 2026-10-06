@@ -9,7 +9,7 @@ import {
   Compass,
   CheckCircle2,
 } from '@/components/icons';
-import { Card } from '@/components/ui/Card';
+import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';

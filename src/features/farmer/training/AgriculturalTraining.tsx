@@ -2,23 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { tr } from "@/lib/localize";
 import { useLanguage } from '@/contexts/LanguageContext';
 import {
-  
+  GraduationCap,
   PlayCircle,
   CheckCircle,
   Clock,
   Star,
   Award,
   BookOpen,
-  
+  Filter,
   UserCheck,
 } from '@/components/icons';
-import { Card } from '@/components/ui/Card';
+import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
-import { getTrainingCourses } from '@/lib/farmerApi';
+import { getTrainingCourses, toggleTrainingLesson } from '@/lib/farmerApi';
 import { TrainingCourse } from '@/types';
 
 export const AgriculturalTraining: React.FC = () => {
@@ -50,22 +50,21 @@ export const AgriculturalTraining: React.FC = () => {
     setSelectedCourse(course);
   };
 
-  const handleCompleteLesson = (lessonIdx: number) => {
+  const handleCompleteLesson = async (lessonIdx: number) => {
     if (!selectedCourse) return;
-    const updatedSyllabus = selectedCourse.syllabus.map((s, idx) =>
-      idx === lessonIdx ? { ...s, completed: true } : s
-    );
-    const newCompletedCount = updatedSyllabus.filter((s) => s.completed).length;
-    const updatedCourse: TrainingCourse = {
-      ...selectedCourse,
-      syllabus: updatedSyllabus,
-      completedLessonsCount: newCompletedCount,
-    };
-    setSelectedCourse(updatedCourse);
-    setCourses((prev) =>
-      prev.map((c) => (c.id === updatedCourse.id ? updatedCourse : c))
-    );
-    showToast('success', tr('Lesson progress recorded! Knowledge badge updated.'));
+    try {
+      const res = await toggleTrainingLesson(selectedCourse.id, lessonIdx);
+      if (res.success) {
+        setSelectedCourse(res.data);
+        setCourses((prev) => prev.map((c) => (c.id === res.data.id ? res.data : c)));
+        showToast('success', tr('Lesson progress recorded! Knowledge badge updated.'));
+      }
+    } catch (err) {
+      showToast(
+        'error',
+        err instanceof Error ? err.message : tr('Failed to record lesson progress')
+      );
+    }
   };
 
   const filteredCourses =
@@ -112,9 +111,9 @@ export const AgriculturalTraining: React.FC = () => {
       {/* Courses Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {filteredCourses.map((course) => {
-          const progressPercent = Math.round(
-            (course.completedLessonsCount / course.lessonsCount) * 100
-          );
+          const progressPercent = course.lessonsCount
+            ? Math.round((course.completedLessonsCount / course.lessonsCount) * 100)
+            : 0;
 
           return (
             <Card key={course.id} className="flex flex-col justify-between hover:border-slate-300 dark:border-[#333333] transition-all">

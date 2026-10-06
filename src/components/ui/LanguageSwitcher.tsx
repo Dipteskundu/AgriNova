@@ -3,7 +3,7 @@
 import React from 'react';
 import { tr } from "@/lib/localize";
 import { Globe } from '@/components/icons';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { useLanguage, Language } from '@/contexts/LanguageContext';
 
 interface LanguageSwitcherProps {
   className?: string;

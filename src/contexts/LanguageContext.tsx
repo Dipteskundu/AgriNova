@@ -332,19 +332,15 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [language, setLanguageState] = useState<Language>('bn');
 
   useEffect(() => {
-    const timer = window.setTimeout(() => {
-      try {
-        const saved = localStorage.getItem('agri_language');
-        if (saved === 'bn' || saved === 'en') {
-          setLanguageState(saved);
-          setAppLanguage(saved);
-        }
-      } catch {
-        // ignore
+    try {
+      const saved = localStorage.getItem('agri_language');
+      if (saved === 'bn' || saved === 'en') {
+        setLanguageState(saved);
+        setAppLanguage(saved);
       }
-    }, 0);
-
-    return () => window.clearTimeout(timer);
+    } catch {
+      // ignore
+    }
   }, []);
 
   const setLanguage = (lang: Language) => {

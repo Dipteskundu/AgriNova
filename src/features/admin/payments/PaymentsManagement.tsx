@@ -1,23 +1,26 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { tr } from "@/lib/localize";
 import {
-  
+  CreditCard,
   Search,
-  
-  
-  
-  
+  Filter,
+  CheckCircle2,
+  Clock,
+  AlertCircle,
   Check,
-  
-  
-  
+  DollarSign,
+  ArrowUpRight,
+  ShieldCheck,
   Download,
 } from '@/components/icons';
+import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
 import { getPaymentRecordsAdmin, approvePaymentPayoutAdmin } from '@/lib/adminApi';
+import { getWithdrawalRequestsAdmin, settleWithdrawalAdmin, WalletEntryView } from '@/lib/walletApi';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { PaymentRecordAdminView } from '@/types';
 
 export const PaymentsManagement: React.FC = () => {
@@ -28,24 +31,43 @@ export const PaymentsManagement: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState('All');
   const [approvingId, setApprovingId] = useState<string | null>(null);
 
-  const loadPayments = useCallback(async () => {
+  // Wallet withdrawals live in their own table below, on purpose: a payment
+  // is what the buyer spent and a wallet debit is what a seller wants paid
+  // out. Approving the second moves a balance; approving the first only
+  // stamps a payout record, so the two buttons must never be the same one.
+  const [withdrawals, setWithdrawals] = useState<WalletEntryView[]>([]);
+  const [settlingId, setSettlingId] = useState<string | null>(null);
+
+  const handleSettle = async (id: string, action: 'approve' | 'reject') => {
     try {
-      setLoading(true);
-      const res = await getPaymentRecordsAdmin();
-      if (res.success) {
-        setPayments(res.data);
+      setSettlingId(id);
+      const res = await settleWithdrawalAdmin(id, action);
+      if (res.success && res.data) {
+        const settled = res.data;
+        setWithdrawals((prev) => prev.map((w) => (w.id === id ? settled : w)));
+        showToast(
+          'success',
+          action === 'approve'
+            ? tr('Withdrawal approved and debited from the seller balance')
+            : tr('Withdrawal rejected and returned to the seller balance')
+        );
+      } else {
+        showToast('error', res.message || tr('Failed to settle withdrawal request'));
       }
     } catch {
-      showToast('error', tr('Failed to load platform payment disbursement records'));
+      showToast('error', tr('Failed to settle withdrawal request'));
     } finally {
-      setLoading(false);
+      setSettlingId(null);
     }
-  }, [showToast]);
+  };
 
-  useEffect(() => {
-    const timer = window.setTimeout(() => void loadPayments(), 0);
-    return () => window.clearTimeout(timer);
-  }, [loadPayments]);
+  // Queue order: anything still needing a decision first, then newest.
+  const queued = [...withdrawals].sort((a, b) => {
+    const aPending = a.status === 'Pending Approval' ? 0 : 1;
+    const bPending = b.status === 'Pending Approval' ? 0 : 1;
+    if (aPending !== bPending) return aPending - bPending;
+    return b.date.localeCompare(a.date);
+  });
 
   const handleApprove = async (id: string) => {
     try {
@@ -61,6 +83,28 @@ export const PaymentsManagement: React.FC = () => {
       setApprovingId(null);
     }
   };
+
+  // Boot is nested in the effect rather than a component-scope callback: the
+  // hooks lint treats an outer function that writes state as a synchronous
+  // state write from the effect (`react-hooks/set-state-in-effect`).
+  // `loading` starts true, so the skeleton needs no `setLoading(true)` here.
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await getPaymentRecordsAdmin();
+        if (res.success) setPayments(res.data);
+      } catch {
+        showToast('error', tr('Failed to load platform payment disbursement records'));
+      } finally {
+        setLoading(false);
+      }
+
+      const withdrawalsRes = await getWithdrawalRequestsAdmin();
+      if (withdrawalsRes.success) setWithdrawals(withdrawalsRes.data);
+    }
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const filtered = payments.filter((p) => {
     const matchesSearch =
@@ -231,6 +275,155 @@ export const PaymentsManagement: React.FC = () => {
               ))}
             </tbody>
           </table>
+        </div>
+      </div>
+
+      {/* ── Wallet Withdrawal Requests ─────────────────────────────── */}
+      <div>
+        <div className="flex items-end justify-between gap-3 mb-3">
+          <div>
+            <h3 className="text-sm font-bold text-slate-900 dark:text-[#f0f0f0]">
+              {tr('Wallet Withdrawal Requests')}
+            </h3>
+            <p className="text-[11px] text-slate-500 dark:text-[#a0a0a0] mt-0.5">
+              {tr(
+                'Escrow a seller is asking to cash out. Approving moves the money out of their balance; rejecting returns it.'
+              )}
+            </p>
+          </div>
+          {withdrawals.some((w) => w.status === 'Pending Approval') && (
+            <span className="shrink-0 px-2.5 py-1 rounded-full bg-amber-50 dark:bg-amber-500/15 border border-amber-200/80 dark:border-amber-500/25 text-[11px] font-bold text-amber-700 dark:text-amber-300">
+              {
+                withdrawals.filter((w) => w.status === 'Pending Approval')
+                  .length
+              }{' '}
+              {tr('awaiting decision')}
+            </span>
+          )}
+        </div>
+
+        <div className="bg-white dark:bg-[#0a0a0a] rounded-2xl border border-slate-200 dark:border-[#222222]/80 shadow-xs overflow-hidden">
+          {queued.length === 0 ? (
+            <EmptyState
+              icon={ArrowUpRight}
+              title={tr('No withdrawal requests')}
+              description={tr(
+                'A seller requests a withdrawal from /dashboard/sales once escrow has credited their wallet.'
+              )}
+            />
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse min-w-[44rem]">
+                <thead>
+                  <tr className="border-b border-slate-200 dark:border-[#222222] bg-slate-50 dark:bg-[#111111]/60/80">
+                    <th className="p-4 font-bold text-slate-600 dark:text-[#a0a0a0] uppercase">
+                      {tr('Seller')}
+                    </th>
+                    <th className="p-4 font-bold text-slate-600 dark:text-[#a0a0a0] uppercase">
+                      {tr('Channel')}
+                    </th>
+                    <th className="p-4 font-bold text-slate-600 dark:text-[#a0a0a0] uppercase">
+                      {tr('Requested')}
+                    </th>
+                    <th className="p-4 font-bold text-slate-600 dark:text-[#a0a0a0] uppercase">
+                      {tr('Requested On')}
+                    </th>
+                    <th className="p-4 font-bold text-slate-600 dark:text-[#a0a0a0] uppercase">
+                      {tr('Status')}
+                    </th>
+                    <th className="p-4 font-bold text-slate-600 dark:text-[#a0a0a0] uppercase text-right">
+                      {tr('Action')}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {queued.map((wd) => (
+                    <tr
+                      key={wd.id}
+                      className="hover:bg-slate-50 dark:hover:bg-[#1a1a1a]/60 transition-colors"
+                    >
+                      <td className="p-4">
+                        <span className="font-semibold text-slate-800 dark:text-[#e0e0e0] block">
+                          {wd.ownerName || tr('Unknown seller')}
+                        </span>
+                        <span className="text-[10px] text-slate-400 block">
+                          {wd.ownerEmail}
+                        </span>
+                      </td>
+                      <td className="p-4">
+                        <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-[#1a1a1a] text-[11px] font-mono">
+                          {wd.label.split('—').pop()?.trim() || tr('bKash')}
+                        </span>
+                      </td>
+                      <td className="p-4 font-mono font-bold text-emerald-700 text-sm whitespace-nowrap">
+                        ৳{wd.amountBdt.toLocaleString()}
+                      </td>
+                      <td className="p-4 text-slate-500 dark:text-[#a0a0a0] text-[11px] whitespace-nowrap">
+                        {wd.date}
+                      </td>
+                      <td className="p-4">
+                        <Badge
+                          variant={
+                            wd.status === 'Pending Approval'
+                              ? 'warning'
+                              : wd.status === 'Completed'
+                              ? 'neutral'
+                              : 'danger'
+                          }
+                        >
+                          {wd.status.toUpperCase()}
+                        </Badge>
+                        {wd.approvedBy && (
+                          <span className="text-[10px] text-slate-400 block mt-1">
+                            {tr('By:')}
+                            {wd.approvedBy}
+                          </span>
+                        )}
+                      </td>
+                      <td className="p-4 text-right">
+                        {wd.status === 'Pending Approval' ? (
+                          <div className="inline-flex items-center gap-2">
+                            <Button
+                              size="sm"
+                              variant="primary"
+                              icon={Check}
+                              disabled={settlingId === wd.id}
+                              onClick={() => handleSettle(wd.id, 'approve')}
+                            >
+                              {settlingId === wd.id
+                                ? tr('Settling...')
+                                : tr('Approve')}
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              icon={AlertCircle}
+                              disabled={settlingId === wd.id}
+                              onClick={() => handleSettle(wd.id, 'reject')}
+                            >
+                              {tr('Reject')}
+                            </Button>
+                          </div>
+                        ) : (
+                          <span
+                            className={`text-[11px] font-semibold ${
+                              wd.status === 'Completed'
+                                ? 'text-slate-500 dark:text-[#a0a0a0]'
+                                : 'text-rose-600'
+                            }`}
+                          >
+                            {wd.status === 'Completed'
+                              ? tr('Paid out ✓')
+                              : tr('Returned to balance')}
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
     </div>
