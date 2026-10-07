@@ -11,12 +11,18 @@ import { useToast } from "@/components/ui/Toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { SaveToggle } from "./SaveToggle";
+import { StarRating } from "../ratings/StarRating";
+import { RatingForm } from "../ratings/RatingForm";
+import { ReviewList } from "../ratings/ReviewList";
 import {
   getProduceById,
   addToCart,
+  submitProduceRating,
+  getProduceRatings,
   type ProduceListing,
   type QualityGrade,
 } from "@/lib/marketplaceApi";
+import { type RatingItem } from "@/types";
 
 interface Props {
   id: string;
@@ -39,6 +45,11 @@ export function ProduceDetail({ id, basePath = "/products" }: Props) {
   const [quantity, setQuantity] = useState(0);
   const [addingToCart, setAddingToCart] = useState(false);
 
+  // Ratings & feedback — loaded separately from the listing so the detail
+  // fetch stays untouched and a failed review load never blanks the page.
+  const [ratings, setRatings] = useState<RatingItem[]>([]);
+  const [ratingsLoading, setRatingsLoading] = useState(true);
+
   const t = (bn: string, en: string) => language === "bn" ? bn : en;
 
   useEffect(() => {
@@ -48,6 +59,14 @@ export function ProduceDetail({ id, basePath = "/products" }: Props) {
         setQuantity(res.data.minimumOrderKg);
       }
       setLoading(false);
+    });
+  }, [id]);
+
+  useEffect(() => {
+    setRatingsLoading(true);
+    getProduceRatings(id).then((res) => {
+      setRatings(res.success && Array.isArray(res.data) ? res.data : []);
+      setRatingsLoading(false);
     });
   }, [id]);
 
@@ -70,6 +89,44 @@ export function ProduceDetail({ id, basePath = "/products" }: Props) {
     addToCart(listing, quantity);
     showToast("success", `${listing.cropName} added to cart (${quantity} kg)`);
     setAddingToCart(false);
+  };
+
+  /**
+   * Submit a rating. The server recomputes the summary, so a successful write
+   * updates both the header stats and the list locally instead of refetching —
+   * the reviewer sees their own comment appear immediately.
+   */
+  const handleRate = async (rating: number, comment: string): Promise<boolean> => {
+    if (!user) {
+      requireLogin();
+      return false;
+    }
+    const res = await submitProduceRating(id, rating, comment);
+    if (!res.success || !res.data) {
+      showToast("error", res.message || t("রেটিং জমা দিতে ব্যর্থ", "Could not submit your rating"));
+      return false;
+    }
+
+    setListing((prev) =>
+      prev
+        ? {
+            ...prev,
+            averageRating: res.data!.averageRating,
+            totalRatings: res.data!.totalRatings,
+          }
+        : prev
+    );
+    setRatings((prev) => [
+      {
+        rating,
+        comment,
+        userName: user.name || user.email || "User",
+        userId: user.id,
+        createdAt: new Date().toISOString(),
+      },
+      ...prev,
+    ]);
+    return true;
   };
 
   const gradeColor: Record<
@@ -155,6 +212,17 @@ export function ProduceDetail({ id, basePath = "/products" }: Props) {
             <div className="flex items-baseline gap-2 mt-3">
               <span className="text-3xl font-black text-blue-600 dark:text-blue-400">৳{listing.pricePerKgBdt}</span>
               <span className="text-sm text-slate-400">/kg</span>
+            </div>
+            {/* Rating summary — always rendered; "no ratings yet" rather than
+                a hidden row, so buyers see the feature exists. */}
+            <div className="flex items-center gap-2 mt-2">
+              <StarRating rating={listing.averageRating ?? 0} size={14} />
+              <span className="text-xs font-semibold text-slate-700 dark:text-[#e0e0e0]">
+                {(listing.averageRating ?? 0).toFixed(1)}
+              </span>
+              <span className="text-xs text-slate-400">
+                ({listing.totalRatings ?? 0} {t("রেটিং", "rating(s)")})
+              </span>
             </div>
           </div>
 
@@ -257,6 +325,64 @@ export function ProduceDetail({ id, basePath = "/products" }: Props) {
           </div>
         </div>
       </div>
+
+      {/* Ratings & feedback */}
+      <section className="mt-10">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <h2 className="text-lg font-black text-slate-900 dark:text-[#f0f0f0] flex items-center gap-2">
+            <Icon name="Star" size={17} className="text-yellow-400" fill="currentColor" />
+            {t("রেটিং ও মতামত", "Ratings & Reviews")}
+          </h2>
+          <div className="flex items-center gap-2">
+            <StarRating rating={listing.averageRating ?? 0} size={14} />
+            <span className="text-xs text-slate-400">
+              {listing.totalRatings ?? 0} {t("টি রেটিং", "rating(s)")}
+            </span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+          {/* One rating per user — the form disappears once theirs is in. */}
+          <div>
+            {!user ? (
+              <div className="rounded-2xl border border-slate-200 dark:border-[#222] bg-white dark:bg-[#0a0a0a] p-5 text-center">
+                <p className="text-sm text-slate-600 dark:text-[#a0a0a0]">
+                  {t("রেটিং দিতে সাইন ইন করুন", "Sign in to rate this product")}
+                </p>
+                <Button
+                  className="mt-3"
+                  onClick={requireLogin}
+                  icon={Icon.bind(null, { name: "ArrowRight" }) as any}
+                >
+                  {t("সাইন ইন", "Sign in")}
+                </Button>
+              </div>
+            ) : ratings.some((r) => r.userId === user.id) ? (
+              <div className="rounded-2xl border border-slate-200 dark:border-[#222] bg-slate-50 dark:bg-[#0f0f0f] p-5 text-center">
+                <Icon
+                  name="Star"
+                  size={20}
+                  className="text-yellow-400 mx-auto"
+                  fill="currentColor"
+                />
+                <p className="mt-2 text-sm font-semibold text-slate-700 dark:text-[#e0e0e0]">
+                  {t("আপনি ইতিমধ্যে রেটিং দিয়েছেন", "You have already rated this product")}
+                </p>
+                <p className="mt-1 text-xs text-slate-400">
+                  {t(
+                    "একজন ব্যবহারকারী একটি পণ্যে একবার রেটিং দিতে পারেন",
+                    "Each user can rate a product once"
+                  )}
+                </p>
+              </div>
+            ) : (
+              <RatingForm onSubmit={handleRate} />
+            )}
+          </div>
+
+          <ReviewList ratings={ratings} loading={ratingsLoading} />
+        </div>
+      </section>
     </div>
   );
 }

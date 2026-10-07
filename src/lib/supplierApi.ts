@@ -14,7 +14,7 @@
  * (`productName`, `pricePerUnitBdt`, `isAvailable`, …) and converts it to the
  * database enum itself — send the same object back unchanged.
  */
-import { ApiResponse, SupplierProduct } from "@/types";
+import { ApiResponse, RatingItem, SupplierProduct } from "@/types";
 import { api } from "@/lib/api";
 import { getBuyerOrders, getMyProduceListings } from "@/lib/marketplaceApi";
 
@@ -145,6 +145,45 @@ export async function getInputById(
       null,
       err instanceof Error ? err.message : "Input not found."
     );
+  }
+}
+
+/**
+ * Submit a rating + comment for an input product.
+ *
+ * Whole numbers 1–5 and a 10–2000 character comment are enforced server-side
+ * (`validateRating`); the returned summary is the recomputed one, so the
+ * detail page updates its header without a second fetch. A duplicate rating
+ * or expired session surfaces as `success: false` with the server's message.
+ */
+export async function submitInputRating(
+  productId: string,
+  rating: number,
+  comment: string
+): Promise<ApiResponse<{ averageRating: number; totalRatings: number }>> {
+  try {
+    const data = await api.post<{ averageRating: number; totalRatings: number }>(
+      `/products/${productId}/rating`,
+      { rating, comment }
+    );
+    return ok(data);
+  } catch (err) {
+    return fail(
+      { averageRating: 0, totalRatings: 0 },
+      err instanceof Error ? err.message : "Could not submit your rating."
+    );
+  }
+}
+
+/** Every review on an input product, newest first — public, no token needed. */
+export async function getInputRatings(
+  productId: string
+): Promise<ApiResponse<RatingItem[]>> {
+  try {
+    const data = await api.get<RatingItem[]>(`/products/${productId}/ratings`);
+    return ok(Array.isArray(data) ? data : []);
+  } catch (err) {
+    return fail([], err instanceof Error ? err.message : "Could not load reviews.");
   }
 }
 
