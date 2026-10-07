@@ -609,6 +609,26 @@ export interface ProduceListing {
    * the report lands. Drives the Request-inspection button on My Listings.
    */
   inspectionRequestedAt?: string;
+  /**
+   * Ratings summary — server-owned, recomputed on every rating submission.
+   * Optional because only the browse/detail UI reads it, and mock fixtures
+   * predating the feature simply omit it (callers default to 0).
+   */
+  averageRating?: number;
+  totalRatings?: number;
+}
+
+/**
+ * One submitted review — returned by `GET /api/marketplace/listings/:id/ratings`
+ * and `GET /api/products/:id/ratings`, newest first. `userId` is what lets the
+ * detail page recognise "you already rated" without a second endpoint.
+ */
+export interface RatingItem {
+  rating: number;
+  comment: string;
+  userName: string;
+  userId: string;
+  createdAt: string;
 }
 
 export interface BuyerOrder {
@@ -679,6 +699,12 @@ export interface SupplierProduct {
   imageUrl: string;
   isAvailable: boolean;
   listedAt: string;
+  /**
+   * Ratings summary — server-owned, recomputed on every rating submission.
+   * Optional because mock fixtures predating the feature omit it.
+   */
+  averageRating?: number;
+  totalRatings?: number;
 }
 
 export interface SupplierOrder {

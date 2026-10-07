@@ -8,8 +8,12 @@ import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
-import { getInputById, type SupplierProduct } from "@/lib/supplierApi";
+import { getInputById, submitInputRating, getInputRatings, type SupplierProduct } from "@/lib/supplierApi";
 import { addInputToCart } from "@/lib/marketplaceApi";
+import { StarRating } from "../ratings/StarRating";
+import { RatingForm } from "../ratings/RatingForm";
+import { ReviewList } from "../ratings/ReviewList";
+import { type RatingItem } from "@/types";
 
 interface Props {
   id: string;
@@ -41,6 +45,11 @@ export function InputDetail({ id, basePath = "/inputs" }: Props) {
   const [quantity, setQuantity] = useState(1);
   const [addingToCart, setAddingToCart] = useState(false);
 
+  // Ratings & feedback — loaded apart from the product so a failed review
+  // load never blanks the detail page.
+  const [ratings, setRatings] = useState<RatingItem[]>([]);
+  const [ratingsLoading, setRatingsLoading] = useState(true);
+
   const t = (bn: string, en: string) => (language === "bn" ? bn : en);
 
   useEffect(() => {
@@ -52,6 +61,14 @@ export function InputDetail({ id, basePath = "/inputs" }: Props) {
         setNotFound(true);
       }
       setLoading(false);
+    });
+  }, [id]);
+
+  useEffect(() => {
+    setRatingsLoading(true);
+    getInputRatings(id).then((res) => {
+      setRatings(res.success && Array.isArray(res.data) ? res.data : []);
+      setRatingsLoading(false);
     });
   }, [id]);
 
@@ -103,6 +120,43 @@ export function InputDetail({ id, basePath = "/inputs" }: Props) {
       `${product.productName} ${t("কার্টে যোগ হয়েছে", "added to cart")} (${quantity} ${product.unit})`
     );
     setAddingToCart(false);
+  };
+
+  /**
+   * Submit a rating. The server returns the recomputed summary, so both the
+   * header stats and the review list update locally — no second fetch.
+   */
+  const handleRate = async (rating: number, comment: string): Promise<boolean> => {
+    if (!user) return false; // LoginGate already covers this.
+    const res = await submitInputRating(id, rating, comment);
+    if (!res.success || !res.data) {
+      showToast(
+        "error",
+        res.message || t("রেটিং জমা দিতে ব্যর্থ", "Could not submit your rating")
+      );
+      return false;
+    }
+
+    setProduct((prev) =>
+      prev
+        ? {
+            ...prev,
+            averageRating: res.data!.averageRating,
+            totalRatings: res.data!.totalRatings,
+          }
+        : prev
+    );
+    setRatings((prev) => [
+      {
+        rating,
+        comment,
+        userName: user.name || user.email || "User",
+        userId: user.id,
+        createdAt: new Date().toISOString(),
+      },
+      ...prev,
+    ]);
+    return true;
   };
 
   return (
@@ -169,6 +223,18 @@ export function InputDetail({ id, basePath = "/inputs" }: Props) {
             ৳{product.pricePerUnitBdt.toLocaleString()}
             <span className="text-base font-semibold text-slate-400">/{product.unit}</span>
           </p>
+
+          {/* Rating summary — always rendered; "0 rating(s)" rather than a
+              hidden row, so buyers see the feature exists. */}
+          <div className="flex items-center gap-2 mt-2">
+            <StarRating rating={product.averageRating ?? 0} size={14} />
+            <span className="text-xs font-semibold text-slate-700 dark:text-[#e0e0e0]">
+              {(product.averageRating ?? 0).toFixed(1)}
+            </span>
+            <span className="text-xs text-slate-400">
+              ({product.totalRatings ?? 0} {t("রেটিং", "rating(s)")})
+            </span>
+          </div>
 
           {lowStock && (
             <div className="mt-4 flex gap-2 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-700 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-400">
@@ -241,6 +307,57 @@ export function InputDetail({ id, basePath = "/inputs" }: Props) {
           </div>
         </div>
       </div>
+
+      {/* Ratings & feedback */}
+      <section className="mt-10">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <h2 className="text-lg font-black text-slate-900 dark:text-[#f0f0f0] flex items-center gap-2">
+            <Icon name="Star" size={17} className="text-yellow-400" fill="currentColor" />
+            {t("রেটিং ও মতামত", "Ratings & Reviews")}
+          </h2>
+          <div className="flex items-center gap-2">
+            <StarRating rating={product.averageRating ?? 0} size={14} />
+            <span className="text-xs text-slate-400">
+              {product.totalRatings ?? 0} {t("টি রেটিং", "rating(s)")}
+            </span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+          {/* One rating per user — the form disappears once theirs is in. */}
+          <div>
+            {!user ? (
+              <div className="rounded-2xl border border-slate-200 dark:border-[#222] bg-white dark:bg-[#0a0a0a] p-5 text-center">
+                <p className="text-sm text-slate-600 dark:text-[#a0a0a0]">
+                  {t("রেটিং দিতে সাইন ইন করুন", "Sign in to rate this product")}
+                </p>
+              </div>
+            ) : ratings.some((r) => r.userId === user.id) ? (
+              <div className="rounded-2xl border border-slate-200 dark:border-[#222] bg-slate-50 dark:bg-[#0f0f0f] p-5 text-center">
+                <Icon
+                  name="Star"
+                  size={20}
+                  className="text-yellow-400 mx-auto"
+                  fill="currentColor"
+                />
+                <p className="mt-2 text-sm font-semibold text-slate-700 dark:text-[#e0e0e0]">
+                  {t("আপনি ইতিমধ্যে রেটিং দিয়েছেন", "You have already rated this product")}
+                </p>
+                <p className="mt-1 text-xs text-slate-400">
+                  {t(
+                    "একজন ব্যবহারকারী একটি পণ্যে একবার রেটিং দিতে পারেন",
+                    "Each user can rate a product once"
+                  )}
+                </p>
+              </div>
+            ) : (
+              <RatingForm onSubmit={handleRate} />
+            )}
+          </div>
+
+          <ReviewList ratings={ratings} loading={ratingsLoading} />
+        </div>
+      </section>
     </div>
   );
 }

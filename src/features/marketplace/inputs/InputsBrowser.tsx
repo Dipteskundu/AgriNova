@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getPublicInputs, type SupplierProduct } from "@/lib/supplierApi";
+import { StarRating } from "../ratings/StarRating";
 
 /** The UI union `mapSupplierProduct` emits, plus "" for "everything". */
 const CATEGORIES = [
@@ -267,6 +268,19 @@ export function InputsBrowser({ basePath = "/inputs" }: { basePath?: string }) {
                 <p className="text-xs text-slate-500 dark:text-[#a0a0a0] line-clamp-2 mt-0.5">
                   {product.description}
                 </p>
+                {/* Rating badge — only once something has been rated; the
+                    detail page always shows the summary, including 0. */}
+                {(product.totalRatings ?? 0) > 0 && (
+                  <span className="flex items-center gap-1.5 mt-1">
+                    <StarRating rating={product.averageRating ?? 0} size={12} />
+                    <span className="text-[11px] font-semibold text-slate-600 dark:text-[#a0a0a0]">
+                      {(product.averageRating ?? 0).toFixed(1)}
+                    </span>
+                    <span className="text-[10px] text-slate-400">
+                      ({product.totalRatings})
+                    </span>
+                  </span>
+                )}
                 <div className="flex items-center justify-between mt-2">
                   <span className="text-[11px] text-slate-400 truncate">
                     {product.supplierName}

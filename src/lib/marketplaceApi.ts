@@ -11,7 +11,7 @@
  * Decisions table).
  */
 
-import { ApiResponse, DisputeCase, SupplierProduct } from "@/types";
+import { ApiResponse, DisputeCase, RatingItem, SupplierProduct } from "@/types";
 import { api, uploadFile } from "@/lib/api";
 
 // ─── Shared helpers ──────────────────────────────────────────
@@ -117,6 +117,13 @@ export interface ProduceListing {
    * where the heart is hidden anyway.
    */
   saved?: boolean;
+  /**
+   * Ratings summary — server-owned, recomputed on every rating submission.
+   * Optional so fixtures predating the feature still compile; the browse and
+   * detail UIs default to 0 / "no ratings yet".
+   */
+  averageRating?: number;
+  totalRatings?: number;
 }
 
 /**
@@ -363,6 +370,47 @@ export async function setListingSaved(
       reverted,
       err instanceof Error ? err.message : "Could not update your saved listings."
     );
+  }
+}
+
+/**
+ * Submit a rating + comment for a produce listing.
+ *
+ * Whole numbers 1–5 and a comment of 10–2000 characters are enforced
+ * server-side (`ratingValidation`); the returned summary is the recomputed
+ * one, so the detail page can update its header without a second fetch. A
+ * duplicate rating or an expired session surfaces as `success: false` with
+ * the server's message — callers toast it rather than optimistically
+ * pretending the rating landed.
+ */
+export async function submitProduceRating(
+  listingId: string,
+  rating: number,
+  comment: string
+): Promise<ApiResponse<{ averageRating: number; totalRatings: number }>> {
+  try {
+    const data = await api.post<{ averageRating: number; totalRatings: number }>(
+      `/marketplace/listings/${listingId}/rating`,
+      { rating, comment }
+    );
+    return ok(data);
+  } catch (err) {
+    return fail(
+      { averageRating: 0, totalRatings: 0 },
+      err instanceof Error ? err.message : "Could not submit your rating."
+    );
+  }
+}
+
+/** Every review on a listing, newest first — public, no token needed. */
+export async function getProduceRatings(
+  listingId: string
+): Promise<ApiResponse<RatingItem[]>> {
+  try {
+    const data = await api.get<RatingItem[]>(`/marketplace/listings/${listingId}/ratings`);
+    return ok(Array.isArray(data) ? data : []);
+  } catch (err) {
+    return fail([], err instanceof Error ? err.message : "Could not load reviews.");
   }
 }
 

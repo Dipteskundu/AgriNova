@@ -6,6 +6,7 @@ import { Icon } from "@/components/icons";
 import { Badge } from "@/components/ui/Badge";
 import { useAuth } from "@/contexts/AuthContext";
 import { SaveToggle } from "./SaveToggle";
+import { StarRating } from "../ratings/StarRating";
 import { type ProduceListing, type QualityGrade } from "@/lib/marketplaceApi";
 
 /**
@@ -84,6 +85,20 @@ export function ProduceCard({ listing, basePath = "/products", onSaveChange }: P
             {listing.cropName}
           </h3>
           <p className="text-xs text-slate-500 dark:text-[#a0a0a0]">{listing.variety}</p>
+          {/* Rating badge — only once something has been rated; a star row of
+              zeros on every card is noise the buyer has to scroll past. The
+              detail page always shows the summary, including "0 rating(s)". */}
+          {(listing.totalRatings ?? 0) > 0 && (
+            <span className="flex items-center gap-1.5 mt-1">
+              <StarRating rating={listing.averageRating ?? 0} size={12} />
+              <span className="text-[11px] font-semibold text-slate-600 dark:text-[#a0a0a0]">
+                {(listing.averageRating ?? 0).toFixed(1)}
+              </span>
+              <span className="text-[10px] text-slate-400">
+                ({listing.totalRatings})
+              </span>
+            </span>
+          )}
           <div className="flex items-center justify-between mt-2">
             <span className="text-[11px] text-slate-400 flex items-center gap-1">
               <Icon name="MapPin" size={11} />
