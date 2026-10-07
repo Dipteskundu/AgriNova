@@ -1,21 +1,5 @@
 {
   "framework": "nextjs",
-  "version": "15.x",
-  "buildCommand": "npm run build",
-  "outputDirectory": ".next",
-  "installCommand": "npm install",
-  "port": 3000,
-  "env": {
-    "NEXT_PUBLIC_API_URL": "http://localhost:8000/api",
-    "NEXT_PUBLIC_FIREBASE_API_KEY": "AIzaSyAxhAHWU25Zcpt4t0hbzOQMV-xMiqclvnI",
-    "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN": "mentro-71aca.firebaseapp.com",
-    "NEXT_PUBLIC_FIREBASE_PROJECT_ID": "mentro-71aca",
-    "NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET": "mentro-71aca.firebasestorage.app",
-    "NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID": "756461169079",
-    "NEXT_PUBLIC_FIREBASE_APP_ID": "1:756461169079:web:f01c3212d61cf9ef0be032",
-    "NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID": "G-MZPMFEK4QM",
-    "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY": "pk_test_placeholder"
-  },
   "headers": [
     {
       "source": "/(.*)",
@@ -24,14 +8,6 @@
         { "key": "X-Frame-Options", "value": "DENY" },
         { "key": "X-XSS-Protection", "value": "1; mode=block" },
         { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
-      ]
-    },
-    {
-      "source": "/api/auth/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-store, max-age=0" },
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "SAMEORIGIN" }
       ]
     }
   ]

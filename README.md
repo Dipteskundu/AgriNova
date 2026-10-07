@@ -21,8 +21,8 @@ This README provides step-by-step instructions for deploying the AgriNova Smart 
 #### Frontend (.env.local)
 Create in the `FarmPath/` directory:
 ```env
-# Backend API URL
-NEXT_PUBLIC_API_URL=http://localhost:8000/api
+# Backend API URL (local backend runs on port 5000, see FarmPath-Server/.env)
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
 
 # Firebase Configuration (from FarmPath/.env.local)
 NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyAxhAHWU25Zcpt4t0hbzOQMV-xMiqclvnI
@@ -41,7 +41,7 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_placeholder
 Create in the `FarmPath-Server/` directory:
 ```env
 # Server Configuration
-PORT=8000
+PORT=5000
 NODE_ENV=production
 
 # MongoDB
