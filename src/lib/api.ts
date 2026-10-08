@@ -48,6 +48,15 @@ export function removeToken(): void {
   localStorage.removeItem(TOKEN_KEY);
 }
 
+export function getLoginUrl(nextPath?: string): string {
+  const safeNext =
+    nextPath && nextPath.startsWith("/") && !nextPath.startsWith("//")
+      ? nextPath
+      : "/";
+
+  return `/login?next=${encodeURIComponent(safeNext)}`;
+}
+
 async function readBody(res: Response): Promise<unknown> {
   try {
     return await res.json();
@@ -130,7 +139,9 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 
       removeToken();
       if (typeof window !== "undefined" && !window.location.pathname.startsWith("/login")) {
-        window.location.href = "/login";
+        window.location.href = getLoginUrl(
+          `${window.location.pathname}${window.location.search}`
+        );
       }
       throw new Error("Session expired. Please log in again.");
     }

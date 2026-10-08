@@ -6,6 +6,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 import { isRouteAllowed } from '@/features/layout/navConfig';
 import { PortalType } from '@/types';
+import { getLoginUrl } from '@/lib/api';
 
 export function RouteGuard({ children }: { children: React.ReactNode }) {
   const { user, isLoading, selectedPortal } = useAuth();
@@ -16,7 +17,7 @@ export function RouteGuard({ children }: { children: React.ReactNode }) {
     if (isLoading) return;
 
     if (!user) {
-      router.push('/login');
+      router.push(getLoginUrl(pathname));
       return;
     }
 

@@ -9,6 +9,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useRouter } from "next/navigation";
+import { getLoginUrl } from "@/lib/api";
 import { getBuyerOrders, type BuyerOrder, type OrderStatus } from "@/lib/marketplaceApi";
 import { DisputeForm } from "./DisputeForm";
 import {
@@ -48,7 +49,10 @@ export function BuyerOrders({ view = "all" }: BuyerOrdersProps) {
   const t = (bn: string, en: string) => (language === "bn" ? bn : en);
 
   useEffect(() => {
-    if (!user) { router.push("/login"); return; }
+    if (!user) {
+      router.push(getLoginUrl("/dashboard/orders"));
+      return;
+    }
     getBuyerOrders().then(res => {
       if (res.success) setOrders(res.data);
       setLoading(false);

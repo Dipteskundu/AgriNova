@@ -6,6 +6,7 @@ import { Badge, type BadgeVariant } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
+import { getLoginUrl } from "@/lib/api";
 import {
   getBuyerPayments,
   type BuyerPayment,
@@ -55,7 +56,7 @@ export function BuyerPayments() {
 
   useEffect(() => {
     if (!user) {
-      router.push("/login");
+      router.push(getLoginUrl("/dashboard/payments"));
       return;
     }
     getBuyerPayments().then((res) => {

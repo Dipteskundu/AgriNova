@@ -7,6 +7,7 @@ import { Icon } from "@/components/icons";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { getLoginUrl } from "@/lib/api";
 import { postDemand, type QualityGrade } from "@/lib/marketplaceApi";
 
 export function PostDemand() {
@@ -33,7 +34,10 @@ export function PostDemand() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) { router.push("/login"); return; }
+    if (!user) {
+      router.push(getLoginUrl("/dashboard/demands/post"));
+      return;
+    }
     if (!form.productName || !form.deadline || !form.preferredLocation) {
       showToast("error", "Please fill all required fields.");
       return;

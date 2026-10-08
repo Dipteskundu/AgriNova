@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useToast } from "@/components/ui/Toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { getLoginUrl } from "@/lib/api";
 import {
   getCart,
   removeFromCart,
@@ -190,7 +191,10 @@ export function CartPage() {
                 className="w-full mt-5"
                 size="lg"
                 onClick={() => {
-                  if (!user) { router.push("/login"); return; }
+                  if (!user) {
+                    router.push(getLoginUrl("/dashboard/checkout"));
+                    return;
+                  }
                   router.push("/dashboard/checkout");
                 }}
               >
