@@ -1,4 +1,7 @@
+"use client";
+
 import React from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { tr } from "@/lib/localize";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -16,11 +19,13 @@ export const FormInput: React.FC<InputProps> = ({
   className = "",
   ...props
 }) => {
+  useLanguage();
+
   return (
     <div className="flex flex-col gap-1.5 w-full">
       {label && (
         <label htmlFor={id} className="text-xs font-semibold text-slate-700 dark:text-[#a0a0a0]">
-          {label} {props.required && <span className="text-rose-500">{tr('*')}</span>}
+          {tr(label)} {props.required && <span className="text-rose-500">{tr('*')}</span>}
         </label>
       )}
       <input
@@ -30,8 +35,8 @@ export const FormInput: React.FC<InputProps> = ({
         } ${className}`}
         {...props}
       />
-      {error && <span className="text-xs text-rose-600">{error}</span>}
-      {helperText && !error && <span className="text-xs text-slate-400 dark:text-[#666666]">{helperText}</span>}
+      {error && <span className="text-xs text-rose-600">{tr(error)}</span>}
+      {helperText && !error && <span className="text-xs text-slate-400 dark:text-[#666666]">{tr(helperText)}</span>}
     </div>
   );
 };
@@ -51,11 +56,13 @@ export const FormSelect: React.FC<SelectProps> = ({
   className = "",
   ...props
 }) => {
+  useLanguage();
+
   return (
     <div className="flex flex-col gap-1.5 w-full">
       {label && (
         <label htmlFor={id} className="text-xs font-semibold text-slate-700 dark:text-[#a0a0a0]">
-          {label} {props.required && <span className="text-rose-500">{tr('*')}</span>}
+          {tr(label)} {props.required && <span className="text-rose-500">{tr('*')}</span>}
         </label>
       )}
       <select
@@ -67,7 +74,7 @@ export const FormSelect: React.FC<SelectProps> = ({
       >
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>
-            {opt.label}
+            {tr(opt.label)}
           </option>
         ))}
       </select>
@@ -90,11 +97,13 @@ export const FormTextarea: React.FC<TextareaProps> = ({
   rows = 3,
   ...props
 }) => {
+  useLanguage();
+
   return (
     <div className="flex flex-col gap-1.5 w-full">
       {label && (
         <label htmlFor={id} className="text-xs font-semibold text-slate-700 dark:text-[#a0a0a0]">
-          {label} {props.required && <span className="text-rose-500">{tr('*')}</span>}
+          {tr(label)} {props.required && <span className="text-rose-500">{tr('*')}</span>}
         </label>
       )}
       <textarea
@@ -105,7 +114,7 @@ export const FormTextarea: React.FC<TextareaProps> = ({
         } ${className}`}
         {...props}
       />
-      {error && <span className="text-xs text-rose-600">{error}</span>}
+      {error && <span className="text-xs text-rose-600">{tr(error)}</span>}
     </div>
   );
 };

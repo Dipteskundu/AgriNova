@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { tr } from "@/lib/localize";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   GraduationCap,
   Plus,
@@ -22,7 +23,9 @@ import { getAdminTrainingCourses, createAdminTrainingCourse } from '@/lib/adminA
 import { TrainingManagementAdminView } from '@/types';
 
 export const TrainingManagement: React.FC = () => {
+  const { language } = useLanguage();
   const { showToast } = useToast();
+  const t = (bn: string, en: string) => (language === 'bn' ? bn : en);
   const [loading, setLoading] = useState(true);
   const [courses, setCourses] = useState<TrainingManagementAdminView[]>([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -118,7 +121,11 @@ export const TrainingManagement: React.FC = () => {
                       : 'neutral'
                   }
                 >
-                  {course.status}
+                  {course.status === 'Published'
+                    ? t('প্রকাশিত', 'Published')
+                    : course.status === 'Draft'
+                      ? t('খসড়া', 'Draft')
+                      : t('সংরক্ষিত', 'Archived')}
                 </Badge>
                 <div className="flex items-center gap-1 text-amber-500 text-xs font-bold">
                   <Star className="w-3.5 h-3.5 fill-amber-400" />
@@ -127,9 +134,9 @@ export const TrainingManagement: React.FC = () => {
               </div>
 
               <h3 className="text-sm font-bold text-slate-900 dark:text-[#f0f0f0] leading-snug mb-1">
-                {course.courseTitle}
+                {tr(course.courseTitle)}
               </h3>
-              <p className="text-[11px] text-slate-500 dark:text-[#a0a0a0] mb-3">{tr('Lead Agronomist:')}<span className="font-semibold text-slate-700 dark:text-[#999999]">{course.instructorAssigned}</span>
+              <p className="text-[11px] text-slate-500 dark:text-[#a0a0a0] mb-3">{tr('Lead Agronomist:')}<span className="font-semibold text-slate-700 dark:text-[#999999]">{tr(course.instructorAssigned)}</span>
               </p>
 
               {/* Participation Stats */}
@@ -148,7 +155,7 @@ export const TrainingManagement: React.FC = () => {
 
               <div className="mt-3 text-xs text-slate-600 dark:text-[#a0a0a0]">
                 <span className="text-[11px] text-slate-400 block">{tr('Target Region')}</span>
-                <span className="font-medium text-slate-800 dark:text-[#e0e0e0]">{course.targetRegion}</span>
+                <span className="font-medium text-slate-800 dark:text-[#e0e0e0]">{tr(course.targetRegion)}</span>
               </div>
             </div>
 

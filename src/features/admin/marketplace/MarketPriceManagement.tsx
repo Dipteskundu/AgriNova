@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { tr } from "@/lib/localize";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   TrendingUp,
   TrendingDown,
@@ -21,6 +22,7 @@ import { getMarketCommodityPrices, updateCommodityPrice } from '@/lib/adminApi';
 import { MarketCommodityPrice } from '@/types';
 
 export const MarketPriceManagement: React.FC = () => {
+  const { language } = useLanguage();
   const { showToast } = useToast();
   const [loading, setLoading] = useState(true);
   const [prices, setPrices] = useState<MarketCommodityPrice[]>([]);
@@ -105,13 +107,20 @@ export const MarketPriceManagement: React.FC = () => {
                     : 'neutral'
                 }
               >
-                {p.priceTrend.toUpperCase()}{tr('TREND')}</Badge>
+                {language === 'bn'
+                  ? p.priceTrend === 'up'
+                    ? 'বৃদ্ধি'
+                    : p.priceTrend === 'down'
+                      ? 'হ্রাস'
+                      : 'স্থিতিশীল'
+                  : p.priceTrend.toUpperCase()}
+                {tr('TREND')}</Badge>
             </div>
 
             <div className="p-3 bg-slate-50 dark:bg-[#111111]/60 rounded-xl my-3 flex items-center justify-between">
               <div>
                 <span className="text-[10px] text-slate-400 block uppercase font-bold">
-                  Wholesale Modal Rate (৳/kg)
+                  {language === 'bn' ? 'পাইকারি গড় দর (৳/কেজি)' : 'Wholesale Modal Rate (৳/kg)'}
                 </span>
                 {editingId === p.id ? (
                   <div className="flex items-center gap-2 mt-1">

@@ -94,7 +94,7 @@ export function RatingForm({ onSubmit }: Props) {
             onClick={() => setRating(star)}
             onMouseEnter={() => setHovered(star)}
             onMouseLeave={() => setHovered(0)}
-            aria-label={`${star} star${star > 1 ? "s" : ""}`}
+            aria-label={t(`${star} তারকা`, `${star} star${star > 1 ? "s" : ""}`)}
             aria-pressed={rating === star}
             className="p-0.5 transition-transform hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded"
           >

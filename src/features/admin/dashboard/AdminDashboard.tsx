@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { tr } from "@/lib/localize";
+import { tr, trPhrase } from "@/lib/localize";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Users,
   ShieldCheck,
@@ -144,8 +145,23 @@ const COMMAND_MATRIX: Array<{
 ];
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) => {
+  useLanguage();
   const { showToast } = useToast();
   const t = useT();
+
+  const verifyStatusLabel = (s: string) =>
+    s === "verified"
+      ? t("যাচাইকৃত", "Verified")
+      : s === "rejected"
+        ? t("প্রত্যাখ্যাত", "Rejected")
+        : t("অপেক্ষমাণ", "Pending");
+
+  const logStatusLabel = (s: string) =>
+    s === "success"
+      ? t("সফল", "success")
+      : s === "failure"
+        ? t("ব্যর্থ", "failure")
+        : s;
   const [loading, setLoading] = useState(true);
   const [summary, setSummary] = useState<AdminDashboardSummary | null>(null);
   const [pendingVerifications, setPendingVerifications] = useState<FarmVerificationRequest[]>([]);
@@ -253,8 +269,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
           {
             id: 'monitored-acreage',
             title: tr('Monitored Acreage'),
-            value: `${kpis.monitoredAcreage.toLocaleString()} Acres`,
-            change: 'GIS mapped & verified',
+            value: `${kpis.monitoredAcreage.toLocaleString()} ${t("একর", "Acres")}`,
+            change: t("জিপিএস ম্যাপিং ও যাচাইকৃত", "GIS mapped & verified"),
             trend: 'neutral',
             subtitle: `${kpis.totalActiveFarms} ${tr('active farms registered')}`,
             icon: Sprout,
@@ -263,7 +279,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
           {
             id: 'projected-yield',
             title: tr('Projected Yield'),
-            value: `${(kpis.projectedAnnualYieldTons / 1000).toFixed(0)}k Tons`,
+            value: `${(kpis.projectedAnnualYieldTons / 1000).toFixed(0)}k ${t("টন", "Tons")}`,
             trend: 'up',
             subtitle: tr('Boro, Potato & Mustard'),
             icon: TrendingUp,
@@ -273,7 +289,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
             id: 'pending-verifications',
             title: tr('Pending Verifications'),
             value: summary.totalPendingVerifications,
-            change: 'Cadastral Porcha deeds',
+            change: t("কাদস্ট্রাল পরচা দলিল", "Cadastral Porcha deeds"),
             trend: 'neutral',
             subtitle: tr('Awaiting officer audit'),
             icon: ShieldCheck,
@@ -344,15 +360,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
                   className="p-3.5 rounded-xl border border-slate-200 dark:border-[#222222] bg-white dark:bg-[#0a0a0a] hover:border-emerald-300 transition-all text-xs"
                 >
                   <div className="flex items-start justify-between gap-1 mb-1">
-                    <h4 className="font-bold text-slate-900 dark:text-[#f0f0f0]">{item.farmName}</h4>
-                    <Badge variant="warning">{item.status}</Badge>
+                    <h4 className="font-bold text-slate-900 dark:text-[#f0f0f0]">{tr(item.farmName)}</h4>
+                    <Badge variant="warning">{verifyStatusLabel(item.status)}</Badge>
                   </div>
                   <p className="text-slate-600 dark:text-[#a0a0a0] font-medium">{tr('Owner:')}{item.farmerName}</p>
                   <p className="text-slate-400 text-[11px] mt-0.5">
-                    {item.upazila}, {item.district}{tr('•')}{item.totalAcreage}{tr('Acres')}</p>
+                    {tr(item.upazila)}, {tr(item.district)}{tr('•')}{item.totalAcreage}{tr('Acres')}</p>
 
                   <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between">
-                    <span className="text-[10px] text-slate-400 font-mono">{item.cadastralPlotNumbers}</span>
+                    <span className="text-[10px] text-slate-400 font-mono">{tr(item.cadastralPlotNumbers)}</span>
                     <Button
                       variant="ghost"
                       size="sm"
@@ -420,9 +436,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
               {pendingVerifications.slice(0, 3).map((item) => (
                 <ModalRow
                   key={item.id}
-                  title={item.farmName}
-                  subtitle={`${item.farmerName} • ${item.upazila}, ${item.district}`}
-                  chip={<ModalChip className="bg-amber-100 text-amber-800">{item.status}</ModalChip>}
+                  title={tr(item.farmName)}
+                  subtitle={`${item.farmerName} • ${tr(item.upazila)}, ${tr(item.district)}`}
+                  chip={<ModalChip className="bg-amber-100 text-amber-800">{verifyStatusLabel(item.status)}</ModalChip>}
                 />
               ))}
               {pendingVerifications.length === 0 && (
@@ -439,7 +455,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
               <ModalRow
                 key={log.id}
                 title={tr(log.actionType)}
-                subtitle={`${tr(log.actorRole)} • ${log.timestamp}`}
+                subtitle={`${tr(log.actorRole)} • ${trPhrase(log.timestamp)}`}
                 chip={
                   <ModalChip
                     className={
@@ -450,7 +466,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
                         : 'bg-amber-100 text-amber-800'
                     }
                   >
-                    {log.status}
+                    {logStatusLabel(log.status)}
                   </ModalChip>
                 }
               />
@@ -487,12 +503,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
                 <div>
                   <span className="font-bold text-slate-900 dark:text-[#f0f0f0]">{tr(log.actionType)}</span>
                   <span className="text-slate-500 dark:text-[#a0a0a0] ml-2">{tr('by')}{log.actorName} ({tr(log.actorRole)})</span>
-                  <p className="text-slate-600 dark:text-[#a0a0a0] text-[11px] mt-0.5">{tr(log.details)}</p>
+                  <p className="text-slate-600 dark:text-[#a0a0a0] text-[11px] mt-0.5">{trPhrase(log.details)}</p>
                 </div>
               </div>
 
               <div className="text-right shrink-0">
-                <span className="text-slate-400 text-[11px] block">{log.timestamp}</span>
+                <span className="text-slate-400 text-[11px] block">{trPhrase(log.timestamp)}</span>
                 <span className="font-mono text-[10px] text-slate-400">{tr('IP:')}{log.ipAddress}</span>
               </div>
             </div>

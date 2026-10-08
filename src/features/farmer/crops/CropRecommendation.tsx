@@ -28,6 +28,36 @@ interface CropRecommendationProps {
 export const CropRecommendation: React.FC<CropRecommendationProps> = ({ onNavigate }) => {
   const { showToast } = useToast();
   const { language } = useLanguage();
+
+  /**
+   * The engine composes key-advantage sentences dynamically
+   * (`Maturity in N days (season)`, `Benchmark market price BDT N/kg`,
+   * `Manage N known pests proactively`), so a whole-string dict lookup can
+   * never match. Rebuild those three patterns bangla-side; everything else
+   * falls back to the dictionary.
+   */
+  const recText = (s: string): string => {
+    const maturity = s.match(/^Maturity in (\d+) days \((.*)\)$/);
+    if (maturity) {
+      const season = tr(maturity[2]);
+      return language === "bn"
+        ? `${maturity[1]} দিনে পাক (${season})`
+        : `Maturity in ${maturity[1]} days (${season})`;
+    }
+    const price = s.match(/^Benchmark market price BDT (\d+)\/kg$/);
+    if (price) {
+      return language === "bn"
+        ? `বেঞ্চমার্ক বাজারদর ৳${price[1]}/কেজি`
+        : `Benchmark market price BDT ${price[1]}/kg`;
+    }
+    const pests = s.match(/^Manage (\d+) known pests proactively$/);
+    if (pests) {
+      return language === "bn"
+        ? `${pests[1]}টি পরিচিত পোকামাকড় সক্রিয়ভাবে নিয়ন্ত্রণ করুন`
+        : `Manage ${pests[1]} known pests proactively`;
+    }
+    return tr(s);
+  };
   const [loading, setLoading] = useState(false);
   const [recommendations, setRecommendations] = useState<CropRecommendationItem[]>([]);
   const [inputForm, setInputForm] = useState<CropRecommendationInput>({
@@ -280,7 +310,7 @@ export const CropRecommendation: React.FC<CropRecommendationProps> = ({ onNaviga
                   {item.keyAdvantages.map((adv, i) => (
                     <div key={i} className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-[#a0a0a0]">
                       <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                      <span>{tr(adv)}</span>
+                      <span>{recText(adv)}</span>
                     </div>
                   ))}
                 </div>
@@ -289,7 +319,7 @@ export const CropRecommendation: React.FC<CropRecommendationProps> = ({ onNaviga
                   <span className="font-semibold text-emerald-800">
                     {language === 'bn' ? 'জলবায়ু সহনশীলতা: ' : 'Climate Resilience: '}
                   </span>
-                  {tr(item.climateResilience)}
+                  {recText(item.climateResilience)}
                 </div>
               </div>
 

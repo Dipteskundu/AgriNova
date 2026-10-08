@@ -4,6 +4,7 @@ import React from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Compass } from "@/components/icons";
+import { tr } from "@/lib/localize";
 
 interface PortalComingSoonProps {
   /** Page heading, e.g. "Demand Board". */
@@ -31,10 +32,10 @@ export function PortalComingSoon({
     <div className="space-y-6 p-6">
       <div>
         <h1 className="text-2xl font-bold text-slate-900 dark:text-[#f0f0f0]">
-          {title}
+          {tr(title)}
         </h1>
         <p className="mt-1 text-sm text-slate-500 dark:text-[#a0a0a0]">
-          {description}
+          {tr(description)}
         </p>
       </div>
 
@@ -47,7 +48,7 @@ export function PortalComingSoon({
         }
         description={
           language === "bn"
-            ? `${phase} পর্যায়ে যুক্ত হবে।`
+            ? `${tr(phase)} পর্যায়ে যুক্ত হবে।`
             : `Ships in ${phase} of the Marketplace & Business Portals plan.`
         }
       />

@@ -2,6 +2,8 @@
 
 import React, { createContext, useContext, useState, useCallback } from "react";
 import { CheckCircle2, AlertTriangle, XCircle, Info, X } from "@/components/icons";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { tr } from "@/lib/localize";
 
 type ToastType = "success" | "warning" | "error" | "info";
 
@@ -19,6 +21,7 @@ interface ToastContextType {
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
 export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { language } = useLanguage();
   const [toasts, setToasts] = useState<ToastItem[]>([]);
 
   const showToast = useCallback((type: ToastType, title: string, message?: string) => {
@@ -62,12 +65,13 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             {toast.type === "info" && <Info className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />}
 
             <div className="flex-1 text-xs">
-              <p className="font-semibold text-slate-900 dark:text-slate-100">{toast.title}</p>
-              {toast.message && <p className="text-slate-600 dark:text-slate-400 mt-0.5">{toast.message}</p>}
+              <p className="font-semibold text-slate-900 dark:text-slate-100">{tr(toast.title)}</p>
+              {toast.message && <p className="text-slate-600 dark:text-slate-400 mt-0.5">{tr(toast.message)}</p>}
             </div>
 
             <button
               onClick={() => removeToast(toast.id)}
+              aria-label={language === "bn" ? "বার্তা বন্ধ করুন" : "Dismiss notification"}
               className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5"
             >
               <X className="w-3.5 h-3.5" />

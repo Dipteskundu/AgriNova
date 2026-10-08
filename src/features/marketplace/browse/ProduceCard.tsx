@@ -8,6 +8,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { SaveToggle } from "./SaveToggle";
 import { StarRating } from "../ratings/StarRating";
 import { type ProduceListing, type QualityGrade } from "@/lib/marketplaceApi";
+import { tr } from "@/lib/localize";
+import { useT } from "@/components/dashboard/useT";
 
 /**
  * One produce card: the browse grid and the saved shelf render the same
@@ -52,6 +54,16 @@ interface Props {
 
 export function ProduceCard({ listing, basePath = "/products", onSaveChange }: Props) {
   const { user } = useAuth();
+  const t = useT();
+
+  const gradeText = (g: QualityGrade) =>
+    ({
+      "Grade A": t("গ্রেড এ", "Grade A"),
+      "Grade B": t("গ্রেড বি", "Grade B"),
+      "Grade C": t("গ্রেড সি", "Grade C"),
+      "Pending Inspection": t("পরিদর্শন বাকি", "Pending Inspection"),
+      Rejected: t("প্রত্যাখ্যাত", "Rejected"),
+    }[g] ?? g);
 
   return (
     <div className="relative">
@@ -62,29 +74,29 @@ export function ProduceCard({ listing, basePath = "/products", onSaveChange }: P
         <div className="relative h-48 overflow-hidden">
           <img
             src={listing.imageUrl}
-            alt={listing.cropName}
+            alt={tr(listing.cropName)}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
           <div className="absolute top-2 left-2 flex gap-1.5 flex-wrap">
             <Badge variant={GRADE_VARIANT[listing.qualityGrade]} size="sm">
-              {listing.qualityGrade}
+              {gradeText(listing.qualityGrade)}
             </Badge>
             {listing.isVerified && (
               <span className="flex items-center gap-0.5 bg-emerald-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
-                <Icon name="ShieldCheck" size={9} /> Verified
+                <Icon name="ShieldCheck" size={9} /> {t("ভেরিফাইড", "Verified")}
               </span>
             )}
           </div>
           <div className="absolute bottom-2 right-2 bg-white/90 dark:bg-black/70 backdrop-blur-sm px-2 py-1 rounded-lg text-sm font-black text-blue-700 dark:text-blue-400">
             ৳{listing.pricePerKgBdt}
-            <span className="text-[10px] font-normal">/kg</span>
+            <span className="text-[10px] font-normal">{t("/কেজি", "/kg")}</span>
           </div>
         </div>
         <div className="p-4">
           <h3 className="font-bold text-sm text-slate-900 dark:text-[#f0f0f0]">
-            {listing.cropName}
+            {tr(listing.cropName)}
           </h3>
-          <p className="text-xs text-slate-500 dark:text-[#a0a0a0]">{listing.variety}</p>
+          <p className="text-xs text-slate-500 dark:text-[#a0a0a0]">{tr(listing.variety)}</p>
           {/* Rating badge — only once something has been rated; a star row of
               zeros on every card is noise the buyer has to scroll past. The
               detail page always shows the summary, including "0 rating(s)". */}
@@ -102,10 +114,10 @@ export function ProduceCard({ listing, basePath = "/products", onSaveChange }: P
           <div className="flex items-center justify-between mt-2">
             <span className="text-[11px] text-slate-400 flex items-center gap-1">
               <Icon name="MapPin" size={11} />
-              {listing.location}
+              {tr(listing.location)}
             </span>
             <span className="text-[11px] text-slate-400">
-              {listing.quantityKg.toLocaleString()} kg
+              {listing.quantityKg.toLocaleString()} {t("কেজি", "kg")}
             </span>
           </div>
           <div className="flex items-center gap-1.5 mt-2.5 pt-2.5 border-t border-slate-100 dark:border-[#1a1a1a]">
@@ -116,7 +128,7 @@ export function ProduceCard({ listing, basePath = "/products", onSaveChange }: P
               {listing.farmerName}
             </span>
             <span className="text-[11px] text-slate-400 ml-auto shrink-0">
-              Min {listing.minimumOrderKg} kg
+              {t("নূন্যতম", "Min")} {listing.minimumOrderKg} {t("কেজি", "kg")}
             </span>
           </div>
         </div>

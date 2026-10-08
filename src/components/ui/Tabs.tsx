@@ -1,4 +1,8 @@
+"use client";
+
 import React from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { tr } from "@/lib/localize";
 
 interface TabItem {
   id: string;
@@ -14,6 +18,8 @@ interface TabsProps {
 }
 
 export const Tabs: React.FC<TabsProps> = ({ tabs, activeTab, onChange, className = "" }) => {
+  useLanguage();
+
   return (
     <div className={`flex items-center gap-1 border-b border-slate-200 overflow-x-auto dark:border-[#222222] ${className}`}>
       {tabs.map((tab) => {
@@ -28,7 +34,7 @@ export const Tabs: React.FC<TabsProps> = ({ tabs, activeTab, onChange, className
                 : "border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300 dark:text-[#a0a0a0] dark:hover:text-[#f0f0f0] dark:hover:border-[#333333]"
             }`}
           >
-            <span>{tab.label}</span>
+            <span>{tr(tab.label)}</span>
             {tab.count !== undefined && (
               <span
                 className={`text-[10px] px-1.5 py-0.2 rounded-full ${

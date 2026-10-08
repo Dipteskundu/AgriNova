@@ -58,7 +58,7 @@ function RegisterForm() {
       );
       router.push("/login");
     } catch (err: any) {
-      showToast("error", err.message || "Registration failed. Please try again.");
+      showToast("error", err.message || (language === "bn" ? "নিবন্ধন ব্যর্থ হয়েছে। আবার চেষ্টা করুন।" : "Registration failed. Please try again."));
     } finally {
       setLoading(false);
     }
@@ -71,7 +71,7 @@ function RegisterForm() {
       showToast("success", language === "bn" ? "সফলভাবে নিবন্ধন হয়েছে।" : "Signed up successfully.");
     } catch (err: any) {
       if (err.code !== "auth/popup-closed-by-user") {
-        showToast("error", err.message || "Google sign-up failed.");
+        showToast("error", err.message || (language === "bn" ? "গুগল সাইন-আপ ব্যর্থ হয়েছে।" : "Google sign-up failed."));
       }
     } finally {
       setSocialLoading(false);
@@ -85,7 +85,7 @@ function RegisterForm() {
       showToast("success", language === "bn" ? "সফলভাবে নিবন্ধন হয়েছে।" : "Signed up successfully.");
     } catch (err: any) {
       if (err.code !== "auth/popup-closed-by-user") {
-        showToast("error", err.message || "GitHub sign-up failed.");
+        showToast("error", err.message || (language === "bn" ? "গিটহাব সাইন-আপ ব্যর্থ হয়েছে।" : "GitHub sign-up failed."));
       }
     } finally {
       setSocialLoading(false);
@@ -155,7 +155,7 @@ function RegisterForm() {
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    placeholder="+880 17XX-XXXXXX"
+                    placeholder={language === "bn" ? "+৮৮০ ১৭XX-XXXXXX" : "+880 17XX-XXXXXX"}
                     className="w-full bg-white/10 border border-white/20 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-white/40 focus:outline-none focus:border-emerald-400 transition-colors"
                   />
                 </div>

@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { tr } from "@/lib/localize";
 import { useAuth } from "@/contexts/AuthContext";
 import { getInputById, submitInputRating, getInputRatings, type SupplierProduct } from "@/lib/supplierApi";
 import { addInputToCart } from "@/lib/marketplaceApi";
@@ -19,6 +20,16 @@ interface Props {
   id: string;
   basePath?: string;
 }
+
+const CATEGORY_LABEL: Record<string, [string, string]> = {
+  Seeds: ["বীজ", "Seeds"],
+  Fertilizers: ["সার", "Fertilizers"],
+  Pesticides: ["কীটনাশক", "Pesticides"],
+  Tools: ["সরঞ্জাম", "Tools"],
+  Equipment: ["যন্ত্রপাতি", "Equipment"],
+  Irrigation: ["সেচ যন্ত্র", "Irrigation"],
+  Packaging: ["প্যাকেজিং", "Packaging"],
+};
 
 /**
  * Detail for a farm input — `/inputs/:id`.
@@ -51,6 +62,10 @@ export function InputDetail({ id, basePath = "/inputs" }: Props) {
   const [ratingsLoading, setRatingsLoading] = useState(true);
 
   const t = (bn: string, en: string) => (language === "bn" ? bn : en);
+  const categoryLabel = (cat: string) => {
+    const pair = CATEGORY_LABEL[cat];
+    return pair ? (language === "bn" ? pair[0] : pair[1]) : cat;
+  };
 
   useEffect(() => {
     getInputById(id).then((res) => {
@@ -110,14 +125,14 @@ export function InputDetail({ id, basePath = "/inputs" }: Props) {
     if (!user) return; // LoginGate already covers this; belt and braces.
     if (outOfStock) return;
     if (quantity < minOrder) {
-      showToast("error", `${t("সর্বনিম্ন অর্ডার", "Minimum order is")} ${minOrder} ${product.unit}`);
+      showToast("error", `${t("সর্বনিম্ন অর্ডার", "Minimum order is")} ${minOrder} ${tr(product.unit)}`);
       return;
     }
     setAddingToCart(true);
     addInputToCart(product, quantity);
     showToast(
       "success",
-      `${product.productName} ${t("কার্টে যোগ হয়েছে", "added to cart")} (${quantity} ${product.unit})`
+      `${tr(product.productName)} ${t("কার্টে যোগ হয়েছে", "added to cart")} (${quantity} ${tr(product.unit)})`
     );
     setAddingToCart(false);
   };
@@ -150,7 +165,7 @@ export function InputDetail({ id, basePath = "/inputs" }: Props) {
       {
         rating,
         comment,
-        userName: user.name || user.email || "User",
+        userName: user.name || user.email || t("ব্যবহারকারী", "User"),
         userId: user.id,
         createdAt: new Date().toISOString(),
       },
@@ -168,7 +183,7 @@ export function InputDetail({ id, basePath = "/inputs" }: Props) {
         </Link>
         <Icon name="ChevronRight" size={12} />
         <span className="text-slate-700 dark:text-[#e0e0e0] font-medium">
-          {product.productName}
+          {tr(product.productName)}
         </span>
       </nav>
 
@@ -178,11 +193,11 @@ export function InputDetail({ id, basePath = "/inputs" }: Props) {
           <div className="relative rounded-2xl overflow-hidden h-72 sm:h-80">
             <img
               src={product.imageUrl}
-              alt={product.productName}
+              alt={tr(product.productName)}
               className="w-full h-full object-cover"
             />
             <div className="absolute top-3 left-3 flex gap-2">
-              <Badge variant="neutral">{product.category}</Badge>
+              <Badge variant="neutral">{categoryLabel(product.category)}</Badge>
               {outOfStock && (
                 <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
                   {t("স্টক নেই", "Out of stock")}
@@ -194,18 +209,18 @@ export function InputDetail({ id, basePath = "/inputs" }: Props) {
             <div className="rounded-xl border border-slate-200 dark:border-[#222] p-3">
               <p className="text-[11px] text-slate-400">{t("মজুত", "In stock")}</p>
               <p className="mt-1 text-sm font-bold">
-                {product.stockQuantity.toLocaleString()} {product.unit}
+                {product.stockQuantity.toLocaleString()} {tr(product.unit)}
               </p>
             </div>
             <div className="rounded-xl border border-slate-200 dark:border-[#222] p-3">
               <p className="text-[11px] text-slate-400">{t("সর্বনিম্ন", "Min order")}</p>
               <p className="mt-1 text-sm font-bold">
-                {minOrder} {product.unit}
+                {minOrder} {tr(product.unit)}
               </p>
             </div>
             <div className="rounded-xl border border-slate-200 dark:border-[#222] p-3">
               <p className="text-[11px] text-slate-400">{t("ক্যাটাগরি", "Category")}</p>
-              <p className="mt-1 text-sm font-bold">{product.category}</p>
+              <p className="mt-1 text-sm font-bold">{categoryLabel(product.category)}</p>
             </div>
           </div>
         </div>
@@ -213,7 +228,7 @@ export function InputDetail({ id, basePath = "/inputs" }: Props) {
         {/* Facts + action */}
         <div>
           <h1 className="text-2xl font-black text-slate-900 dark:text-[#f0f0f0]">
-            {product.productName}
+            {tr(product.productName)}
           </h1>
           <p className="text-sm text-slate-500 dark:text-[#a0a0a0] mt-1">
             {product.supplierName}
@@ -221,7 +236,7 @@ export function InputDetail({ id, basePath = "/inputs" }: Props) {
 
           <p className="mt-4 text-3xl font-black text-blue-700 dark:text-blue-400">
             ৳{product.pricePerUnitBdt.toLocaleString()}
-            <span className="text-base font-semibold text-slate-400">/{product.unit}</span>
+            <span className="text-base font-semibold text-slate-400">/{tr(product.unit)}</span>
           </p>
 
           {/* Rating summary — always rendered; "0 rating(s)" rather than a
@@ -240,14 +255,14 @@ export function InputDetail({ id, basePath = "/inputs" }: Props) {
             <div className="mt-4 flex gap-2 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-700 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-400">
               <Icon name="AlertTriangle" size={14} className="shrink-0 mt-0.5" />
               <span>
-                {t("শুধুমাত্র", "Only")} {product.stockQuantity} {product.unit}{" "}
+                {t("শুধুমাত্র", "Only")} {product.stockQuantity} {tr(product.unit)}{" "}
                 {t("বাকি আছে।", "left in stock.")}
               </span>
             </div>
           )}
 
           <p className="mt-4 text-sm leading-relaxed text-slate-600 dark:text-[#a0a0a0]">
-            {product.description}
+            {tr(product.description)}
           </p>
 
           <div className="mt-6 rounded-2xl border border-slate-200 dark:border-[#222] p-4">
@@ -260,7 +275,7 @@ export function InputDetail({ id, basePath = "/inputs" }: Props) {
                   setQuantity((q) => Math.max(minOrder, q - Math.max(1, minOrder)))
                 }
                 className="w-9 h-9 rounded-lg border border-slate-200 dark:border-[#333] flex items-center justify-center hover:bg-slate-50 dark:hover:bg-[#1a1a1a]"
-                aria-label="Decrease quantity"
+                aria-label={t("পরিমাণ কমান", "Decrease quantity")}
               >
                 <Icon name="Minus" size={14} />
               </button>
@@ -278,11 +293,11 @@ export function InputDetail({ id, basePath = "/inputs" }: Props) {
               <button
                 onClick={() => setQuantity((q) => q + Math.max(1, minOrder))}
                 className="w-9 h-9 rounded-lg border border-slate-200 dark:border-[#333] flex items-center justify-center hover:bg-slate-50 dark:hover:bg-[#1a1a1a]"
-                aria-label="Increase quantity"
+                aria-label={t("পরিমাণ বাড়ান", "Increase quantity")}
               >
                 <Icon name="Plus" size={14} />
               </button>
-              <span className="text-xs text-slate-400">{product.unit}</span>
+              <span className="text-xs text-slate-400">{tr(product.unit)}</span>
               <span className="ml-auto text-sm font-black text-slate-900 dark:text-[#f0f0f0]">
                 ৳{(product.pricePerUnitBdt * Math.max(quantity, 0)).toLocaleString()}
               </span>

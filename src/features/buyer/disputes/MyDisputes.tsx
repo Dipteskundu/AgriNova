@@ -10,6 +10,7 @@ import { Card } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getMyDisputes } from "@/lib/marketplaceApi";
+import { tr } from "@/lib/localize";
 import type { DisputeCase } from "@/types";
 
 type Variant = "info" | "warning" | "success" | "neutral" | "danger";
@@ -235,7 +236,7 @@ export function MyDisputes() {
                     {defendantRole
                       ? ` · ${t(defendantRole.bn, defendantRole.en)}`
                       : c.defendant.role
-                        ? ` · ${c.defendant.role}`
+                        ? ` · ${tr(c.defendant.role)}`
                         : ""}
                   </span>
                 </div>

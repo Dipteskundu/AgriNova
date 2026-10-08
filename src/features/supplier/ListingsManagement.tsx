@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useToast } from "@/components/ui/Toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { tr, trPhrase } from "@/lib/localize";
+import { bnNum, fmtDateBn } from "@/lib/format";
 import {
   createListing,
   deleteListing,
@@ -42,6 +44,33 @@ const STATUS_BADGE: Record<string, BadgeVariant> = {
   "Pending Review": "warning",
   Rejected: "danger",
   Inactive: "neutral",
+};
+
+/** Display text for status/grade/option values — the English keys are unchanged. */
+const STATUS_LABEL: Record<string, [string, string]> = {
+  Approved: ["অনুমোদিত", "Approved"],
+  "Pending Review": ["রিভিউ চলমান", "Pending Review"],
+  Rejected: ["প্রত্যাখ্যাত", "Rejected"],
+  Inactive: ["নিষ্ক্রিয়", "Inactive"],
+};
+
+/** Labels the shared dictionary does not cover (grades/certs/storage go via tr). */
+const ENUM_LABEL: Record<string, [string, string]> = {
+  "Pending Inspection": ["নিরীক্ষার অপেক্ষায়", "Pending Inspection"],
+  "Farm Shed": ["খামার শেড", "Farm Shed"],
+  None: ["না", "None"],
+  "GAP Certified": ["GAP সার্টিফাইড", "GAP Certified"],
+  Organic: ["জৈব", "Organic"],
+};
+
+const enumLabel = (value: string, t: (bn: string, en: string) => string) => {
+  const local = ENUM_LABEL[value];
+  return local ? t(local[0], local[1]) : tr(value);
+};
+
+const statusLabel = (status: string, t: (bn: string, en: string) => string) => {
+  const local = STATUS_LABEL[status];
+  return local ? t(local[0], local[1]) : tr(status);
 };
 
 const emptyPayload = (): ListingPayload => ({
@@ -96,13 +125,14 @@ export function ListingsManagement() {
   const [requestingId, setRequestingId] = useState("");
 
   const t = (bn: string, en: string) => (language === "bn" ? bn : en);
+  const num = (v: string | number) => (language === "bn" ? bnNum(v) : String(v));
 
   const load = useCallback(async () => {
     setLoading(true);
     setError("");
     const res = await getMyProduceListings();
     if (res.success) setRows(res.data);
-    else setError(res.message || "Could not load your listings.");
+    else setError(res.message ? trPhrase(res.message) : t("তালিকা আনা যায়নি", "Could not load your listings."));
     setLoading(false);
   }, []);
 
@@ -201,7 +231,7 @@ export function ListingsManagement() {
       close();
       load();
     } else {
-      setFormError(res.message || t("সংরক্ষণ করা যায়নি", "Could not save."));
+      setFormError(res.message ? trPhrase(res.message) : t("সংরক্ষণ করা যায়নি", "Could not save."));
     }
     setSaving(false);
   };
@@ -209,7 +239,7 @@ export function ListingsManagement() {
   const remove = async (row: ProduceListing) => {
     if (
       !window.confirm(
-        t(`"${row.cropName}" মুছে ফেলবেন?`, `Delete "${row.cropName}" permanently?`)
+        t(`"${trPhrase(row.cropName)}" মুছে ফেলবেন?`, `Delete "${row.cropName}" permanently?`)
       )
     ) {
       return;
@@ -219,7 +249,7 @@ export function ListingsManagement() {
       showToast("success", t("তালিকা মুছে ফেলা হয়েছে", "Listing deleted"));
       load();
     } else {
-      showToast("error", res.message || t("মুছা যায়নি", "Could not delete."));
+      showToast("error", (res.message ? trPhrase(res.message) : "") || t("মুছা যায়নি", "Could not delete."));
     }
   };
 
@@ -255,7 +285,8 @@ export function ListingsManagement() {
     } else {
       showToast(
         "error",
-        res.message || t("নিরীক্ষার অনুরোধ করা যায়নি", "Could not request the inspection.")
+        (res.message ? trPhrase(res.message) : "") ||
+        t("নিরীক্ষার অনুরোধ করা যায়নি", "Could not request the inspection.")
       );
     }
   };
@@ -297,7 +328,7 @@ export function ListingsManagement() {
             {t("আমার তালিকা", "My Listings")}
           </h1>
           <p className="text-sm text-slate-500 dark:text-[#a0a0a0]">
-            {rows.length} {t("টি তালিকা", "listings")} ·{" "}
+            {num(rows.length)} {t("টি তালিকা", "listings")} ·{" "}
             <Link href="/products" className="text-blue-600 hover:underline">
               {t("ক্যাটালগ দেখুন →", "View public catalogue →")}
             </Link>
@@ -361,23 +392,25 @@ export function ListingsManagement() {
                       />
                       <div className="min-w-0">
                         <p className="font-semibold text-slate-900 dark:text-[#f0f0f0]">
-                          {row.cropName}
+                          {trPhrase(row.cropName)}
                         </p>
                         <p className="text-xs text-slate-400">
-                          {row.variety} · {row.category}
+                          {trPhrase(row.variety)} · {tr(row.category)}
                         </p>
                       </div>
                     </div>
                   </td>
                   <td className="px-4 py-3 text-slate-600 dark:text-[#a0a0a0]">
-                    {row.quantityKg.toLocaleString()} kg
+                    {num(row.quantityKg.toLocaleString())} {tr("kg")}
                     <p className="text-[11px] text-slate-400">
-                      {t("সর্বনিম্ন", "MOQ")} {row.minimumOrderKg} kg
+                      {t("সর্বনিম্ন", "MOQ")} {num(row.minimumOrderKg)} {tr("kg")}
                     </p>
                   </td>
                   <td className="px-4 py-3 font-semibold">
-                    ৳{row.pricePerKgBdt.toLocaleString()}
-                    <span className="text-xs font-normal text-slate-400">/kg</span>
+                    ৳{num(row.pricePerKgBdt.toLocaleString())}
+                    <span className="text-xs font-normal text-slate-400">
+                      /{tr("kg")}
+                    </span>
                   </td>
                   <td className="px-4 py-3">
                     <Badge
@@ -391,12 +424,12 @@ export function ListingsManagement() {
                               : "neutral"
                       }
                     >
-                      {row.qualityGrade}
+                      {enumLabel(row.qualityGrade, t)}
                     </Badge>
                   </td>
                   <td className="px-4 py-3">
                     <Badge variant={STATUS_BADGE[row.status ?? ""] ?? "neutral"}>
-                      {row.status || "Pending Review"}
+                      {statusLabel(row.status || "Pending Review", t)}
                     </Badge>
                   </td>
                   <td className="px-4 py-3">
@@ -521,7 +554,7 @@ function ListingFormModal({
     setUploading(true);
     const res = await uploadListingImage(file);
     if (res.success && res.data) set({ imageUrl: res.data });
-    else setUploadError(res.message || t("আপলোড ব্যর্থ হয়েছে", "Upload failed."));
+    else setUploadError(res.message ? trPhrase(res.message) : t("আপলোড ব্যর্থ হয়েছে", "Upload failed."));
     setUploading(false);
     // Clear so choosing the same file again re-fires `onChange`.
     input.value = "";
@@ -539,7 +572,7 @@ function ListingFormModal({
           <button
             onClick={onClose}
             className="p-1 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-[#1a1a1a]"
-            aria-label="Close"
+            aria-label={t("বন্ধ করুন", "Close")}
           >
             <Icon name="X" size={16} />
           </button>
@@ -576,7 +609,9 @@ function ListingFormModal({
               className={`mt-1 ${field}`}
             >
               {CATEGORIES.map((c) => (
-                <option key={c}>{c}</option>
+                <option key={c} value={c}>
+                  {tr(c)}
+                </option>
               ))}
             </select>
           </label>
@@ -624,7 +659,7 @@ function ListingFormModal({
               <option value="">{t("নির্বাচন করুন", "Select…")}</option>
               {STORAGE_CONDITIONS.map((s) => (
                 <option key={s} value={s}>
-                  {s}
+                  {enumLabel(s, t)}
                 </option>
               ))}
             </select>
@@ -650,7 +685,7 @@ function ListingFormModal({
             >
               {CERTIFICATIONS.map((c) => (
                 <option key={c} value={c}>
-                  {c}
+                  {enumLabel(c, t)}
                 </option>
               ))}
             </select>
@@ -779,7 +814,7 @@ function ListingFormModal({
                         : "neutral"
                 }
               >
-                {grade || t("নিরীক্ষার অপেক্ষায়", "Pending inspection")}
+                {grade ? enumLabel(grade, t) : t("নিরীক্ষার অপেক্ষায়", "Pending inspection")}
               </Badge>
               <span className="text-[11px] font-normal text-slate-400">
                 {t("কৃষক নিজে গ্রেড বেছে নেন না", "Sellers cannot pick a grade")}
@@ -790,8 +825,8 @@ function ListingFormModal({
               (inspectionRequestedAt ? (
                 <p className="mt-1.5 text-[11px] text-sky-700 dark:text-sky-300">
                   {t(
-                    `নিরীক্ষার অনুরোধ দেওয়া হয়েছে (${inspectionRequestedAt}) — নিরীক্ষকের অপেক্ষায়`,
-                    `Inspection requested (${inspectionRequestedAt}) — waiting for an inspector`
+                    `নিরীক্ষার অনুরোধ দেওয়া হয়েছে (${fmtDateBn(inspectionRequestedAt)}) — নিরীক্ষকের অপেক্ষায়`,
+                    `Inspection requested (${fmtDateBn(inspectionRequestedAt)}) — waiting for an inspector`
                   )}
                 </p>
               ) : (

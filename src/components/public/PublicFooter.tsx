@@ -3,28 +3,44 @@
 import React from "react";
 import Link from "next/link";
 import { Icon } from "@/components/icons";
+import { useT } from "@/components/dashboard/useT";
 
 const FOOTER_LINKS = {
   platform: [
-    { label: "Home", href: "/" },
-    { label: "About Us", href: "/about" },
-    { label: "Crop Suggestion", href: "/farmer/crops/recommend" },
-    { label: "Login", href: "/login" },
+    { key: "home", href: "/" },
+    { key: "aboutUs", href: "/about" },
+    { key: "cropSuggestion", href: "/farmer/crops/recommend" },
+    { key: "login", href: "/login" },
   ],
   resources: [
-    { label: "Farmer Portal", href: "/farmer" },
-    { label: "Admin Portal", href: "/admin" },
-    { label: "Documentation", href: "#" },
-    { label: "API Reference", href: "#" },
+    { key: "farmerPortal", href: "/farmer" },
+    { key: "adminPortal", href: "/admin" },
+    { key: "documentation", href: "#" },
+    { key: "apiReference", href: "#" },
   ],
   legal: [
-    { label: "Privacy Policy", href: "#" },
-    { label: "Terms of Service", href: "#" },
-    { label: "Cookie Policy", href: "#" },
+    { key: "privacy", href: "#" },
+    { key: "terms", href: "#" },
+    { key: "cookies", href: "#" },
   ],
 };
 
 export const PublicFooter: React.FC = () => {
+  const t = useT();
+  const label = (key: string) =>
+    ({
+      home: t("হোম", "Home"),
+      aboutUs: t("আমাদের সম্পর্কে", "About Us"),
+      cropSuggestion: t("ফসল পরামর্শ", "Crop Suggestion"),
+      login: t("লগইন", "Login"),
+      farmerPortal: t("ফার্মার পোর্টাল", "Farmer Portal"),
+      adminPortal: t("এডমিন পোর্টাল", "Admin Portal"),
+      documentation: t("ডকুমেন্টেশন", "Documentation"),
+      apiReference: t("এপিআই রেফারেন্স", "API Reference"),
+      privacy: t("প্রাইভেসি পলিসি", "Privacy Policy"),
+      terms: t("সার্ভিসের শর্তাবলি", "Terms of Service"),
+      cookies: t("কুকি পলিসি", "Cookie Policy"),
+    }[key] ?? key);
   return (
     <footer className="border-t border-slate-200/80 bg-white dark:bg-[#0a0a0a] dark:border-[#222222]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -39,7 +55,10 @@ export const PublicFooter: React.FC = () => {
               </span>
             </Link>
             <p className="text-sm text-slate-500 dark:text-[#a0a0a0] max-w-xs leading-relaxed">
-              National Digital Agriculture & Farm-to-Market Platform. Connecting farmers with precision intelligence and instant markets.
+              {t(
+                "জাতীয় ডিজিটাল কৃষি ও ফার্ম-টু-মার্কেট প্ল্যাটফর্ম। নির্ভুল বুদ্ধিমত্তা ও তাৎক্ষণিক বাজারের সাথে কৃষকদের সংযোগ ঘটায়।",
+                "National Digital Agriculture & Farm-to-Market Platform. Connecting farmers with precision intelligence and instant markets."
+              )}
             </p>
             <div className="mt-4 flex items-center gap-3">
               <a href="#" className="text-slate-400 hover:text-emerald-600 dark:text-[#666666] dark:hover:text-emerald-400 transition-colors">
@@ -56,15 +75,15 @@ export const PublicFooter: React.FC = () => {
 
           {/* Platform links */}
           <div>
-            <h3 className="text-sm font-semibold text-slate-900 dark:text-[#f0f0f0] mb-3">Platform</h3>
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-[#f0f0f0] mb-3">{t("প্ল্যাটফর্ম", "Platform")}</h3>
             <ul className="space-y-2">
               {FOOTER_LINKS.platform.map((link) => (
-                <li key={link.href}>
+                <li key={link.key}>
                   <Link
                     href={link.href}
                     className="text-sm text-slate-500 hover:text-emerald-600 dark:text-[#a0a0a0] dark:hover:text-emerald-400 transition-colors"
                   >
-                    {link.label}
+                    {label(link.key)}
                   </Link>
                 </li>
               ))}
@@ -73,15 +92,15 @@ export const PublicFooter: React.FC = () => {
 
           {/* Resources links */}
           <div>
-            <h3 className="text-sm font-semibold text-slate-900 dark:text-[#f0f0f0] mb-3">Resources</h3>
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-[#f0f0f0] mb-3">{t("রিসোর্স", "Resources")}</h3>
             <ul className="space-y-2">
               {FOOTER_LINKS.resources.map((link) => (
-                <li key={link.label}>
+                <li key={link.key}>
                   <Link
                     href={link.href}
                     className="text-sm text-slate-500 hover:text-emerald-600 dark:text-[#a0a0a0] dark:hover:text-emerald-400 transition-colors"
                   >
-                    {link.label}
+                    {label(link.key)}
                   </Link>
                 </li>
               ))}
@@ -90,18 +109,18 @@ export const PublicFooter: React.FC = () => {
 
           {/* Newsletter */}
           <div>
-            <h3 className="text-sm font-semibold text-slate-900 dark:text-[#f0f0f0] mb-3">Stay Updated</h3>
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-[#f0f0f0] mb-3">{t("আপডেট পান", "Stay Updated")}</h3>
             <p className="text-sm text-slate-500 dark:text-[#a0a0a0] mb-3">
-              Get the latest market prices and farming tips.
+              {t("সর্বশেষ বাজার দর ও কৃষি টিপস পেয়ে যান।", "Get the latest market prices and farming tips.")}
             </p>
             <div className="flex gap-2">
               <input
                 type="email"
-                placeholder="Enter email"
+                placeholder={t("ইমেইল লিখুন", "Enter email")}
                 className="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 dark:bg-[#111111] dark:border-[#333333] dark:text-[#f0f0f0] dark:placeholder:text-[#666666]"
               />
               <button className="rounded-lg bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-400 transition-colors whitespace-nowrap">
-                Subscribe
+                {t("সাবস্ক্রাইব", "Subscribe")}
               </button>
             </div>
           </div>
@@ -110,16 +129,16 @@ export const PublicFooter: React.FC = () => {
         {/* Bottom bar */}
         <div className="border-t border-slate-200/80 dark:border-[#222222] py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-slate-400 dark:text-[#666666]">
-            &copy; 2026 FarmPath. All rights reserved. Ministry of Agriculture, Bangladesh.
+            &copy; 2026 FarmPath. {t("সর্বস্বত্ব সংরক্ষিত। বাংলাদেশ কৃষি মন্ত্রণালয়।", "All rights reserved. Ministry of Agriculture, Bangladesh.")}
           </p>
           <div className="flex items-center gap-4">
             {FOOTER_LINKS.legal.map((link) => (
               <Link
-                key={link.label}
+                key={link.key}
                 href={link.href}
                 className="text-xs text-slate-400 hover:text-emerald-600 dark:text-[#666666] dark:hover:text-emerald-400 transition-colors"
               >
-                {link.label}
+                {label(link.key)}
               </Link>
             ))}
           </div>

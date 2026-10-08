@@ -1,5 +1,9 @@
+"use client";
+
 import React from 'react';
 import { PackageOpen, LucideIcon } from '@/components/icons';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { tr } from '@/lib/localize';
 
 interface EmptyStateProps {
   id?: string;
@@ -18,6 +22,8 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   action,
   className = '',
 }) => {
+  useLanguage();
+
   return (
     <div
       id={id}
@@ -26,8 +32,8 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
       <div className="p-3 bg-white dark:bg-slate-700 rounded-full border border-slate-200 dark:border-slate-600 text-slate-400 shadow-xs mb-3">
         <Icon className="w-6 h-6" />
       </div>
-      <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 tracking-tight">{title}</h4>
-      {description && <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mt-1">{description}</p>}
+      <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 tracking-tight">{tr(title)}</h4>
+      {description && <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mt-1">{tr(description)}</p>}
       {action && <div className="mt-4">{action}</div>}
     </div>
   );

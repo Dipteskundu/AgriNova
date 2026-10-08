@@ -33,7 +33,20 @@ import {
 import { getMyProduceListings } from "@/lib/marketplaceApi";
 import { ProduceListing } from "@/types";
 import { fmtBdt } from "@/lib/format";
+import { tr, trPhrase } from "@/lib/localize";
 import { useAuth } from "@/contexts/AuthContext";
+
+/** Category labels the shared dictionary does not cover. */
+const CATEGORY_LABEL: Record<string, [string, string]> = {
+  Tools: ["কৃষি সরঞ্জাম", "Tools"],
+  Equipment: ["যন্ত্রপাতি", "Equipment"],
+  Packaging: ["প্যাকেজিং", "Packaging"],
+};
+
+const categoryLabel = (value: string, t: (bn: string, en: string) => string) => {
+  const local = CATEGORY_LABEL[value];
+  return local ? t(local[0], local[1]) : tr(value);
+};
 
 interface SupplierDashboardProps {
   onNavigate: (module: string) => void;
@@ -285,8 +298,8 @@ export const SupplierDashboard: React.FC<SupplierDashboardProps> = ({
                   {activeProducts.slice(0, 4).map((p) => (
                     <ModalRow
                       key={p.id}
-                      title={p.productName}
-                      subtitle={`${p.category} · ${p.stockQuantity.toLocaleString()} ${p.unit} · ${fmtBdt(p.pricePerUnitBdt)}`}
+                      title={trPhrase(p.productName)}
+                      subtitle={`${categoryLabel(p.category, t)} · ${p.stockQuantity.toLocaleString()} ${tr(p.unit)} · ${fmtBdt(p.pricePerUnitBdt)}`}
                       chip={
                         <ModalChip
                           className={
@@ -333,8 +346,8 @@ export const SupplierDashboard: React.FC<SupplierDashboardProps> = ({
                   {listings.slice(0, 4).map((l) => (
                     <ModalRow
                       key={l.id}
-                      title={`${l.cropName}${l.variety ? ` · ${l.variety}` : ""}`}
-                      subtitle={`${l.quantityKg.toLocaleString()} kg · ${fmtBdt(l.pricePerKgBdt)}/kg · ${l.district}`}
+                      title={`${trPhrase(l.cropName)}${l.variety ? ` · ${trPhrase(l.variety)}` : ""}`}
+                      subtitle={`${l.quantityKg.toLocaleString()} kg · ${fmtBdt(l.pricePerKgBdt)}/kg · ${trPhrase(l.district)}`}
                       chip={
                         <ModalChip
                           className={

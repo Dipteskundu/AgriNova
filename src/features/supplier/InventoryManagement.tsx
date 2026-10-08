@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useToast } from "@/components/ui/Toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { tr, trPhrase } from "@/lib/localize";
+import { bnNum } from "@/lib/format";
 import type { SupplierProduct } from "@/types";
 import {
   createProduct,
@@ -28,6 +30,19 @@ const CATEGORIES: SupplierProduct["category"][] = [
 ];
 
 const UNITS: SupplierProduct["unit"][] = ["kg", "liter", "piece", "bag", "set"];
+
+/** Category labels the shared dictionary does not cover. */
+const CATEGORY_LABEL: Record<string, [string, string]> = {
+  Tools: ["কৃষি সরঞ্জাম", "Tools"],
+  Equipment: ["যন্ত্রপাতি", "Equipment"],
+  Packaging: ["প্যাকেজিং", "Packaging"],
+};
+
+/** Display text for an English enum/option value — `value=` props stay English. */
+const optionLabel = (value: string, t: (bn: string, en: string) => string) => {
+  const local = CATEGORY_LABEL[value];
+  return local ? t(local[0], local[1]) : tr(value);
+};
 
 const emptyPayload = (): ProductPayload => ({
   productName: "",
@@ -73,13 +88,19 @@ export function InventoryManagement() {
   const [deletingId, setDeletingId] = useState("");
 
   const t = (bn: string, en: string) => (language === "bn" ? bn : en);
+  const num = (v: string | number) => (language === "bn" ? bnNum(v) : String(v));
 
   const load = useCallback(async () => {
     setLoading(true);
     setError("");
     const res = await getSupplierProducts();
     if (res.success) setRows(res.data);
-    else setError(res.message || "Could not load your inputs.");
+    else
+      setError(
+        res.message
+          ? trPhrase(res.message)
+          : t("ইনপুট আনা যায়নি", "Could not load your inputs.")
+      );
     setLoading(false);
   }, []);
 
@@ -149,7 +170,11 @@ export function InventoryManagement() {
       close();
       load();
     } else {
-      setFormError(res.message || t("সংরক্ষণ করা যায়নি", "Could not save."));
+      setFormError(
+        res.message
+          ? trPhrase(res.message)
+          : t("সংরক্ষণ করা যায়নি", "Could not save.")
+      );
     }
     setSaving(false);
   };
@@ -165,7 +190,7 @@ export function InventoryManagement() {
           : t("ক্যাটালগে ফিরে এসেছে", "Back on the catalogue")
       );
     } else {
-      showToast("error", res.message || t("পরিবর্তন করা যায়নি", "Could not change that."));
+      showToast("error", (res.message ? trPhrase(res.message) : "") || t("পরিবর্তন করা যায়নি", "Could not change that."));
     }
   };
 
@@ -173,7 +198,7 @@ export function InventoryManagement() {
     if (
       !window.confirm(
         t(
-          `"${row.productName}" মুছে ফেলবেন?`,
+          `"${trPhrase(row.productName)}" মুছে ফেলবেন?`,
           `Delete "${row.productName}" permanently?`
         )
       )
@@ -186,7 +211,7 @@ export function InventoryManagement() {
       showToast("success", t("ইনপুট মুছে ফেলা হয়েছে", "Input deleted"));
       load();
     } else {
-      showToast("error", res.message || t("মুছা যায়নি", "Could not delete."));
+      showToast("error", (res.message ? trPhrase(res.message) : "") || t("মুছা যায়নি", "Could not delete."));
     }
     setDeletingId("");
   };
@@ -228,7 +253,7 @@ export function InventoryManagement() {
             {t("ইনভেন্টরি", "Inventory")}
           </h1>
           <p className="text-sm text-slate-500 dark:text-[#a0a0a0]">
-            {rows.length} {t("টি ইনপুট", "items")} ·{" "}
+            {num(rows.length)} {t("টি ইনপুট", "items")} ·{" "}
             <Link href="/inputs" className="text-blue-600 hover:underline">
               {t("ক্যাটালগ দেখুন →", "View public catalogue →")}
             </Link>
@@ -292,27 +317,27 @@ export function InventoryManagement() {
                       />
                       <div className="min-w-0">
                         <p className="font-semibold text-slate-900 dark:text-[#f0f0f0]">
-                          {row.productName}
+                          {trPhrase(row.productName)}
                         </p>
                         <p className="text-xs text-slate-400 line-clamp-1">
-                          {row.description}
+                          {trPhrase(row.description)}
                         </p>
                       </div>
                     </div>
                   </td>
                   <td className="px-4 py-3 text-slate-600 dark:text-[#a0a0a0]">
-                    {row.category}
+                    {optionLabel(row.category, t)}
                   </td>
                   <td className="px-4 py-3 font-semibold">
-                    ৳{row.pricePerUnitBdt.toLocaleString()}
+                    ৳{num(row.pricePerUnitBdt.toLocaleString())}
                     <span className="text-xs font-normal text-slate-400">
-                      /{row.unit}
+                      /{tr(row.unit)}
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    {row.stockQuantity.toLocaleString()} {row.unit}
+                    {num(row.stockQuantity.toLocaleString())} {tr(row.unit)}
                     <p className="text-[11px] text-slate-400">
-                      {t("সর্বনিম্ন", "MOQ")} {row.minimumOrderQuantity}
+                      {t("সর্বনিম্ন", "MOQ")} {num(row.minimumOrderQuantity)}
                     </p>
                   </td>
                   <td className="px-4 py-3">
@@ -414,7 +439,7 @@ function FormModal({
           <button
             onClick={onClose}
             className="p-1 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-[#1a1a1a]"
-            aria-label="Close"
+            aria-label={t("বন্ধ করুন", "Close")}
           >
             <Icon name="X" size={16} />
           </button>
@@ -441,7 +466,9 @@ function FormModal({
               className={`mt-1 ${field}`}
             >
               {CATEGORIES.map((c) => (
-                <option key={c}>{c}</option>
+                <option key={c} value={c}>
+                  {optionLabel(c, t)}
+                </option>
               ))}
             </select>
           </label>
@@ -454,7 +481,9 @@ function FormModal({
               className={`mt-1 ${field}`}
             >
               {UNITS.map((u) => (
-                <option key={u}>{u}</option>
+                <option key={u} value={u}>
+                  {optionLabel(u, t)}
+                </option>
               ))}
             </select>
           </label>

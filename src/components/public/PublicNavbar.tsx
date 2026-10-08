@@ -9,17 +9,18 @@ import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { useAuth } from "@/contexts/AuthContext";
 import { getCart, onCartCountChange } from "@/lib/marketplaceApi";
+import { useT } from "@/components/dashboard/useT";
 
 /**
  * Marketplace entries sit alongside the site's own pages — the two public
  * catalogue routes are part of the main application, not a separate area, so
  * they get the same treatment as About.
  */
-const NAV_LINKS: { label: string; href: string; icon: IconName }[] = [
-  { label: "Home", href: "/", icon: "Sprout" },
-  { label: "Products", href: "/products", icon: "Store" },
-  { label: "Inputs", href: "/inputs", icon: "PackageCheck" },
-  { label: "About", href: "/about", icon: "BookOpen" },
+const NAV_LINKS: { key: string; href: string; icon: IconName }[] = [
+  { key: "home", href: "/", icon: "Sprout" },
+  { key: "products", href: "/products", icon: "Store" },
+  { key: "inputs", href: "/inputs", icon: "PackageCheck" },
+  { key: "about", href: "/about", icon: "BookOpen" },
 ];
 
 interface PublicNavbarProps {
@@ -30,6 +31,7 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({ transparent = false 
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout } = useAuth();
+  const t = useT();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [show, setShow] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -112,6 +114,14 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({ transparent = false 
     await logout();
   };
 
+  const navLabel = (key: string) =>
+    ({
+      home: t("হোম", "Home"),
+      products: t("পণ্য", "Products"),
+      inputs: t("ইনপুট", "Inputs"),
+      about: t("আমাদের সম্পর্কে", "About"),
+    }[key] ?? key);
+
   return (
     <header className={`sticky top-0 z-50 w-full backdrop-blur-md ${
       transparent
@@ -133,19 +143,19 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({ transparent = false 
         <nav className="hidden md:flex items-center gap-1">
           {NAV_LINKS.map((link) => (
             <Link key={link.href} href={link.href} className={navLinkClass(link.href)}>
-              {link.label}
+              {navLabel(link.key)}
             </Link>
           ))}
           {user && (
             <Link href="/dashboard" className={navLinkClass("/dashboard")}>
-              Dashboard
+              {t("ড্যাশবোর্ড", "Dashboard")}
             </Link>
           )}
           {user && (
             <Link href="/dashboard/cart" className={navLinkClass("/dashboard/cart")}>
               <span className="inline-flex items-center gap-1.5">
                 <Icon name="ShoppingCart" size={16} />
-                Cart
+                {t("কার্ট", "Cart")}
                 {cartCount > 0 && (
                   <span className="rounded-full bg-emerald-600 px-1.5 py-0.5 text-[10px] font-bold text-white">
                     {cartCount}
@@ -196,7 +206,7 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({ transparent = false 
                     className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-[#e0e0e0] hover:bg-slate-50 dark:hover:bg-[#111111] transition-colors"
                   >
                     <Icon name="User" size={16} className="text-slate-400 dark:text-[#666666]" />
-                    Profile
+                    {t("প্রোফাইল", "Profile")}
                   </Link>
                   <Link
                     href="/dashboard"
@@ -204,7 +214,7 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({ transparent = false 
                     className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-[#e0e0e0] hover:bg-slate-50 dark:hover:bg-[#111111] transition-colors"
                   >
                     <Icon name="LayoutDashboard" size={16} className="text-slate-400 dark:text-[#666666]" />
-                    Dashboard
+                    {t("ড্যাশবোর্ড", "Dashboard")}
                   </Link>
 
                   <div className="my-1 h-px bg-slate-100 dark:bg-[#222222]" />
@@ -214,7 +224,7 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({ transparent = false 
                     className="flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors w-full"
                   >
                     <Icon name="LogOut" size={16} />
-                    Logout
+                    {t("লগআউট", "Logout")}
                   </button>
                 </div>
               )}
@@ -230,13 +240,13 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({ transparent = false 
                     : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-[#a0a0a0] dark:hover:bg-[#1a1a1a] dark:hover:text-[#f0f0f0]"
                 }`}
               >
-                Login
+                {t("লগইন", "Login")}
               </Link>
               <Link
                 href="/register"
                 className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all hover:bg-emerald-700 hover:shadow-md dark:bg-emerald-500 dark:hover:bg-emerald-400 dark:shadow-[0_0_16px_rgba(16,185,129,0.3)]"
               >
-                Register
+                {t("রেজিস্টার", "Register")}
               </Link>
             </div>
           )}
@@ -304,7 +314,7 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({ transparent = false 
                     >
                       <span className="flex items-center gap-3">
                         <Icon name={link.icon} size={18} className={isActive ? "text-emerald-600 dark:text-emerald-400" : ""} />
-                        {link.label}
+                        {navLabel(link.key)}
                       </span>
                       <Icon name="ChevronRight" size={16} className="text-slate-300 dark:text-[#444444]" />
                     </Link>
@@ -322,7 +332,7 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({ transparent = false 
                   >
                     <span className="flex items-center gap-3">
                       <Icon name="LayoutDashboard" size={18} />
-                      Dashboard
+                      {t("ড্যাশবোর্ড", "Dashboard")}
                     </span>
                     <Icon name="ChevronRight" size={16} className="text-slate-300 dark:text-[#444444]" />
                   </Link>
@@ -338,8 +348,8 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({ transparent = false 
                     }`}
                   >
                     <span className="flex items-center gap-3">
-                      <Icon name="ShoppingCart" size={18} />
-                      Cart
+<Icon name="ShoppingCart" size={18} />
+                  {t("কার্ট", "Cart")}
                     </span>
                     <span className="flex items-center gap-2">
                       {cartCount > 0 && (
@@ -379,14 +389,14 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({ transparent = false 
                     onClick={closeMenu}
                     className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-[#333333] dark:bg-[#0a0a0a] dark:text-[#e0e0e0] dark:hover:bg-[#111111]"
                   >
-                    <Icon name="User" size={16} />
-                    Profile
+<Icon name="User" size={16} />
+                    {t("প্রোফাইল", "Profile")}
                   </Link>
                   <button
                     onClick={handleLogout}
                     className="w-full rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md transition-all hover:bg-red-700"
                   >
-                    Logout
+                    {t("লগআউট", "Logout")}
                   </button>
                 </div>
               ) : (
@@ -396,14 +406,14 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({ transparent = false 
                     onClick={closeMenu}
                     className="flex-1 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-center text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-[#333333] dark:bg-[#0a0a0a] dark:text-[#e0e0e0] dark:hover:bg-[#111111]"
                   >
-                    Login
+                    {t("লগইন", "Login")}
                   </Link>
                   <Link
                     href="/register"
                     onClick={closeMenu}
                     className="flex-1 rounded-xl bg-emerald-600 px-4 py-2.5 text-center text-sm font-semibold text-white shadow-md shadow-emerald-600/20 transition-all hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-400"
                   >
-                    Register
+                    {t("রেজিস্টার", "Register")}
                   </Link>
                 </div>
               )}

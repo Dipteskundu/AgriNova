@@ -343,6 +343,10 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   }, []);
 
+  useEffect(() => {
+    document.documentElement.lang = language;
+  }, [language]);
+
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
     setAppLanguage(lang);
@@ -357,6 +361,9 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     const langDict = translations[language];
     if (langDict && langDict[key]) {
       return langDict[key];
+    }
+    if (language === 'en') {
+      return defaultText || key;
     }
     const fallbackDict = translations['bn'];
     if (fallbackDict && fallbackDict[key]) {

@@ -247,7 +247,7 @@ export const FarmManagement: React.FC = () => {
               id="waterSource"
               label={tr('Water Supply Source')}
               placeholder={tr('e.g. Solar Tube Well / Karatoya Canal')}
-              value={newFarm.waterSource}
+              value={tr(newFarm.waterSource)}
               onChange={(e) => setNewFarm({ ...newFarm, waterSource: e.target.value })}
               required
             />
@@ -255,7 +255,7 @@ export const FarmManagement: React.FC = () => {
               id="soilClassification"
               label={tr('Soil Classification')}
               placeholder={tr('e.g. Clay Loam / Sandy Alluvium')}
-              value={newFarm.soilClassification}
+              value={tr(newFarm.soilClassification)}
               onChange={(e) => setNewFarm({ ...newFarm, soilClassification: e.target.value })}
               required
             />

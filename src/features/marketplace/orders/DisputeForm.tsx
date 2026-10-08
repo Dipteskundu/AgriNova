@@ -11,6 +11,16 @@ import {
   type DisputeReason,
 } from "@/lib/marketplaceApi";
 
+/** The six reasons `disputeRules()` accepts, said in both scripts. `value` stays English. */
+const REASON_LABEL: Record<DisputeReason, { bn: string; en: string }> = {
+  "Order Not Received": { bn: "মাল পাওয়া যায়নি", en: "Order Not Received" },
+  "Produce Grade Degradation": { bn: "পণ্যের গ্রেড নামছে", en: "Produce Grade Degradation" },
+  "Moisture Mismatch": { bn: "আর্দ্রতার অমিল", en: "Moisture Mismatch" },
+  "Delivery Transit Spoilage": { bn: "পরিবহনে পণ্য নষ্ট", en: "Delivery Transit Spoilage" },
+  "Weight Shortage": { bn: "ওজন ঘাটতি", en: "Weight Shortage" },
+  "Payment Delay": { bn: "পেমেন্ট বিলম্ব", en: "Payment Delay" },
+};
+
 interface Props {
   orderId: string;
   /** The fresh order the API returns, so the caller can re-render in place. */
@@ -91,7 +101,7 @@ export function DisputeForm({
         >
           {DISPUTE_REASONS.map((item) => (
             <option key={item} value={item}>
-              {item}
+              {t(REASON_LABEL[item].bn, REASON_LABEL[item].en)}
             </option>
           ))}
         </select>

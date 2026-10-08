@@ -17,6 +17,20 @@ import {
 const CATEGORIES = ["", "Cereal", "Vegetable", "Pulse", "Oilseed", "Fruit", "Cash Crop"] as const;
 const GRADES: Array<QualityGrade | ""> = ["", "Grade A", "Grade B", "Grade C"];
 
+const CATEGORY_LABEL: Record<string, [string, string]> = {
+  Cereal: ["শস্য", "Cereal"],
+  Vegetable: ["সবজি", "Vegetable"],
+  Pulse: ["ডাল", "Pulse"],
+  Oilseed: ["তেলবীজ", "Oilseed"],
+  Fruit: ["ফল", "Fruit"],
+  "Cash Crop": ["অর্থকরী ফসল", "Cash Crop"],
+};
+const GRADE_LABEL: Record<string, [string, string]> = {
+  "Grade A": ["গ্রেড এ", "Grade A"],
+  "Grade B": ["গ্রেড বি", "Grade B"],
+  "Grade C": ["গ্রেড সি", "Grade C"],
+};
+
 interface Props {
   /**
    * Where detail pages live. `/products` on the public route, and the same
@@ -40,6 +54,17 @@ export function BrowseProduce({ basePath = "/products" }: Props) {
   const [showFilters, setShowFilters] = useState(false);
 
   const t = (bn: string, en: string) => language === "bn" ? bn : en;
+
+  const catLabel = (c: string) => {
+    const p = CATEGORY_LABEL[c];
+    return p ? (language === "bn" ? p[0] : p[1]) : c;
+  };
+
+  const gradeLabel = (g: QualityGrade | "") => {
+    if (!g) return t("যেকোনো গ্রেড", "Any Grade");
+    const p = GRADE_LABEL[g];
+    return p ? (language === "bn" ? p[0] : p[1]) : g;
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -83,7 +108,7 @@ export function BrowseProduce({ basePath = "/products" }: Props) {
             {t("পণ্য ব্রাউজ করুন", "Browse Produce")}
           </h1>
           <p className="text-sm text-slate-500 dark:text-[#a0a0a0] mt-0.5">
-            {loading ? "Loading..." : `${listings.length} ${t("পণ্য পাওয়া গেছে", "listings found")}`}
+            {loading ? t("লোড হচ্ছে...", "Loading...") : `${listings.length} ${t("পণ্য পাওয়া গেছে", "listings found")}`}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -92,17 +117,17 @@ export function BrowseProduce({ basePath = "/products" }: Props) {
             onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
             className="text-xs px-3 py-2 border border-slate-200 dark:border-[#333] rounded-lg bg-white dark:bg-[#111] text-slate-700 dark:text-[#e0e0e0] focus:outline-none"
           >
-            <option value="newest">Newest First</option>
-            <option value="price_asc">Price: Low → High</option>
-            <option value="price_desc">Price: High → Low</option>
-            <option value="quantity">Most Available</option>
+            <option value="newest">{t("নতুন প্রথমে", "Newest First")}</option>
+            <option value="price_asc">{t("দাম: কম → বেশি", "Price: Low → High")}</option>
+            <option value="price_desc">{t("দাম: বেশি → কম", "Price: High → Low")}</option>
+            <option value="quantity">{t("সবচেয়ে বেশি পাওয়া যায়", "Most Available")}</option>
           </select>
           <button
             onClick={() => setShowFilters(!showFilters)}
             className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium border border-slate-200 dark:border-[#333] rounded-lg bg-white dark:bg-[#111] text-slate-700 dark:text-[#e0e0e0] hover:bg-slate-50 dark:hover:bg-[#1a1a1a] transition-colors"
           >
             <Icon name="SlidersHorizontal" size={14} />
-            Filters
+            {t("ফিল্টার", "Filters")}
           </button>
         </div>
       </div>
@@ -128,7 +153,7 @@ export function BrowseProduce({ basePath = "/products" }: Props) {
               onChange={(e) => setCategory(e.target.value)}
               className="w-full text-xs px-2 py-1.5 border border-slate-200 dark:border-[#333] rounded-lg bg-white dark:bg-[#111] text-slate-700 dark:text-[#e0e0e0] focus:outline-none"
             >
-              {CATEGORIES.map((c) => <option key={c} value={c}>{c || "All"}</option>)}
+              {CATEGORIES.map((c) => <option key={c} value={c}>{c ? catLabel(c) : t("সব", "All")}</option>)}
             </select>
           </div>
           <div>
@@ -138,7 +163,7 @@ export function BrowseProduce({ basePath = "/products" }: Props) {
               onChange={(e) => setGrade(e.target.value as QualityGrade | "")}
               className="w-full text-xs px-2 py-1.5 border border-slate-200 dark:border-[#333] rounded-lg bg-white dark:bg-[#111] text-slate-700 dark:text-[#e0e0e0] focus:outline-none"
             >
-              {GRADES.map((g) => <option key={g} value={g}>{g || "Any Grade"}</option>)}
+              {GRADES.map((g) => <option key={g} value={g}>{gradeLabel(g)}</option>)}
             </select>
           </div>
           <div className="flex items-end">
@@ -175,7 +200,7 @@ export function BrowseProduce({ basePath = "/products" }: Props) {
                 : "bg-slate-100 dark:bg-[#1a1a1a] text-slate-600 dark:text-[#a0a0a0] hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-500/10 dark:hover:text-blue-400"
             }`}
           >
-            {cat || t("সব", "All")}
+            {cat ? catLabel(cat) : t("সব", "All")}
           </button>
         ))}
       </div>
@@ -198,7 +223,7 @@ export function BrowseProduce({ basePath = "/products" }: Props) {
         <EmptyState
           title={t("কোনো পণ্য পাওয়া যায়নি", "No produce found")}
           description={t("ফিল্টার পরিবর্তন করে আবার চেষ্টা করুন।", "Try adjusting your filters.")}
-          action={<Button variant="outline" onClick={() => { setSearch(""); setCategory(""); setGrade(""); setVerifiedOnly(false); }}>Clear Filters</Button>}
+          action={<Button variant="outline" onClick={() => { setSearch(""); setCategory(""); setGrade(""); setVerifiedOnly(false); }}>{t("ফিল্টার মুছুন", "Clear Filters")}</Button>}
         />
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">

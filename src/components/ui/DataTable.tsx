@@ -1,4 +1,7 @@
+"use client";
+
 import React, { useState, useMemo } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { tr } from "@/lib/localize";
 import { ChevronLeft, ChevronRight, Search } from "@/components/icons";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -28,16 +31,26 @@ export function DataTable<T extends Record<string, unknown>>({
   id,
   data,
   columns,
-  searchPlaceholder = "Search records...",
+  searchPlaceholder,
   searchKey,
   pageSize = 6,
-  emptyTitle = "No records found",
-  emptyDescription = "There are no items matching the current criteria.",
+  emptyTitle,
+  emptyDescription,
   filterComponent,
   actionsComponent,
 }: DataTableProps<T>) {
+  const { language } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const fallbackSearchPlaceholder =
+    searchPlaceholder ?? (language === "bn" ? "রেকর্ড খুঁজুন..." : "Search records...");
+  const fallbackEmptyTitle =
+    emptyTitle ?? (language === "bn" ? "কোনো রেকর্ড পাওয়া যায়নি" : "No records found");
+  const fallbackEmptyDescription =
+    emptyDescription ??
+    (language === "bn"
+      ? "বর্তমান শর্তের সাথে মেলে এমন কোনো তথ্য নেই।"
+      : "There are no items matching the current criteria.");
 
   const filteredData = useMemo(() => {
     if (!searchQuery.trim() || !searchKey) return data;
@@ -50,6 +63,9 @@ export function DataTable<T extends Record<string, unknown>>({
   }, [data, searchQuery, searchKey]);
 
   const totalPages = Math.max(1, Math.ceil(filteredData.length / pageSize));
+  const rangeStart = (currentPage - 1) * pageSize + 1;
+  const rangeEnd = Math.min(currentPage * pageSize, filteredData.length);
+  const numberFormat = new Intl.NumberFormat(language === "bn" ? "bn-BD" : "en-US");
   const paginatedData = useMemo(() => {
     const start = (currentPage - 1) * pageSize;
     return filteredData.slice(start, start + pageSize);
@@ -75,7 +91,7 @@ export function DataTable<T extends Record<string, unknown>>({
                   type="text"
                   value={searchQuery}
                   onChange={handleSearchChange}
-                  placeholder={searchPlaceholder}
+                  placeholder={fallbackSearchPlaceholder}
                   className="w-full pl-9 pr-3.5 py-1.5 text-xs bg-white border border-slate-300 rounded-lg text-slate-800 dark:bg-slate-900 dark:border-slate-600 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition-all"
                 />
               </div>
@@ -92,7 +108,7 @@ export function DataTable<T extends Record<string, unknown>>({
             <tr className="border-b border-slate-200 dark:border-slate-600 bg-slate-50/80 dark:bg-slate-700/80 text-slate-600 dark:text-slate-300 font-semibold uppercase tracking-wider">
               {columns.map((col) => (
                 <th key={col.key} className={`px-4 py-3 ${col.className || ""}`}>
-                  {col.header}
+                  {tr(col.header)}
                 </th>
               ))}
             </tr>
@@ -101,7 +117,10 @@ export function DataTable<T extends Record<string, unknown>>({
             {paginatedData.length === 0 ? (
               <tr>
                 <td colSpan={columns.length} className="px-4 py-8">
-                  <EmptyState title={emptyTitle} description={emptyDescription} />
+                  <EmptyState
+                    title={fallbackEmptyTitle}
+                    description={fallbackEmptyDescription}
+                  />
                 </td>
               </tr>
             ) : (
@@ -112,7 +131,9 @@ export function DataTable<T extends Record<string, unknown>>({
                 >
                   {columns.map((col) => (
                     <td key={col.key} className={`px-4 py-3 text-slate-700 dark:text-slate-300 ${col.className || ""}`}>
-                      {col.render ? col.render(row) : String(row[col.key] ?? "")}
+                      {col.render
+                        ? col.render(row)
+                        : tr(String(row[col.key] ?? ""))}
                     </td>
                   ))}
                 </tr>
@@ -124,8 +145,11 @@ export function DataTable<T extends Record<string, unknown>>({
 
       {filteredData.length > pageSize && (
         <div className="px-4 py-3 border-t border-slate-100 dark:border-slate-600 bg-slate-50/50 dark:bg-slate-700/50 flex items-center justify-between text-xs text-slate-500">
-          <span>{tr('Showing')}{(currentPage - 1) * pageSize + 1}{tr('to')}{" "}
-            {Math.min(currentPage * pageSize, filteredData.length)}{tr('of')}{filteredData.length}{tr('entries')}</span>
+          <span>
+            {language === "bn"
+              ? `মোট ${numberFormat.format(filteredData.length)}টি রেকর্ডের মধ্যে ${numberFormat.format(rangeStart)}–${numberFormat.format(rangeEnd)} দেখানো হচ্ছে`
+              : `Showing ${numberFormat.format(rangeStart)} to ${numberFormat.format(rangeEnd)} of ${numberFormat.format(filteredData.length)} entries`}
+          </span>
           <div className="flex items-center gap-1.5">
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
@@ -135,7 +159,7 @@ export function DataTable<T extends Record<string, unknown>>({
               <ChevronLeft className="w-4 h-4" />
             </button>
             <span className="px-2 font-medium text-slate-700 dark:text-slate-300 dark:text-slate-300">
-              {currentPage}{tr('/')}{totalPages}
+              {numberFormat.format(currentPage)} / {numberFormat.format(totalPages)}
             </span>
             <button
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}

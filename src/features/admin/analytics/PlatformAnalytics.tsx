@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { tr } from "@/lib/localize";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   TrendingUp,
   PieChart,
@@ -20,7 +21,9 @@ import { getAdminDashboardSummary } from '@/lib/adminApi';
 import { AdminDashboardSummary } from '@/types';
 
 export const PlatformAnalytics: React.FC = () => {
+  const { language } = useLanguage();
   const { showToast } = useToast();
+  const t = (bn: string, en: string) => (language === 'bn' ? bn : en);
   const [loading, setLoading] = useState(true);
   const [summary, setSummary] = useState<AdminDashboardSummary | null>(null);
 
@@ -95,7 +98,7 @@ export const PlatformAnalytics: React.FC = () => {
         <MetricCard
           title={tr('Weekly Market Volume')}
           value={`${summary.totalWeeklyMarketVolumeTons.toLocaleString()} MT`}
-          change="DAM Audited"
+          change={t('ডিএএম যাচাইকৃত', 'DAM Audited')}
           trend="up"
           subtitle={tr('Through licensed mokams')}
           icon={Activity}
@@ -114,17 +117,17 @@ export const PlatformAnalytics: React.FC = () => {
 
           <div className="space-y-4 text-xs">
             {[
-              { crop: 'Boro Rice (High-Yielding Varieties)', acres: '48,200 Acres', percent: 45, color: 'bg-emerald-600' },
-              { crop: 'Hybrid Yellow Maize', acres: '23,500 Acres', percent: 22, color: 'bg-amber-500' },
-              { crop: 'Mustard & Oilseeds (BARI Sarisha)', acres: '15,100 Acres', percent: 14, color: 'bg-blue-600' },
-              { crop: 'Biofortified Zinc Wheat', acres: '11,800 Acres', percent: 11, color: 'bg-purple-600' },
-              { crop: 'Horticulture (Potato, Banana, Vegetables)', acres: '8,600 Acres', percent: 8, color: 'bg-teal-600' },
+              { crop: t('বোরো ধান (উচ্চ ফলন জাত)', 'Boro Rice (High-Yielding Varieties)'), acres: '48,200', percent: 45, color: 'bg-emerald-600' },
+              { crop: t('হাইব্রিড হলুদ ভুট্টা', 'Hybrid Yellow Maize'), acres: '23,500', percent: 22, color: 'bg-amber-500' },
+              { crop: t('সরিষা ও তেলবীজ (বারি সরিষা)', 'Mustard & Oilseeds (BARI Sarisha)'), acres: '15,100', percent: 14, color: 'bg-blue-600' },
+              { crop: t('বায়োফোর্টিফায়েড জিংক গম', 'Biofortified Zinc Wheat'), acres: '11,800', percent: 11, color: 'bg-purple-600' },
+              { crop: t('উদ্যানপালন (আলু, কলা, সবজি)', 'Horticulture (Potato, Banana, Vegetables)'), acres: '8,600', percent: 8, color: 'bg-teal-600' },
             ].map((item) => (
               <div key={item.crop} className="space-y-1.5">
                 <div className="flex items-center justify-between">
                   <span className="font-semibold text-slate-800 dark:text-[#e0e0e0]">{item.crop}</span>
                   <span className="font-mono text-slate-700 dark:text-[#999999] font-bold">
-                    {item.acres} ({item.percent}%)
+                    {item.acres} {tr('Acres')} ({item.percent}%)
                   </span>
                 </div>
                 <div className="w-full bg-slate-100 dark:bg-[#1a1a1a] h-2.5 rounded-full overflow-hidden">

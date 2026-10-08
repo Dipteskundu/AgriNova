@@ -40,6 +40,7 @@ import {
   LogisticsEarning,
 } from "@/types";
 import { fmtBdt, fmtDate } from "@/lib/format";
+import { trPhrase } from "@/lib/localize";
 
 interface LogisticsDashboardProps {
   onNavigate: (module: string) => void;
@@ -339,11 +340,19 @@ export const LogisticsDashboard: React.FC<LogisticsDashboardProps> = ({
                   {[...transit, ...assigned].slice(0, 4).map((d) => (
                     <ModalRow
                       key={d.id}
-                      title={`${d.consignmentCode} · ${d.cargoDescription}`}
-                      subtitle={`${d.pickupAddress} → ${d.deliveryAddress} · ETA ${fmtDate(d.estimatedDelivery)}`}
+                      title={`${d.consignmentCode} · ${trPhrase(d.cargoDescription)}`}
+                      subtitle={`${trPhrase(d.pickupAddress)} → ${trPhrase(d.deliveryAddress)} · ETA ${fmtDate(d.estimatedDelivery)}`}
                       chip={
                         <ModalChip className={deliveryChip(d.status)}>
-                          {d.status.replace("_", " ")}
+                          {d.status === "assigned"
+                            ? t("বরাদ্দকৃত", "Assigned")
+                            : d.status === "picked_up"
+                              ? t("তোলা হয়েছে", "Picked Up")
+                              : d.status === "in_transit"
+                                ? t("পরিবহণে", "In Transit")
+                                : d.status === "delivered"
+                                  ? t("পৌঁছেছে", "Delivered")
+                                  : t("ব্যর্থ", "Failed")}
                         </ModalChip>
                       }
                     />
@@ -417,7 +426,7 @@ export const LogisticsDashboard: React.FC<LogisticsDashboardProps> = ({
                   {fleet.slice(0, 4).map((v) => (
                     <ModalRow
                       key={v.id}
-                      title={`${v.vehicleNumber} · ${v.type}`}
+                      title={`${v.vehicleNumber} · ${trPhrase(v.type)}`}
                       subtitle={`${v.currentDriverName} · ${v.capacityKg.toLocaleString()} kg`}
                       chip={
                         <ModalChip className={fleetChip(v.currentStatus)}>
@@ -501,7 +510,7 @@ export const LogisticsDashboard: React.FC<LogisticsDashboardProps> = ({
                           : "text-blue-900 dark:text-blue-300"
                       }`}
                     >
-                      {n.title}
+                      {trPhrase(n.title)}
                     </span>
                     <span
                       className={`text-[11px] ${
@@ -510,7 +519,7 @@ export const LogisticsDashboard: React.FC<LogisticsDashboardProps> = ({
                           : "text-blue-800 dark:text-blue-200"
                       }`}
                     >
-                      {n.message}
+                      {trPhrase(n.message)}
                     </span>
                   </div>
                 ))

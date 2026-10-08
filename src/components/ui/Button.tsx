@@ -1,5 +1,9 @@
+"use client";
+
 import React from "react";
 import { LucideIcon } from "@/components/icons";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { tr } from "@/lib/localize";
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   id?: string;
@@ -22,6 +26,8 @@ export const Button: React.FC<ButtonProps> = ({
   disabled,
   ...props
 }) => {
+  useLanguage();
+
   const variantStyles = {
     primary: "bg-emerald-600 hover:bg-emerald-700 text-white border-transparent shadow-xs dark:bg-emerald-500 dark:hover:bg-emerald-400 dark:shadow-[0_0_16px_rgba(16,185,129,0.3)]",
     secondary: "bg-slate-800 hover:bg-slate-900 text-white border-transparent shadow-xs dark:bg-[#1a1a1a] dark:hover:bg-[#2a2a2a] dark:text-[#e0e0e0] dark:border-[#333333]",
@@ -51,7 +57,7 @@ export const Button: React.FC<ButtonProps> = ({
       ) : (
         <>
           {Icon && iconPosition === "left" && <Icon className="w-4 h-4 shrink-0" />}
-          {children}
+          {typeof children === "string" ? tr(children) : children}
           {Icon && iconPosition === "right" && <Icon className="w-4 h-4 shrink-0" />}
         </>
       )}

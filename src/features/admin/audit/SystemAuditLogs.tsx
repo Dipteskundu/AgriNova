@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { tr } from "@/lib/localize";
+import { tr, trPhrase } from "@/lib/localize";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   ShieldAlert,
   Search,
@@ -21,6 +22,7 @@ import { getSystemAuditLogs } from '@/lib/adminApi';
 import { SystemAuditLog } from '@/types';
 
 export const SystemAuditLogs: React.FC = () => {
+  useLanguage();
   const { showToast } = useToast();
   const [loading, setLoading] = useState(true);
   const [logs, setLogs] = useState<SystemAuditLog[]>([]);
@@ -149,7 +151,7 @@ export const SystemAuditLogs: React.FC = () => {
             <tbody className="divide-y divide-slate-100 font-mono text-[11px]">
               {filteredLogs.map((log) => (
                 <tr key={log.id} className="hover:bg-slate-50 dark:hover:bg-[#1a1a1a]/60 dark:bg-[#111111]/60/60 transition-colors">
-                  <td className="p-4 text-slate-500 dark:text-[#a0a0a0] whitespace-nowrap">{log.timestamp}</td>
+                  <td className="p-4 text-slate-500 dark:text-[#a0a0a0] whitespace-nowrap">{trPhrase(log.timestamp)}</td>
                   <td className="p-4 font-sans">
                     <span className="font-bold text-slate-900 dark:text-[#f0f0f0] block">{log.actorName}</span>
                     <span className="text-[10px] text-slate-400 font-mono">{tr(log.actorRole)}</span>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { tr } from "@/lib/localize";
+import { tr, trPhrase } from "@/lib/localize";
 import { useLanguage } from '@/contexts/LanguageContext';
 import {
   GraduationCap,
@@ -127,10 +127,10 @@ export const AgriculturalTraining: React.FC = () => {
                 </div>
 
                 <h3 className="font-bold text-slate-900 dark:text-[#f0f0f0] text-base leading-snug mb-1">
-                  {tr(course.title)}
+                  {trPhrase(course.title)}
                 </h3>
                 <p className="text-xs text-slate-500 dark:text-[#a0a0a0] line-clamp-2 mb-3">
-                  {tr(course.description)}
+                  {trPhrase(course.description)}
                 </p>
 
                 <div className="flex items-center gap-3 text-xs text-slate-400 mb-4">
@@ -140,7 +140,7 @@ export const AgriculturalTraining: React.FC = () => {
                   <span className="flex items-center gap-1">
                     <BookOpen className="w-3.5 h-3.5" />
                     {course.lessonsCount}{tr('lessons')}</span>
-                  <Badge variant="neutral">{tr(course.difficulty)}</Badge>
+                  <Badge variant="neutral">                  {trPhrase(course.difficulty)}</Badge>
                 </div>
 
                 {/* Progress bar */}
@@ -163,7 +163,7 @@ export const AgriculturalTraining: React.FC = () => {
               <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
                 <span className="text-[11px] text-slate-500 dark:text-[#a0a0a0] flex items-center gap-1">
                   <UserCheck className="w-3.5 h-3.5 text-slate-400" />
-                  {tr(course.instructor)}
+                  {trPhrase(course.instructor)}
                 </span>
 
                 <Button
@@ -187,12 +187,12 @@ export const AgriculturalTraining: React.FC = () => {
         <Modal
           isOpen={!!selectedCourse}
           onClose={() => setSelectedCourse(null)}
-          title={selectedCourse.title}
-          subtitle={`${tr('Instructor: ')}${tr(selectedCourse.instructor)} ${tr('•')} ${tr(selectedCourse.category)} ${tr('•')} ${selectedCourse.durationMinutes} ${tr('Total Minutes')}`}
+          title={trPhrase(selectedCourse.title)}
+          subtitle={`${language === 'bn' ? 'প্রশিক্ষক: ' : 'Instructor: '}${tr(selectedCourse.instructor)} ${tr('•')} ${tr(selectedCourse.category)} ${tr('•')} ${selectedCourse.durationMinutes} ${tr('Total Minutes')}`}
           maxWidth="lg"
         >
           <div className="space-y-4 text-xs">
-            <p className="text-slate-600 dark:text-[#a0a0a0] leading-relaxed">{tr(selectedCourse.description)}</p>
+            <p className="text-slate-600 dark:text-[#a0a0a0] leading-relaxed">{trPhrase(selectedCourse.description)}</p>
 
             <div className="space-y-2">
               <h4 className="font-bold text-slate-900 dark:text-[#f0f0f0] text-sm">{tr('Interactive Syllabus & Video Modules')}</h4>
@@ -218,7 +218,7 @@ export const AgriculturalTraining: React.FC = () => {
                             lesson.completed ? 'line-through text-slate-400' : 'text-slate-800 dark:text-[#e0e0e0]'
                           }`}
                         >
-                          {tr(lesson.title)}
+                          {trPhrase(lesson.title)}
                         </span>
                         <span className="text-[11px] text-slate-400">{tr(lesson.duration)}</span>
                       </div>

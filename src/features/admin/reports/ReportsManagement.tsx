@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { tr } from "@/lib/localize";
+import { tr, trPhrase } from "@/lib/localize";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   FileBarChart,
   Download,
@@ -23,7 +24,39 @@ import { getAgritechReportsAdmin } from '@/lib/adminApi';
 import { AgritechReportAdminView } from '@/types';
 
 export const ReportsManagement: React.FC = () => {
+  const { language } = useLanguage();
   const { showToast } = useToast();
+  const t = (bn: string, en: string) => (language === 'bn' ? bn : en);
+
+  const categoryLabel = (c: AgritechReportAdminView['category']) => {
+    switch (c) {
+      case 'Yield Forecast':
+        return t('ফলন পূর্বাভাস', 'Yield Forecast');
+      case 'Soil Salinity & NPK':
+        return t('মাটির লবণাক্ততা ও NPK', 'Soil Salinity & NPK');
+      case 'Pest & Blight Radar':
+        return t('পোকামাকড় ও রোগ রাডার', 'Pest & Blight Radar');
+      case 'Market Price Volatility':
+        return t('বাজার মূল্য অস্থিতিশীলতা', 'Market Price Volatility');
+      case 'Subsidy Impact':
+        return t('সাবসিডি প্রভাব', 'Subsidy Impact');
+      default:
+        return c;
+    }
+  };
+
+  const confidentialityLabel = (l: AgritechReportAdminView['confidentialityLevel']) => {
+    switch (l) {
+      case 'Public Agronomy':
+        return t('পাবলিক কৃষি', 'Public Agronomy');
+      case 'Ministry Restricted':
+        return t('মন্ত্রণালয় সংরক্ষিত', 'Ministry Restricted');
+      case 'Platform Internal':
+        return t('প্ল্যাটফর্ম অভ্যন্তরীণ', 'Platform Internal');
+      default:
+        return l;
+    }
+  };
   const [loading, setLoading] = useState(true);
   const [reports, setReports] = useState<AgritechReportAdminView[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -48,7 +81,12 @@ export const ReportsManagement: React.FC = () => {
   }, [showToast]);
 
   const handleDownload = (rpt: AgritechReportAdminView) => {
-    showToast('success', `Downloading "${rpt.title}" (${rpt.fileSizeMb} MB PDF)`);
+    showToast(
+      'success',
+      language === 'bn'
+        ? `"${tr(rpt.title)}" রিপোর্ট ডাউনলোড হচ্ছে (${rpt.fileSizeMb} MB PDF)`
+        : `Downloading "${rpt.title}" (${rpt.fileSizeMb} MB PDF)`
+    );
   };
 
   const filtered = reports.filter((r) => {
@@ -120,7 +158,7 @@ export const ReportsManagement: React.FC = () => {
           <Card key={rpt.id} className="hover:border-slate-300 dark:border-[#333333] transition-all flex flex-col justify-between">
             <div>
               <div className="flex items-start justify-between gap-2 mb-2">
-                <Badge variant="neutral">{rpt.category}</Badge>
+                <Badge variant="neutral">{categoryLabel(rpt.category)}</Badge>
                 <Badge
                   variant={
                     rpt.confidentialityLevel === 'Public Agronomy'
@@ -130,17 +168,17 @@ export const ReportsManagement: React.FC = () => {
                       : 'danger'
                   }
                 >
-                  {rpt.confidentialityLevel}
+                  {confidentialityLabel(rpt.confidentialityLevel)}
                 </Badge>
               </div>
 
-              <h3 className="text-base font-bold text-slate-900 dark:text-[#f0f0f0] mb-1">{rpt.title}</h3>
-              <span className="text-[11px] font-mono text-slate-400 block mb-3">{tr('ID:')}{rpt.reportCode}{tr('• Period:')}{rpt.reportingPeriod}
+              <h3 className="text-base font-bold text-slate-900 dark:text-[#f0f0f0] mb-1">{tr(rpt.title)}</h3>
+              <span className="text-[11px] font-mono text-slate-400 block mb-3">{tr('ID:')}{rpt.reportCode}{tr('• Period:')}{tr(rpt.reportingPeriod)}
               </span>
 
               <div className="p-3 bg-slate-50 dark:bg-[#111111]/60 rounded-xl text-xs text-slate-600 dark:text-[#a0a0a0] mb-3 leading-relaxed">
                 <span className="font-bold text-slate-800 dark:text-[#e0e0e0] block text-[10px] uppercase mb-0.5">{tr('Executive Briefing:')}</span>
-                {rpt.summaryFindings}
+                {tr(rpt.summaryFindings)}
               </div>
             </div>
 
@@ -171,19 +209,19 @@ export const ReportsManagement: React.FC = () => {
         <Modal
           isOpen={true}
           onClose={() => setSelectedReport(null)}
-          title={selectedReport.title}
-          subtitle={`Report Code: ${selectedReport.reportCode} • ${selectedReport.reportingPeriod}`}
+          title={tr(selectedReport.title)}
+          subtitle={`${t('রিপোর্ট কোড', 'Report Code')}: ${selectedReport.reportCode} • ${tr(selectedReport.reportingPeriod)}`}
           maxWidth="lg"
         >
           <div className="space-y-4 text-xs">
             <div className="p-3 bg-slate-50 dark:bg-[#111111]/60 rounded-xl space-y-2">
               <div className="flex justify-between">
                 <span className="text-slate-500 dark:text-[#a0a0a0]">{tr('Security Classification:')}</span>
-                <span className="font-bold text-slate-900 dark:text-[#f0f0f0]">{selectedReport.confidentialityLevel}</span>
+                <span className="font-bold text-slate-900 dark:text-[#f0f0f0]">{confidentialityLabel(selectedReport.confidentialityLevel)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500 dark:text-[#a0a0a0]">{tr('Subject Category:')}</span>
-                <span className="font-bold text-slate-900 dark:text-[#f0f0f0]">{selectedReport.category}</span>
+                <span className="font-bold text-slate-900 dark:text-[#f0f0f0]">{categoryLabel(selectedReport.category)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500 dark:text-[#a0a0a0]">{tr('Publication Date:')}</span>
@@ -198,7 +236,7 @@ export const ReportsManagement: React.FC = () => {
             <div>
               <h4 className="font-bold text-slate-900 dark:text-[#f0f0f0] mb-1.5 uppercase text-[11px]">{tr('Core Agro-Statistical Insights')}</h4>
               <p className="text-slate-700 dark:text-[#999999] bg-white dark:bg-[#0a0a0a] p-3 rounded-lg border border-slate-200 dark:border-[#222222] leading-relaxed">
-                {selectedReport.summaryFindings}
+                {trPhrase(selectedReport.summaryFindings)}
               </p>
             </div>
 

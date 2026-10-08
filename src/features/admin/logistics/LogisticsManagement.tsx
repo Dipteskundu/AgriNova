@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { tr } from "@/lib/localize";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Truck,
   Thermometer,
@@ -23,7 +24,9 @@ import { getLogisticsFleetAdmin } from '@/lib/adminApi';
 import { LogisticsFleetAdminView } from '@/types';
 
 export const LogisticsManagement: React.FC = () => {
+  const { language } = useLanguage();
   const { showToast } = useToast();
+  const t = (bn: string, en: string) => (language === 'bn' ? bn : en);
   const [loading, setLoading] = useState(true);
   const [fleet, setFleet] = useState<LogisticsFleetAdminView[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -46,6 +49,26 @@ export const LogisticsManagement: React.FC = () => {
       setLoading(false);
     }
   };
+
+  const transitStatusLabel = (s: LogisticsFleetAdminView['transitStatus']) =>
+    s === 'On Route'
+      ? t('রাস্তায়', 'On Route')
+      : s === 'Dispatched'
+        ? t('প্রেরিত', 'Dispatched')
+        : s === 'Delayed'
+          ? t('বিলম্বিত', 'Delayed')
+          : s === 'Delivered'
+            ? t('পৌঁছেছে', 'Delivered')
+            : s;
+
+  const coldChainLabel = (s: LogisticsFleetAdminView['coldChainIntegrity']) =>
+    s === 'Optimal'
+      ? t('সর্বোত্তম', 'Optimal')
+      : s === 'Warning'
+        ? t('সতর্ক', 'Warning')
+        : s === 'Breached'
+          ? t('লঙ্ঘিত', 'Breached')
+          : s;
 
   const filtered = fleet.filter((item) => {
     const matchesSearch =
@@ -155,10 +178,10 @@ export const LogisticsManagement: React.FC = () => {
                           : 'neutral'
                       }
                     >
-                      {item.transitStatus}
+                      {transitStatusLabel(item.transitStatus)}
                     </Badge>
                   </div>
-                  <span className="text-[11px] text-slate-500 dark:text-[#a0a0a0]">{item.vehicleType}</span>
+                  <span className="text-[11px] text-slate-500 dark:text-[#a0a0a0]">{tr(item.vehicleType)}</span>
                 </div>
 
                 <Badge
@@ -170,7 +193,7 @@ export const LogisticsManagement: React.FC = () => {
                       : 'danger'
                   }
                 >
-                  {item.coldChainIntegrity}
+                  {coldChainLabel(item.coldChainIntegrity)}
                 </Badge>
               </div>
 
@@ -178,12 +201,12 @@ export const LogisticsManagement: React.FC = () => {
               <div className="p-3 bg-slate-50 dark:bg-[#111111]/60 rounded-xl my-2 text-xs space-y-1.5">
                 <div className="flex items-center gap-2 text-slate-800 dark:text-[#e0e0e0] font-medium">
                   <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                  <span className="truncate">{item.originHub}</span>
+                  <span className="truncate">{tr(item.originHub)}</span>
                 </div>
                 <div className="pl-5 text-slate-400 text-[10px]">{tr('↓ Dedicated Highway Transit Corridor')}</div>
                 <div className="flex items-center gap-2 text-slate-800 dark:text-[#e0e0e0] font-medium">
                   <MapPin className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                  <span className="truncate">{item.destinationDepot}</span>
+                  <span className="truncate">{tr(item.destinationDepot)}</span>
                 </div>
               </div>
 
@@ -194,13 +217,13 @@ export const LogisticsManagement: React.FC = () => {
                   <div className="flex items-center gap-1 font-mono font-bold text-slate-900 dark:text-[#f0f0f0]">
                     <Thermometer className="w-3.5 h-3.5 text-emerald-600" />
                     {item.temperatureCelsius}{tr('°C')}</div>
-                  <span className="text-[10px] text-slate-500 dark:text-[#a0a0a0]">{item.targetTempRange}</span>
+                  <span className="text-[10px] text-slate-500 dark:text-[#a0a0a0]">{tr(item.targetTempRange)}</span>
                 </div>
                 <div>
                   <span className="text-[10px] text-slate-400 block uppercase font-semibold">{tr('Cargo Weight')}</span>
                   <div className="font-mono font-bold text-slate-900 dark:text-[#f0f0f0]">
                     {(item.cargoWeightKg / 1000).toFixed(1)}{tr('Tons')}</div>
-                  <span className="text-[10px] text-slate-500 dark:text-[#a0a0a0]">{item.cargoDescription}</span>
+                  <span className="text-[10px] text-slate-500 dark:text-[#a0a0a0]">{tr(item.cargoDescription)}</span>
                 </div>
               </div>
 
@@ -219,7 +242,12 @@ export const LogisticsManagement: React.FC = () => {
               <Button
                 size="sm"
                 variant="outline"
-                onClick={() => showToast('info', `Pinged driver ${item.driverName} - GPS signal updated`)}
+                onClick={() => showToast(
+                  'info',
+                  language === 'bn'
+                    ? `চালক ${item.driverName}-এর GPS সিগন্যাল আপডেট করা হয়েছে`
+                    : `Pinged driver ${item.driverName} - GPS signal updated`
+                )}
               >{tr('Track Unit')}</Button>
             </div>
           </Card>

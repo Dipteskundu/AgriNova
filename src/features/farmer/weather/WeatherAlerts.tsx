@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { tr } from "@/lib/localize";
+import { tr, trPhrase } from "@/lib/localize";
 import {
   CloudSun,
   AlertTriangle,
@@ -117,7 +117,7 @@ export const WeatherAlerts: React.FC = () => {
                     {tr(alert.severity.toUpperCase())}
                   </Badge>
                   <span className="text-[11px] opacity-75">
-                    {language === 'bn' ? 'মেয়াদ: ' : 'Valid until: '}{alert.validUntil}
+                    {language === 'bn' ? 'মেয়াদ: ' : 'Valid until: '}{trPhrase(alert.validUntil)}
                   </span>
                 </div>
                 <p className="text-slate-700 dark:text-[#999999]">{tr(alert.message)}</p>

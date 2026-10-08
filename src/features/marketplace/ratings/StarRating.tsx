@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Icon } from "@/components/icons";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 /**
  * Read-only star display — used by the browse cards, the detail headers and
@@ -21,12 +22,17 @@ interface Props {
 }
 
 export function StarRating({ rating, size = 14, className = "" }: Props) {
+  const { language } = useLanguage();
   const rounded = Math.round(rating);
   return (
     <span
       className={`inline-flex items-center gap-0.5 ${className}`}
       role="img"
-      aria-label={`Rated ${rating} out of 5 stars`}
+      aria-label={
+        language === "bn"
+          ? `রেটিং ${rating} (সর্বোচ্চ ৫)`
+          : `Rated ${rating} out of 5 stars`
+      }
     >
       {[1, 2, 3, 4, 5].map((star) =>
         star <= rounded ? (

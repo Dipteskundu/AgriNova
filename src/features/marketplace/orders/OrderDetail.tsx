@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { tr, trPhrase } from "@/lib/localize";
 import {
   getOrderById,
   type BuyerOrder,
@@ -103,12 +104,12 @@ export function OrderDetail({ id }: { id: string }) {
       {/* Header card */}
       <Card className="mb-4">
         <div className="flex gap-4">
-          <img src={order.listing.imageUrl} alt={order.listing.cropName} className="w-20 h-20 rounded-xl object-cover shrink-0" />
+          <img src={order.listing.imageUrl} alt={trPhrase(order.listing.cropName)} className="w-20 h-20 rounded-xl object-cover shrink-0" />
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">
               <div>
-                <h1 className="font-bold text-slate-900 dark:text-[#f0f0f0]">{order.listing.cropName}</h1>
-                <p className="text-xs text-slate-400">{order.listing.variety} · {order.listing.qualityGrade}</p>
+                <h1 className="font-bold text-slate-900 dark:text-[#f0f0f0]">{trPhrase(order.listing.cropName)}</h1>
+                <p className="text-xs text-slate-400">{trPhrase(order.listing.variety)} · {trPhrase(order.listing.qualityGrade)}</p>
               </div>
               <Badge variant={cfg.variant}>{t(cfg.labelBn, cfg.label)}</Badge>
             </div>
@@ -116,7 +117,7 @@ export function OrderDetail({ id }: { id: string }) {
               <span className="text-slate-400">{t("অর্ডার কোড", "Order Code")}</span>
               <span className="font-mono font-semibold text-slate-800 dark:text-[#e0e0e0]">{order.orderCode}</span>
               <span className="text-slate-400">{t("পরিমাণ", "Quantity")}</span>
-              <span className="font-semibold text-slate-800 dark:text-[#e0e0e0]">{order.quantityKg} kg</span>
+              <span className="font-semibold text-slate-800 dark:text-[#e0e0e0]">{order.quantityKg} {t("কেজি", "kg")}</span>
               <span className="text-slate-400">{t("মোট", "Total")}</span>
               <span className="font-black text-blue-700 dark:text-blue-400">৳{order.totalAmountBdt.toLocaleString()}</span>
               <span className="text-slate-400">{t("পেমেন্ট", "Payment")}</span>

@@ -45,6 +45,38 @@ const CHANNELS = ["bKash", "Nagad", "Rocket", "Bank (BEFTN)"] as const;
 const money = (n: number) => `৳${(Number(n) || 0).toLocaleString()}`;
 
 /**
+ * The wallet ledger's `label` is written server-side from two dynamic
+ * templates (`Escrow release (reason) — produce (code)` in `escrow.service.js`,
+ * `Withdrawal request — method` in `wallet.routes.js`), so a whole-string dict
+ * lookup can never match. Rebuild the phrases bangla-side: keep the interpolated
+ * produce/order-code, translate the static parts (and known reasons).
+ */
+const ESCROW_REASON_BN: Record<string, string> = {
+  released: "মুক্তি হয়ে গেছে",
+  "buyer confirmed receipt": "ক্রেতা রসিদ নিশ্চিত করেছেন",
+  "auto-release": "স্বয়ংক্রিয় মুক্তি",
+};
+
+const ledgerLabel = (label: string, t: (bn: string, en: string) => string) => {
+  const escrow = label.match(/^Escrow release \(([^)]*)\) — (.*?) \(([^)]*)\)$/);
+  if (escrow) {
+    const reason = escrow[1].trim();
+    const reasonBn = reason ? (ESCROW_REASON_BN[reason] ?? t(reason, reason)) : "";
+    return `${t("এসক্রো রিলিজ", "Escrow release")}${reason ? ` (${reasonBn})` : ""} — ${tr(
+      escrow[2]
+    )} (${escrow[3]})`;
+  }
+  const withdrawal = label.match(/^Withdrawal request — (.*)$/);
+  if (withdrawal) {
+    const method = withdrawal[1].trim();
+    return `${t("উত্তোলন অনুরোধ", "Withdrawal request")} — ${
+      method === "Bank (BEFTN)" ? t("ব্যাংক (BEFTN)", "Bank (BEFTN)") : method
+    }`;
+  }
+  return tr(label);
+};
+
+/**
  * Sales & Wallet — `/dashboard/sales`.
  *
  * Two halves of one question: *what did I sell* (the orders, from
@@ -285,7 +317,7 @@ export function SalesWallet() {
                 >
                   {CHANNELS.map((c) => (
                     <option key={c} value={c}>
-                      {c}
+                      {c === "Bank (BEFTN)" ? t("ব্যাংক (BEFTN)", "Bank (BEFTN)") : c}
                     </option>
                   ))}
                 </select>
@@ -351,7 +383,7 @@ export function SalesWallet() {
                       </td>
                       <td className="p-3">
                         <span className="text-slate-800 dark:text-[#e0e0e0] block">
-                          {row.label}
+                          {ledgerLabel(row.label, t)}
                         </span>
                         {row.orderCode && (
                           <span className="font-mono text-[10px] text-slate-400">
@@ -375,7 +407,7 @@ export function SalesWallet() {
                         {money(row.amountBdt)}
                       </td>
                       <td className="p-3">
-                        <Badge variant={LEDGER_BADGE[row.status]}>{row.status}</Badge>
+                        <Badge variant={LEDGER_BADGE[row.status]}>{tr(row.status)}</Badge>
                       </td>
                     </tr>
                   ))}
@@ -460,24 +492,24 @@ export function SalesWallet() {
                       </td>
                       <td className="p-4">
                         <span className="font-semibold text-slate-800 dark:text-[#e0e0e0] block">
-                          {order.listing.cropName}
+                          {tr(order.listing.cropName)}
                         </span>
                         <span className="text-[10px] text-slate-400">
-                          {order.listing.qualityGrade}
+                          {tr(order.listing.qualityGrade)}
                         </span>
                       </td>
                       <td className="p-4 text-slate-700 dark:text-[#999999]">
                         {order.buyerName || "—"}
                       </td>
                       <td className="p-4 text-slate-700 dark:text-[#999999] whitespace-nowrap">
-                        {order.quantityKg.toLocaleString()} {order.unit}
+                        {order.quantityKg.toLocaleString()} {tr(order.unit)}
                       </td>
                       <td className="p-4 font-mono font-bold text-emerald-700 dark:text-emerald-400 whitespace-nowrap">
                         {money(order.totalAmountBdt)}
                       </td>
                       <td className="p-4">
                         <Badge variant={ESCROW_BADGE[order.escrowStatus]}>
-                          {order.escrowStatus}
+                          {tr(order.escrowStatus)}
                         </Badge>
                         {order.escrowStatus === "Held in Escrow" && order.escrowReleaseAt && (
                           <span className="block text-[10px] text-slate-400 mt-1">

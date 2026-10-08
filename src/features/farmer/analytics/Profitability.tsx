@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { tr } from "@/lib/localize";
+import { tr, trPhrase } from "@/lib/localize";
 import {
   TrendingUp,
   DollarSign,
@@ -126,7 +126,7 @@ export const Profitability: React.FC = () => {
               return (
                 <div key={crop.cropName} className="p-3.5 bg-slate-50 dark:bg-[#111111]/60 rounded-xl border border-slate-100">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-bold text-slate-900 dark:text-[#f0f0f0] text-sm">{tr(crop.cropName)}</h4>
+                    <h4 className="font-bold text-slate-900 dark:text-[#f0f0f0] text-sm">{trPhrase(crop.cropName)}</h4>
                     <Badge variant={crop.profit > 0 ? 'success' : 'danger'}>
                       {margin}% {language === 'bn' ? 'মুনাফা' : 'Margin'}
                     </Badge>
@@ -170,7 +170,7 @@ export const Profitability: React.FC = () => {
               <div key={cat.category} className="space-y-1">
                 <div className="flex items-center justify-between">
                   <span className="font-semibold text-slate-800 dark:text-[#e0e0e0]">
-                    {tr(cat.category)}
+                    {trPhrase(cat.category)}
                   </span>
                   <div className="flex items-center gap-2">
                     <span className="font-mono text-slate-600 dark:text-[#a0a0a0] font-bold">

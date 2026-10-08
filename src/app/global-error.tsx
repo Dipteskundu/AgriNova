@@ -1,6 +1,7 @@
 "use client";
 
 import ErrorPage from "@/components/ui/ErrorPage";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 
 export default function GlobalError({
   error,
@@ -10,9 +11,11 @@ export default function GlobalError({
   reset: () => void;
 }) {
   return (
-    <html lang="en">
+    <html lang="bn">
       <body>
-        <ErrorPage errorCode="500" errorMessage={error.message} onRetry={reset} />
+        <LanguageProvider>
+          <ErrorPage errorCode="500" errorMessage={error.message} onRetry={reset} />
+        </LanguageProvider>
       </body>
     </html>
   );

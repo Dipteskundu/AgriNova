@@ -35,6 +35,9 @@ import {
 } from "@/lib/inspectorApi";
 import { InspectionRequest, InspectorScheduleEntry } from "@/types";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { trPhrase } from "@/lib/localize";
+import { bnNum, fmtDateBn } from "@/lib/format";
 
 interface InspectorDashboardProps {
   onNavigate: (module: string) => void;
@@ -87,6 +90,8 @@ export const InspectorDashboard: React.FC<InspectorDashboardProps> = ({
   onNavigate,
 }) => {
   const t = useT();
+  const { language } = useLanguage();
+  const num = (v: string | number) => (language === "bn" ? bnNum(v) : String(v));
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<InspectorDashboardStats>(EMPTY_STATS);
@@ -141,7 +146,7 @@ export const InspectorDashboard: React.FC<InspectorDashboardProps> = ({
       icon: ClipboardList,
       titleBn: "কোয়ালিটি পরীক্ষণ",
       titleEn: "Quality Inspections",
-      badgeBn: `${stats.pendingCount}টি বাকি`,
+      badgeBn: `${bnNum(stats.pendingCount)}টি বাকি`,
       badgeEn: `${stats.pendingCount} Pending`,
       descBn: "অপেক্ষমাণ ও চলমান পরীক্ষণের তালিকা, ফলাফল জমা দিন",
       descEn: "Review assigned lots and submit grade assessments",
@@ -153,7 +158,7 @@ export const InspectorDashboard: React.FC<InspectorDashboardProps> = ({
       icon: Calendar,
       titleBn: "পরীক্ষণ সময়সূচি",
       titleEn: "Inspection Schedule",
-      badgeBn: `${stats.scheduledThisWeek}টি এই সপ্তাহে`,
+      badgeBn: `${bnNum(stats.scheduledThisWeek)}টি এই সপ্তাহে`,
       badgeEn: `${stats.scheduledThisWeek} This Week`,
       descBn: "আজকের ও আসন্ন পরীক্ষণের তারিখ, সময় ও স্থান",
       descEn: "Upcoming visits with dates, times and farm locations",
@@ -165,7 +170,7 @@ export const InspectorDashboard: React.FC<InspectorDashboardProps> = ({
       icon: FileBarChart,
       titleBn: "পরীক্ষণ রিপোর্ট",
       titleEn: "Inspection Reports",
-      badgeBn: `${stats.completedThisMonth}টি এই মাসে`,
+      badgeBn: `${bnNum(stats.completedThisMonth)}টি এই মাসে`,
       badgeEn: `${stats.completedThisMonth} This Month`,
       descBn: "জমাকৃত গ্রেড, ময়লা হার ও সার্টিফিকেট রিপোর্ট",
       descEn: "Submitted grades, moisture readings and certificates",
@@ -177,7 +182,7 @@ export const InspectorDashboard: React.FC<InspectorDashboardProps> = ({
       icon: Bell,
       titleBn: "বিজ্ঞপ্তি ও সতর্কতা",
       titleEn: "Alerts & Messages",
-      badgeBn: `${unread.length}টি নতুন`,
+      badgeBn: `${bnNum(unread.length)}টি নতুন`,
       badgeEn: `${unread.length} New`,
       descBn: "নতুন অ্যাসাইনমেন্ট, জরুরি অনুরোধ ও স্ট্যাটাস আপডেট",
       descEn: "New assignments, urgent requests and status updates",
@@ -250,7 +255,7 @@ export const InspectorDashboard: React.FC<InspectorDashboardProps> = ({
           {
             id: "pending",
             title: t("অপেক্ষমাণ পরীক্ষণ", "Pending Inspections"),
-            value: stats.pendingCount,
+            value: num(stats.pendingCount),
             change: t("বাকি আছে", "In queue"),
             trend: stats.pendingCount > 0 ? "neutral" : "up",
             subtitle: t("স্ট্যাটাস: অ্যাসাইনড", "Status: assigned"),
@@ -261,7 +266,7 @@ export const InspectorDashboard: React.FC<InspectorDashboardProps> = ({
           {
             id: "in-progress",
             title: t("চলমান পরীক্ষণ", "In Progress"),
-            value: stats.inProgressCount,
+            value: num(stats.inProgressCount),
             change: t("এখন চলছে", "Active now"),
             trend: "neutral",
             subtitle: t("শুরু হয়েছে, জমা দেওয়া হয়নি", "Started, not yet submitted"),
@@ -272,7 +277,7 @@ export const InspectorDashboard: React.FC<InspectorDashboardProps> = ({
           {
             id: "completed",
             title: t("এই মাসে সম্পন্ন", "Completed This Month"),
-            value: stats.completedThisMonth,
+            value: num(stats.completedThisMonth),
             change: t("রিপোর্ট জমা", "Filed"),
             trend: "up",
             subtitle: t("গ্রেড ও সার্টিফিকেট প্রদত্ত", "Grades & certificates issued"),
@@ -283,7 +288,7 @@ export const InspectorDashboard: React.FC<InspectorDashboardProps> = ({
           {
             id: "scheduled",
             title: t("এই সপ্তাহে সূচি", "Scheduled This Week"),
-            value: stats.scheduledThisWeek,
+            value: num(stats.scheduledThisWeek),
             change: t("আসন্ন", "Upcoming"),
             trend: "neutral",
             subtitle: t("মাঠ পরিদর্শনের নির্ধারিত সময়", "Field visits on the calendar"),
@@ -313,11 +318,11 @@ export const InspectorDashboard: React.FC<InspectorDashboardProps> = ({
               <div className="grid grid-cols-2 gap-2">
                 <ModalStat
                   label={t("মোট অ্যাসাইনমেন্ট", "Total Assignments")}
-                  value={inspections.length}
+                  value={num(inspections.length)}
                 />
                 <ModalStat
                   label={t("চলমান", "In Progress")}
-                  value={inProgress.length}
+                  value={num(inProgress.length)}
                   valueClassName="text-blue-700 dark:text-blue-400"
                 />
               </div>
@@ -326,8 +331,14 @@ export const InspectorDashboard: React.FC<InspectorDashboardProps> = ({
                   {[...inProgress, ...pendingQueue].slice(0, 4).map((item) => (
                     <ModalRow
                       key={item.id}
-                      title={`${item.cropName} · ${item.harvestBatchCode}`}
-                      subtitle={`${item.farmerName} · ${item.farmLocation} · ${item.scheduledDate}`}
+                      title={`${trPhrase(item.cropName)} · ${item.harvestBatchCode}`}
+                      subtitle={[
+                        item.farmerName,
+                        item.farmLocation ? trPhrase(item.farmLocation) : "",
+                        item.scheduledDate ? fmtDateBn(item.scheduledDate) : "",
+                      ]
+                        .filter(Boolean)
+                        .join(" · ")}
                       chip={
                         <ModalChip className={inspectionChip(item.status)}>
                           {item.status === "in_progress"
@@ -354,11 +365,11 @@ export const InspectorDashboard: React.FC<InspectorDashboardProps> = ({
               <div className="grid grid-cols-2 gap-2">
                 <ModalStat
                   label={t("আসন্ন ভ্রমণ", "Upcoming Visits")}
-                  value={upcomingSchedule.length}
+                  value={num(upcomingSchedule.length)}
                 />
                 <ModalStat
                   label={t("মোট সূচি", "Total Entries")}
-                  value={schedule.length}
+                  value={num(schedule.length)}
                 />
               </div>
               {upcomingSchedule.length > 0 ? (
@@ -366,8 +377,15 @@ export const InspectorDashboard: React.FC<InspectorDashboardProps> = ({
                   {upcomingSchedule.slice(0, 4).map((entry) => (
                     <ModalRow
                       key={entry.id}
-                      title={`${entry.cropName} · ${entry.farmerName}`}
-                      subtitle={`${entry.date} ${entry.time} · ${entry.location}`}
+                      title={`${trPhrase(entry.cropName)} · ${entry.farmerName}`}
+                      subtitle={[
+                        [entry.date ? fmtDateBn(entry.date) : "", entry.time]
+                          .filter(Boolean)
+                          .join(" "),
+                        entry.location ? trPhrase(entry.location) : "",
+                      ]
+                        .filter(Boolean)
+                        .join(" · ")}
                       chip={
                         <ModalChip className={scheduleChip(entry.status)}>
                           {entry.status === "in_progress"
@@ -394,12 +412,12 @@ export const InspectorDashboard: React.FC<InspectorDashboardProps> = ({
               <div className="grid grid-cols-2 gap-2">
                 <ModalStat
                   label={t("এই মাসে সম্পন্ন", "Completed This Month")}
-                  value={stats.completedThisMonth}
+                  value={num(stats.completedThisMonth)}
                   valueClassName="text-emerald-700 dark:text-emerald-400"
                 />
                 <ModalStat
                   label={t("মোট রিপোর্ট", "All Reports")}
-                  value={completed.length}
+                  value={num(completed.length)}
                 />
               </div>
               {completed.length > 0 ? (
@@ -407,8 +425,10 @@ export const InspectorDashboard: React.FC<InspectorDashboardProps> = ({
                   {completed.slice(0, 4).map((item) => (
                     <ModalRow
                       key={item.id}
-                      title={`${item.cropName} · ${item.harvestBatchCode}`}
-                      subtitle={`${item.farmerName} · ${item.scheduledDate}`}
+                      title={`${trPhrase(item.cropName)} · ${item.harvestBatchCode}`}
+                      subtitle={[item.farmerName, item.scheduledDate ? fmtDateBn(item.scheduledDate) : ""]
+                        .filter(Boolean)
+                        .join(" · ")}
                       chip={
                         <ModalChip className="bg-emerald-100 text-emerald-800 dark:bg-emerald-500/15 dark:text-emerald-300">
                           {t("সম্পন্ন", "Completed")}
@@ -447,7 +467,7 @@ export const InspectorDashboard: React.FC<InspectorDashboardProps> = ({
                           : "text-amber-900 dark:text-amber-300"
                       }`}
                     >
-                      {n.title}
+                      {trPhrase(n.title)}
                     </span>
                     <span
                       className={`text-[11px] ${
@@ -456,7 +476,7 @@ export const InspectorDashboard: React.FC<InspectorDashboardProps> = ({
                           : "text-amber-800 dark:text-amber-200"
                       }`}
                     >
-                      {n.message}
+                      {trPhrase(n.message)}
                     </span>
                   </div>
                 ))

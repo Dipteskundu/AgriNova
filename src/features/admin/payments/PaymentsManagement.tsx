@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { tr } from "@/lib/localize";
+import { tr, trPhrase } from "@/lib/localize";
+import { bnNum, fmtDateTimeBn } from "@/lib/format";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   CreditCard,
   Search,
@@ -24,7 +26,55 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { PaymentRecordAdminView } from '@/types';
 
 export const PaymentsManagement: React.FC = () => {
+  const { language } = useLanguage();
   const { showToast } = useToast();
+  const t = (bn: string, en: string) => (language === 'bn' ? bn : en);
+  const num = (v: string | number) => (language === 'bn' ? bnNum(v) : String(v));
+
+  const statusLabel = (s: string) => {
+    if (language !== 'bn') return s.toUpperCase();
+    switch (s) {
+      case 'Completed':
+        return 'সম্পন্ন';
+      case 'Pending Approval':
+        return 'অনুমোদনের অপেক্ষায়';
+      case 'Processing':
+        return 'প্রক্রিয়াধীন';
+      case 'Failed':
+        return 'ব্যর্থ';
+      case 'Rejected':
+        return 'প্রত্যাখ্যাত';
+      case 'Available':
+        return 'উপলব্ধ';
+      default:
+        return s;
+    }
+  };
+
+  const roleLabel = (r: PaymentRecordAdminView['recipientRole']) =>
+    r === 'Farmer'
+      ? t('কৃষক', 'Farmer')
+      : r === 'Logistics Vendor'
+        ? t('লজিস্টিকস ভেন্ডর', 'Logistics Vendor')
+        : t('পরীক্ষাগার', 'Inspection Lab');
+
+  /**
+   * Purchase records carry a composed purpose (`Purchase of X`, sometimes
+   * with a `(Stripe)` suffix) while settlement seeds use fixed phrases
+   * already in the dictionary. Rebuild the dynamic template bangla-side and
+   * let the fixed ones resolve through `tr()`.
+   */
+  const purposeText = (purpose: string): string => {
+    const m = purpose.match(/^Purchase of (.*?)(?: \(Stripe\))?$/);
+    if (m) {
+      const item = trPhrase(m[1]);
+      const stripe = purpose.endsWith('(Stripe)') ? ' (Stripe)' : '';
+      return language === 'bn'
+        ? `পণ্য ক্রয়: ${item}${stripe}`
+        : `Purchase of ${item}${stripe}`;
+    }
+    return trPhrase(purpose);
+  };
   const [loading, setLoading] = useState(true);
   const [payments, setPayments] = useState<PaymentRecordAdminView[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -75,7 +125,12 @@ export const PaymentsManagement: React.FC = () => {
       const res = await approvePaymentPayoutAdmin(id, 'Tariqul Islam Chowdhury (Admin HQ)');
       if (res.success) {
         setPayments((prev) => prev.map((p) => (p.id === id ? res.data : p)));
-        showToast('success', `Payment ${res.data.transactionRef} approved and disbursed`);
+        showToast(
+          'success',
+          language === 'bn'
+            ? `পেমেন্ট ${res.data.transactionRef} অনুমোদন ও পরিশোধ করা হয়েছে`
+            : `Payment ${res.data.transactionRef} approved and disbursed`
+        );
       }
     } catch {
       showToast('error', tr('Failed to authorize payout disbursement'));
@@ -158,12 +213,12 @@ export const PaymentsManagement: React.FC = () => {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="p-3 bg-white dark:bg-[#0a0a0a] rounded-xl border border-slate-200 dark:border-[#222222]">
           <span className="text-[10px] text-slate-400 block uppercase font-bold">{tr('Total Settled Volume')}</span>
-          <span className="text-lg font-black text-emerald-700">৳{(totalDisbursed / 100000).toFixed(2)}{tr('Lakh')}</span>
+          <span className="text-lg font-black text-emerald-700">৳{num((totalDisbursed / 100000).toFixed(2))}{tr('Lakh')}</span>
           <span className="text-[10px] text-slate-500 dark:text-[#a0a0a0] block">{tr('All bank & mobile channels')}</span>
         </div>
         <div className="p-3 bg-white dark:bg-[#0a0a0a] rounded-xl border border-slate-200 dark:border-[#222222]">
           <span className="text-[10px] text-slate-400 block uppercase font-bold">{tr('Awaiting Authorization')}</span>
-          <span className="text-lg font-black text-amber-600">৳{pendingDisbursement.toLocaleString()}</span>
+          <span className="text-lg font-black text-amber-600">৳{num(pendingDisbursement.toLocaleString())}</span>
           <span className="text-[10px] text-slate-500 dark:text-[#a0a0a0] block">{tr('Pending Admin Dual-Sign')}</span>
         </div>
         <div className="p-3 bg-white dark:bg-[#0a0a0a] rounded-xl border border-slate-200 dark:border-[#222222]">
@@ -225,16 +280,16 @@ export const PaymentsManagement: React.FC = () => {
                 <tr key={pay.id} className="hover:bg-slate-50 dark:hover:bg-[#1a1a1a]/60 dark:bg-[#111111]/60/60 transition-colors">
                   <td className="p-4 font-mono font-bold text-slate-900 dark:text-[#f0f0f0]">{pay.transactionRef}</td>
                   <td className="p-4">
-                    <span className="font-semibold text-slate-800 dark:text-[#e0e0e0] block">{pay.recipientName}</span>
-                    <Badge variant="neutral">{pay.recipientRole}</Badge>
+                    <span className="font-semibold text-slate-800 dark:text-[#e0e0e0] block">{trPhrase(pay.recipientName)}</span>
+                    <Badge variant="neutral">{roleLabel(pay.recipientRole)}</Badge>
                   </td>
-                  <td className="p-4 text-slate-700 dark:text-[#999999] font-medium">{pay.purpose}</td>
+                  <td className="p-4 text-slate-700 dark:text-[#999999] font-medium">{purposeText(pay.purpose)}</td>
                   <td className="p-4 font-mono font-bold text-emerald-700 text-sm">
-                    ৳{pay.amountBdt.toLocaleString()}
+                    ৳{num(pay.amountBdt.toLocaleString())}
                   </td>
                   <td className="p-4 font-medium text-slate-700 dark:text-[#999999]">
                     <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-[#1a1a1a] text-[11px] font-mono">
-                      {pay.paymentChannel}
+                      {trPhrase(pay.paymentChannel)}
                     </span>
                   </td>
                   <td className="p-4">
@@ -247,13 +302,13 @@ export const PaymentsManagement: React.FC = () => {
                           : 'neutral'
                       }
                     >
-                      {pay.payoutStatus.toUpperCase()}
+                      {statusLabel(pay.payoutStatus)}
                     </Badge>
                   </td>
                   <td className="p-4 text-slate-500 dark:text-[#a0a0a0] text-[11px]">
-                    <div>{pay.initiatedAt}</div>
+                    <div>{fmtDateTimeBn(pay.initiatedAt)}</div>
                     {pay.approvedBy && (
-                      <div className="text-[10px] text-slate-400 font-mono">{tr('By:')}{pay.approvedBy}</div>
+                      <div className="text-[10px] text-slate-400 font-mono">{tr('By:')} {trPhrase(pay.approvedBy)}</div>
                     )}
                   </td>
                   <td className="p-4 text-right">
@@ -264,9 +319,11 @@ export const PaymentsManagement: React.FC = () => {
                         icon={Check}
                         disabled={approvingId === pay.id}
                         onClick={() => handleApprove(pay.id)}
-                      >
-                        {approvingId === pay.id ? 'Authorizing...' : 'Authorize'}
-                      </Button>
+                        >
+                          {approvingId === pay.id
+                            ? t('অনুমোদন হচ্ছে...', 'Authorizing...')
+                            : t('অনুমোদন করুন', 'Authorize')}
+                        </Button>
                     ) : (
                       <span className="text-[11px] text-emerald-700 font-semibold">{tr('Settled ✓')}</span>
                     )}
@@ -344,7 +401,7 @@ export const PaymentsManagement: React.FC = () => {
                     >
                       <td className="p-4">
                         <span className="font-semibold text-slate-800 dark:text-[#e0e0e0] block">
-                          {wd.ownerName || tr('Unknown seller')}
+                          {trPhrase(wd.ownerName || tr('Unknown seller'))}
                         </span>
                         <span className="text-[10px] text-slate-400 block">
                           {wd.ownerEmail}
@@ -352,14 +409,14 @@ export const PaymentsManagement: React.FC = () => {
                       </td>
                       <td className="p-4">
                         <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-[#1a1a1a] text-[11px] font-mono">
-                          {wd.label.split('—').pop()?.trim() || tr('bKash')}
+                          {trPhrase(wd.label.split('—').pop()?.trim() || tr('bKash'))}
                         </span>
                       </td>
                       <td className="p-4 font-mono font-bold text-emerald-700 text-sm whitespace-nowrap">
-                        ৳{wd.amountBdt.toLocaleString()}
+                        ৳{num(wd.amountBdt.toLocaleString())}
                       </td>
                       <td className="p-4 text-slate-500 dark:text-[#a0a0a0] text-[11px] whitespace-nowrap">
-                        {wd.date}
+                        {fmtDateTimeBn(wd.date)}
                       </td>
                       <td className="p-4">
                         <Badge
@@ -371,12 +428,11 @@ export const PaymentsManagement: React.FC = () => {
                               : 'danger'
                           }
                         >
-                          {wd.status.toUpperCase()}
+                          {statusLabel(wd.status)}
                         </Badge>
                         {wd.approvedBy && (
                           <span className="text-[10px] text-slate-400 block mt-1">
-                            {tr('By:')}
-                            {wd.approvedBy}
+                            {tr('By:')} {trPhrase(wd.approvedBy)}
                           </span>
                         )}
                       </td>

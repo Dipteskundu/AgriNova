@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { tr } from "@/lib/localize";
+import { tr, trPhrase } from "@/lib/localize";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Store,
   CheckCircle2,
@@ -27,7 +28,9 @@ import { requestListingInspection } from '@/lib/marketplaceApi';
 import { MarketplaceListingAdminView } from '@/types';
 
 export const MarketplaceManagement: React.FC = () => {
+  const { language } = useLanguage();
   const { showToast } = useToast();
+  const t = (bn: string, en: string) => (language === 'bn' ? bn : en);
   const [loading, setLoading] = useState(true);
   const [listings, setListings] = useState<MarketplaceListingAdminView[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -59,7 +62,12 @@ export const MarketplaceManagement: React.FC = () => {
       const res = await updateListingStatusAdmin(id, status);
       if (res.success) {
         setListings((prev) => prev.map((l) => (l.id === id ? res.data : l)));
-        showToast('success', `Listing ${id} updated to ${status}`);
+        showToast(
+          'success',
+          language === 'bn'
+            ? `তালিকা ${id}-এর অবস্থা ${tr(status)} করা হয়েছে`
+            : `Listing ${id} updated to ${status}`
+        );
         if (selectedListing?.id === id) {
           setSelectedListing(res.data);
         }
@@ -154,6 +162,33 @@ export const MarketplaceManagement: React.FC = () => {
       </Button>
     );
   };
+
+  const statusLabel = (s: MarketplaceListingAdminView['status']) => {
+    if (language !== 'bn') return s.toUpperCase();
+    switch (s) {
+      case 'Approved':
+        return 'অনুমোদিত';
+      case 'Pending Review':
+        return 'পর্যালোচনায় অপেক্ষমাণ';
+      case 'Flagged':
+        return 'ফ্ল্যাগকৃত';
+      case 'Sold Out':
+        return 'বিক্রিত';
+      default:
+        return s;
+    }
+  };
+
+  const gradeLabel = (g: string) =>
+    g === 'Grade A'
+      ? t('গ্রেড A', 'Grade A')
+      : g === 'Grade B'
+        ? t('গ্রেড B', 'Grade B')
+        : g === 'Grade C'
+          ? t('গ্রেড C', 'Grade C')
+          : g === 'Rejected'
+            ? t('প্রত্যাখ্যাত', 'Rejected')
+            : g;
 
   const filtered = listings.filter((l) => {
     const matchesSearch =
@@ -259,7 +294,7 @@ export const MarketplaceManagement: React.FC = () => {
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div>
                     <div className="flex items-center gap-2">
-                      <h3 className="text-base font-bold text-slate-900 dark:text-[#f0f0f0]">{item.produceName}</h3>
+                      <h3 className="text-base font-bold text-slate-900 dark:text-[#f0f0f0]">{trPhrase(item.produceName)}</h3>
                       <Badge
                         variant={
                           item.status === 'Approved'
@@ -271,13 +306,13 @@ export const MarketplaceManagement: React.FC = () => {
                             : 'neutral'
                         }
                       >
-                        {item.status.toUpperCase()}
+                        {statusLabel(item.status)}
                       </Badge>
                     </div>
-                    <p className="text-xs text-slate-500 dark:text-[#a0a0a0]">{tr('Variety:')}{item.variety}{tr('•')}{item.category}
+                    <p className="text-xs text-slate-500 dark:text-[#a0a0a0]">{tr('Variety:')}{trPhrase(item.variety)}{tr('•')}{trPhrase(item.category)}
                     </p>
                   </div>
-                  <Badge variant="neutral">{item.qualityGrade}</Badge>
+                  <Badge variant="neutral">{gradeLabel(item.qualityGrade)}</Badge>
                 </div>
 
                 <div className="p-3 bg-slate-50 dark:bg-[#111111]/60 rounded-xl my-3 space-y-2 text-xs">
@@ -290,8 +325,8 @@ export const MarketplaceManagement: React.FC = () => {
                     <span className="text-slate-500 dark:text-[#a0a0a0]">{tr('Asking Price:')}</span>
                     <div className="flex items-center gap-2">
                       <strong className="text-emerald-700 font-bold text-sm">৳{item.askingPricePerKg.toFixed(1)}{tr('/ kg')}</strong>
-                      {isPriceHigh && <span className="text-[10px] text-red-600 font-bold">(Above Ceiling ৳{item.suggestedCeilingPrice})</span>}
-                      {isPriceLow && <span className="text-[10px] text-amber-600 font-bold">(Below Floor ৳{item.suggestedFloorPrice})</span>}
+                      {isPriceHigh && <span className="text-[10px] text-red-600 font-bold">{language === 'bn' ? `(সর্বোচ্চ সীমার বেশি ৳${item.suggestedCeilingPrice})` : `(Above Ceiling ৳${item.suggestedCeilingPrice})`}</span>}
+                      {isPriceLow && <span className="text-[10px] text-amber-600 font-bold">{language === 'bn' ? `(সর্বনিম্ন সীমার কম ৳${item.suggestedFloorPrice})` : `(Below Floor ৳${item.suggestedFloorPrice})`}</span>}
                     </div>
                   </div>
                   <div className="flex items-center justify-between text-slate-400 text-[11px] pt-1 border-t border-slate-200 dark:border-[#222222]">
@@ -349,8 +384,8 @@ export const MarketplaceManagement: React.FC = () => {
         <Modal
           isOpen={true}
           onClose={() => setSelectedListing(null)}
-          title={`Listing Audit - ${selectedListing.produceName}`}
-          subtitle={`ID: ${selectedListing.id} • Posted by ${selectedListing.farmerName}`}
+          title={`${t('তালিকা নিরীক্ষা', 'Listing Audit')} - ${selectedListing.produceName}`}
+          subtitle={`${t('আইডি', 'ID')}: ${selectedListing.id} • ${t('পোস্ট করেছেন', 'Posted by')} ${selectedListing.farmerName}`}
           maxWidth="md"
         >
           <div className="space-y-4 text-xs">
@@ -361,11 +396,11 @@ export const MarketplaceManagement: React.FC = () => {
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500 dark:text-[#a0a0a0]">{tr('Produce:')}</span>
-                <span className="font-bold text-slate-800 dark:text-[#e0e0e0]">{selectedListing.produceName} ({selectedListing.variety})</span>
+                <span className="font-bold text-slate-800 dark:text-[#e0e0e0]">{trPhrase(selectedListing.produceName)} ({trPhrase(selectedListing.variety)})</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500 dark:text-[#a0a0a0]">{tr('Certified Grade:')}</span>
-                <span className="font-bold text-emerald-700">{selectedListing.qualityGrade}</span>
+                <span className="font-bold text-emerald-700">{gradeLabel(selectedListing.qualityGrade)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500 dark:text-[#a0a0a0]">{tr('Inspection:')}</span>

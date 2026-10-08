@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { trPhrase } from "@/lib/localize";
 import { Icon, FileCheck } from "@/components/icons";
 import { Badge, type BadgeVariant } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -11,11 +12,11 @@ import { getCompletedReports } from "@/lib/inspectorApi";
 
 const VERDICT_META: Record<
   InspectionReport["verdict"],
-  { label: string; variant: BadgeVariant }
+  { label: [string, string]; variant: BadgeVariant }
 > = {
-  Passed: { label: "Passed", variant: "success" },
-  "Conditional Pass": { label: "Conditional", variant: "warning" },
-  Rejected: { label: "Rejected", variant: "danger" },
+  Passed: { label: ["উত্তীর্ণ", "Passed"], variant: "success" },
+  "Conditional Pass": { label: ["শর্তসাপেক্ষে", "Conditional"], variant: "warning" },
+  Rejected: { label: ["প্রত্যাখ্যাত", "Rejected"], variant: "danger" },
 };
 
 /**
@@ -35,11 +36,31 @@ export function InspectionReports() {
 
   const t = (bn: string, en: string) => (language === "bn" ? bn : en);
 
+  const gradeLabel = (g: string) =>
+    g === "Grade A"
+      ? t("গ্রেড A", "Grade A")
+      : g === "Grade B"
+        ? t("গ্রেড B", "Grade B")
+        : g === "Grade C"
+          ? t("গ্রেড C", "Grade C")
+          : t("প্রত্যাখ্যাত", "Rejected");
+
+  const conditionLabel = (c: string) =>
+    c === "Excellent"
+      ? t("চমৎকার", "Excellent")
+      : c === "Good"
+        ? t("ভালো", "Good")
+        : c === "Fair"
+          ? t("মোটামুটি", "Fair")
+          : c === "Poor"
+            ? t("খারাপ", "Poor")
+            : c;
+
   useEffect(() => {
     getCompletedReports()
       .then((res) => {
         if (res.success) setRows(res.data);
-        else setError(res.message || "Could not load reports.");
+        else setError(res.message || t("রিপোর্ট আনা যায়নি।", "Could not load reports."));
       })
       .finally(() => setLoading(false));
   }, []);
@@ -144,11 +165,13 @@ export function InspectionReports() {
                     <span className="font-mono text-xs font-bold text-slate-500 dark:text-[#a0a0a0]">
                       {report.certificateNumber || "—"}
                     </span>
-                    <Badge variant={meta.variant}>{meta.label}</Badge>
-                    <Badge variant="neutral">{report.grade}</Badge>
+                    <Badge variant={meta.variant}>
+                      {t(meta.label[0], meta.label[1])}
+                    </Badge>
+                    <Badge variant="neutral">{gradeLabel(report.grade)}</Badge>
                   </div>
                   <p className="mt-1 font-semibold text-slate-900 dark:text-[#f0f0f0]">
-                    {report.cropName} · {report.farmerName}
+                    {trPhrase(report.cropName)} · {report.farmerName}
                   </p>
                   <p className="text-xs text-slate-400">
                     {report.harvestBatchCode} · {report.inspectionDate}
@@ -178,7 +201,7 @@ export function InspectionReports() {
                     />
                     <Stat
                       label={t("চেহারা", "Visual")}
-                      value={report.visualCondition}
+                      value={conditionLabel(report.visualCondition)}
                     />
                   </dl>
 

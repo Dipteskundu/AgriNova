@@ -11,6 +11,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useRouter } from "next/navigation";
 import { getLoginUrl } from "@/lib/api";
 import { getBuyerOrders, type BuyerOrder, type OrderStatus } from "@/lib/marketplaceApi";
+import { tr, trPhrase } from "@/lib/localize";
 import { DisputeForm } from "./DisputeForm";
 import {
   ESCROW_CONFIG,
@@ -145,12 +146,12 @@ export function BuyerOrders({ view = "all" }: BuyerOrdersProps) {
                 {/* The card itself stays one big link; the actions below sit
                     outside it so a button never has to nest inside an <a>. */}
                 <Link href={`/dashboard/orders/${order.id}`} className="flex gap-4">
-                  <img src={order.listing.imageUrl} alt={order.listing.cropName} className="w-16 h-16 rounded-xl object-cover shrink-0" />
+                  <img src={order.listing.imageUrl} alt={trPhrase(order.listing.cropName)} className="w-16 h-16 rounded-xl object-cover shrink-0" />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <p className="font-bold text-sm text-slate-900 dark:text-[#f0f0f0]">{order.listing.cropName}</p>
-                        <p className="text-xs text-slate-400">{order.listing.variety} · {order.quantityKg} kg</p>
+                        <p className="font-bold text-sm text-slate-900 dark:text-[#f0f0f0]">{trPhrase(order.listing.cropName)}</p>
+                        <p className="text-xs text-slate-400">{trPhrase(order.listing.variety)} · {order.quantityKg} {t("কেজি", "kg")}</p>
                       </div>
                       {/* Two questions, two badges: where the goods are, and
                           where the money is. They move independently. */}

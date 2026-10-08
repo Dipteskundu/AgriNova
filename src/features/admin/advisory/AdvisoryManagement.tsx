@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { tr } from "@/lib/localize";
+import { tr, trPhrase } from "@/lib/localize";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Bell,
   AlertTriangle,
@@ -22,7 +23,27 @@ import { getAdminAdvisories, publishAdvisory } from '@/lib/adminApi';
 import { AgronomicAdvisory } from '@/types';
 
 export const AdvisoryManagement: React.FC = () => {
+  const { language } = useLanguage();
   const { showToast } = useToast();
+  const t = (bn: string, en: string) => (language === 'bn' ? bn : en);
+
+  const severityLabel = (s: AgronomicAdvisory['severity']) =>
+    s === 'urgent'
+      ? t('জরুরি', 'URGENT')
+      : s === 'high'
+        ? t('উচ্চ', 'HIGH')
+        : s === 'medium'
+          ? t('মাঝারি', 'MEDIUM')
+          : t('নিম্ন', 'LOW');
+
+  const categoryLabel = (c: AgronomicAdvisory['category']) =>
+    c === 'Pest Alert'
+      ? t('পোকামাকড় সতর্কতা', 'Pest Alert')
+      : c === 'Weather Advisory'
+        ? t('আবহাওয়া পরামর্শ', 'Weather Advisory')
+        : c === 'Nutrient Management'
+          ? t('পুষ্টি ব্যবস্থাপনা', 'Nutrient Management')
+          : t('সেচের সময়', 'Irrigation Timing');
   const [loading, setLoading] = useState(true);
   const [advisories, setAdvisories] = useState<AgronomicAdvisory[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -156,19 +177,20 @@ export const AdvisoryManagement: React.FC = () => {
                       : 'info'
                   }
                 >
-                  {adv.severity.toUpperCase()}{tr('RISK')}</Badge>
-                <Badge variant="neutral">{adv.category}</Badge>
+                  {language === 'bn' ? severityLabel(adv.severity) : adv.severity.toUpperCase()}{tr('RISK')}
+                </Badge>
+                <Badge variant="neutral">{categoryLabel(adv.category)}</Badge>
               </div>
 
               <span className="text-[11px] text-slate-400 font-mono">{tr('ID:')}{adv.id}</span>
             </div>
 
-            <h3 className="text-base font-bold text-slate-900 dark:text-[#f0f0f0]">{adv.title}</h3>
+            <h3 className="text-base font-bold text-slate-900 dark:text-[#f0f0f0]">{trPhrase(adv.title)}</h3>
 
             <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 dark:text-[#a0a0a0] mt-1 mb-3">
-              <span>{tr('Target Crops:')}<strong className="text-slate-700 dark:text-[#999999]">{adv.targetCrops.join(', ')}</strong></span>
-              <span>{tr('Districts:')}<strong className="text-slate-700 dark:text-[#999999]">{adv.targetDistricts.join(', ')}</strong></span>
-              <span>{tr('Valid Until:')}<strong className="text-slate-700 dark:text-[#999999]">{adv.validUntil}</strong></span>
+              <span>{tr('Target Crops:')}<strong className="text-slate-700 dark:text-[#999999]">{adv.targetCrops.map(trPhrase).join(', ')}</strong></span>
+              <span>{tr('Districts:')}<strong className="text-slate-700 dark:text-[#999999]">{adv.targetDistricts.map(trPhrase).join(', ')}</strong></span>
+              <span>{tr('Valid Until:')}<strong className="text-slate-700 dark:text-[#999999]">{trPhrase(adv.validUntil)}</strong></span>
             </div>
 
             <p className="text-xs text-slate-700 dark:text-[#999999] leading-relaxed bg-slate-50 dark:bg-[#111111]/60 p-3 rounded-lg border border-slate-100">

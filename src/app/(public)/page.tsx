@@ -56,9 +56,9 @@ export default function HomePage() {
   ];
 
   const TESTIMONIALS = [
-    { name: "আব্দুল মালেক", nameEn: "Abdul Malek", role: t("কৃষক, বগুড়া", "Farmer, Bogura"), quote: t("FarmPath helped me increase my paddy yield by 20% with their AI recommendations. The verified buyers mean I get fair prices every time.", " আমার AI পরামর্শের মাধ্যমে ধানের ফলন ২০% বাড়িয়েছে। যাচাইকৃত ক্রেতারা প্রতিবার ন্যায্য মূল্য দেন।"), avatar: "AM" },
-    { name: "ফাতেমা বেগম", nameEn: "Fatema Begum", role: t("কৃষক, রংপুর", "Farmer, Rangpur"), quote: t("I used to travel 3 hours to sell my vegetables. Now buyers come to me through FarmPath. My income has doubled in just one season.", "আমি সবজি বিক্রি করতে ৩ ঘণ্টা যেতাম। এখন ক্রেতারা FarmPath-র মাধ্যমে আমার কাছে আসেন। মাত্র এক মৌসুমে আয় দ্বিগুণ হয়েছে।"), avatar: "FB" },
-    { name: t("রহিম ট্রেডিং কো.", "Rahim Trading Co."), role: t("পাইকারি ক্রেতা, ঢাকা", "Wholesale Buyer, Dhaka"), quote: t("The 24-hour quality verification gives us confidence. We source directly from verified farmers — no middlemen, no surprises.", "২৪ ঘণ্টার মান যাচাই আমাদের আত্মবিশ্বাস দেয়। আমরা সরাসরি যাচাইকৃত কৃষক থেকে সরবরাহ निइ — कोनो मध्यस्वत्वभोगी नेइ।"), avatar: "RT" },
+    { name: "আব্দুল মালেক", nameEn: "Abdul Malek", role: t("কৃষক, বগুড়া", "Farmer, Bogura"), quote: t("আমার ধানের ফলন FarmPath-এর AI পরামর্শে ২০% বেড়েছে। যাচাইকৃত ক্রেতাদের কারণে প্রতিবার ন্যায্য দাম পাই।", "FarmPath helped me increase my paddy yield by 20% with its AI recommendations. Verified buyers mean I get fair prices every time."), avatar: "AM" },
+    { name: "ফাতেমা বেগম", nameEn: "Fatema Begum", role: t("কৃষক, রংপুর", "Farmer, Rangpur"), quote: t("সবজি বিক্রি করতে আগে ৩ ঘণ্টা যাতায়াত করতে হতো। এখন FarmPath-এর মাধ্যমে ক্রেতারা আমার কাছে আসেন। এক মৌসুমেই আমার আয় দ্বিগুণ হয়েছে।", "I used to travel 3 hours to sell my vegetables. Now buyers come to me through FarmPath. My income has doubled in just one season."), avatar: "FB" },
+    { name: t("রহিম ট্রেডিং কো.", "Rahim Trading Co."), role: t("পাইকারি ক্রেতা, ঢাকা", "Wholesale Buyer, Dhaka"), quote: t("২৪ ঘণ্টার মান যাচাই আমাদের আস্থা দেয়। আমরা সরাসরি যাচাইকৃত কৃষকদের কাছ থেকে পণ্য নিই—মধ্যস্বত্বভোগী বা অনিশ্চয়তা ছাড়াই।", "The 24-hour quality verification gives us confidence. We source directly from verified farmers—no middlemen, no surprises."), avatar: "RT" },
   ];
 
   const STAKEHOLDERS = [
@@ -79,7 +79,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 gap-8 sm:gap-12 lg:grid-cols-2">
             <div className="flex flex-col justify-center h-full">
               <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold leading-[1.1] tracking-tight text-slate-900 dark:text-[#f0f0f0]">
-                <span className="sm:hidden">From the field<br />to the market, one<br />connected platform</span>
+                <span className="sm:hidden">{t("খামার থেকে বাজার পর্যন্ত, একটি সংযুক্ত প্ল্যাটফর্ম", "From the field to the market, one connected platform")}</span>
                 <span className="hidden sm:inline">{t("খামার থেকে বাজার পর্যন্ত, একটি সংযুক্ত প্ল্যাটফর্ম", "From the field to the market, one connected platform")}</span>
               </h1>
               <p className="mt-4 sm:mt-5 text-sm sm:text-base text-slate-500 dark:text-[#a0a0a0] leading-relaxed max-w-lg">
@@ -120,7 +120,7 @@ export default function HomePage() {
                   </select>
                 </div>
                 <button className="mt-3 w-full rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-400 flex items-center justify-center gap-2 cursor-pointer">
-                  {t("Request early access", "প্রারম্ভিক অ্যাক্সেস অনুরোধ করুন")} <Icon name="ArrowRight" size={14} />
+                  {t("প্রারম্ভিক অ্যাক্সেস অনুরোধ করুন", "Request early access")} <Icon name="ArrowRight" size={14} />
                 </button>
                 <p className="mt-2.5 text-center text-[11px] text-slate-400 dark:text-[#666666]">{t("১,২৪৫ জন কৃষক ইতিমধ্যে অপেক্ষা করছেন", "1,245 farmers already waiting")}</p>
               </div>

@@ -37,6 +37,7 @@ import {
   SupportDisputeCase,
 } from "@/types";
 import { fmtBdt, fmtDate } from "@/lib/format";
+import { trPhrase } from "@/lib/localize";
 
 interface SupportDashboardProps {
   onNavigate: (module: string) => void;
@@ -340,7 +341,7 @@ export const SupportDashboard: React.FC<SupportDashboardProps> = ({
                   {pendingDisputes.slice(0, 4).map((d) => (
                     <ModalRow
                       key={d.id}
-                      title={`${d.caseNumber} · ${d.disputeType}`}
+                      title={`${d.caseNumber} · ${trPhrase(d.disputeType)}`}
                       subtitle={`${d.plaintiff.name} vs ${d.defendant.name} · ${fmtBdt(d.disputedAmountBdt)}`}
                       chip={
                         <ModalChip className={disputeChip(d.status)}>
@@ -381,8 +382,8 @@ export const SupportDashboard: React.FC<SupportDashboardProps> = ({
                   {openTickets.slice(0, 4).map((ticket) => (
                     <ModalRow
                       key={ticket.id}
-                      title={`${ticket.ticketNumber} · ${ticket.subject}`}
-                      subtitle={`${ticket.requesterName} · ${ticket.category} · ${fmtDate(ticket.openedAt)}`}
+                      title={`${ticket.ticketNumber} · ${trPhrase(ticket.subject)}`}
+                      subtitle={`${ticket.requesterName} · ${trPhrase(ticket.category)} · ${fmtDate(ticket.openedAt)}`}
                       chip={
                         <ModalChip className={ticketChip(ticket.status)}>
                           {ticket.status === "in_progress"
@@ -423,7 +424,7 @@ export const SupportDashboard: React.FC<SupportDashboardProps> = ({
                     .map((d) => (
                       <ModalRow
                         key={d.id}
-                        title={`${d.caseNumber} · ${d.disputeType}`}
+                        title={`${d.caseNumber} · ${trPhrase(d.disputeType)}`}
                         subtitle={`${d.assignedAgentName} · ${fmtDate(d.openedAt)}`}
                         chip={
                           <ModalChip className="bg-emerald-100 text-emerald-800 dark:bg-emerald-500/15 dark:text-emerald-300">
@@ -464,8 +465,8 @@ export const SupportDashboard: React.FC<SupportDashboardProps> = ({
                   {escalations.slice(0, 4).map((e) => (
                     <ModalRow
                       key={e.id}
-                      title={`${e.caseNumber} · ${e.escalatedTo}`}
-                      subtitle={`${e.reason} · ${fmtDate(e.escalatedAt)}`}
+                      title={`${e.caseNumber} · ${trPhrase(e.escalatedTo)}`}
+                      subtitle={`${trPhrase(e.reason)} · ${fmtDate(e.escalatedAt)}`}
                       chip={
                         <ModalChip className={escalationChip(e.status)}>
                           {e.status === "resolved"

@@ -7,8 +7,21 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { tr } from "@/lib/localize";
 import { getPublicInputs, type SupplierProduct } from "@/lib/supplierApi";
 import { StarRating } from "../ratings/StarRating";
+
+/** UI categories (as `mapSupplierProduct` emits them), plus "" for "everything". */
+const CATEGORY_LABEL: Record<string, [string, string]> = {
+  "": ["সব", "All"],
+  Seeds: ["বীজ", "Seeds"],
+  Fertilizers: ["সার", "Fertilizers"],
+  Pesticides: ["কীটনাশক", "Pesticides"],
+  Tools: ["সরঞ্জাম", "Tools"],
+  Equipment: ["যন্ত্রপাতি", "Equipment"],
+  Irrigation: ["সেচ যন্ত্র", "Irrigation"],
+  Packaging: ["প্যাকেজিং", "Packaging"],
+};
 
 /** The UI union `mapSupplierProduct` emits, plus "" for "everything". */
 const CATEGORIES = [
@@ -50,13 +63,17 @@ export function InputsBrowser({ basePath = "/inputs" }: { basePath?: string }) {
   const [showFilters, setShowFilters] = useState(false);
 
   const t = (bn: string, en: string) => (language === "bn" ? bn : en);
+  const categoryLabel = (cat: string) => {
+    const pair = CATEGORY_LABEL[cat];
+    return pair ? (language === "bn" ? pair[0] : pair[1]) : cat;
+  };
 
   const fetchInputs = useCallback(async () => {
     setLoading(true);
     setError("");
     const res = await getPublicInputs();
     if (res.success) setProducts(res.data);
-    else setError(res.message || "Could not load inputs.");
+    else setError(res.message || t("ইনপুট লোড করা যায়নি।", "Could not load inputs."));
     setLoading(false);
   }, []);
 
@@ -100,7 +117,7 @@ export function InputsBrowser({ basePath = "/inputs" }: { basePath?: string }) {
           </h1>
           <p className="text-sm text-slate-500 dark:text-[#a0a0a0] mt-0.5">
             {loading
-              ? "Loading..."
+              ? t("লোড হচ্ছে...", "Loading...")
               : `${visible.length} ${t("টি আইটেম পাওয়া গেছে", "items found")}`}
           </p>
         </div>
@@ -110,17 +127,17 @@ export function InputsBrowser({ basePath = "/inputs" }: { basePath?: string }) {
             onChange={(e) => setSortBy(e.target.value as SortKey)}
             className="text-xs px-3 py-2 border border-slate-200 dark:border-[#333] rounded-lg bg-white dark:bg-[#111] text-slate-700 dark:text-[#e0e0e0] focus:outline-none"
           >
-            <option value="newest">Newest First</option>
-            <option value="price_asc">Price: Low → High</option>
-            <option value="price_desc">Price: High → Low</option>
-            <option value="stock">Most In Stock</option>
+            <option value="newest">{t("নতুন আগে", "Newest First")}</option>
+            <option value="price_asc">{t("মূল্য: কম → বেশি", "Price: Low → High")}</option>
+            <option value="price_desc">{t("মূল্য: বেশি → কম", "Price: High → Low")}</option>
+            <option value="stock">{t("সবচেয়ে বেশি স্টকে", "Most In Stock")}</option>
           </select>
           <button
             onClick={() => setShowFilters(!showFilters)}
             className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium border border-slate-200 dark:border-[#333] rounded-lg bg-white dark:bg-[#111] text-slate-700 dark:text-[#e0e0e0] hover:bg-slate-50 dark:hover:bg-[#1a1a1a] transition-colors"
           >
             <Icon name="SlidersHorizontal" size={14} />
-            Filters
+            {t("ফিল্টার", "Filters")}
           </button>
         </div>
       </div>
@@ -150,7 +167,7 @@ export function InputsBrowser({ basePath = "/inputs" }: { basePath?: string }) {
             >
               {CATEGORIES.map((c) => (
                 <option key={c} value={c}>
-                  {c || "All"}
+                  {categoryLabel(c)}
                 </option>
               ))}
             </select>
@@ -191,7 +208,7 @@ export function InputsBrowser({ basePath = "/inputs" }: { basePath?: string }) {
                 : "bg-slate-100 dark:bg-[#1a1a1a] text-slate-600 dark:text-[#a0a0a0] hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-500/10 dark:hover:text-blue-400"
             }`}
           >
-            {cat || t("সব", "All")}
+            {categoryLabel(cat)}
           </button>
         ))}
       </div>
@@ -228,7 +245,7 @@ export function InputsBrowser({ basePath = "/inputs" }: { basePath?: string }) {
           description={t("ফিল্টার পরিবর্তন করে আবার চেষ্টা করুন।", "Try adjusting your filters.")}
           action={
             <Button variant="outline" onClick={clearFilters}>
-              Clear Filters
+              {t("ফিল্টার মুছুন", "Clear Filters")}
             </Button>
           }
         />
@@ -243,12 +260,12 @@ export function InputsBrowser({ basePath = "/inputs" }: { basePath?: string }) {
               <div className="relative h-48 overflow-hidden">
                 <img
                   src={product.imageUrl}
-                  alt={product.productName}
+                  alt={tr(product.productName)}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute top-2 left-2 flex gap-1.5 flex-wrap">
                   <Badge variant="neutral" size="sm">
-                    {product.category}
+                    {categoryLabel(product.category)}
                   </Badge>
                   {product.stockQuantity <= 0 && (
                     <span className="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
@@ -258,15 +275,15 @@ export function InputsBrowser({ basePath = "/inputs" }: { basePath?: string }) {
                 </div>
                 <div className="absolute bottom-2 right-2 bg-white/90 dark:bg-black/70 backdrop-blur-sm px-2 py-1 rounded-lg text-sm font-black text-blue-700 dark:text-blue-400">
                   ৳{product.pricePerUnitBdt}
-                  <span className="text-[10px] font-normal">/{product.unit}</span>
+                  <span className="text-[10px] font-normal">/{tr(product.unit)}</span>
                 </div>
               </div>
               <div className="p-4">
                 <h3 className="font-bold text-sm text-slate-900 dark:text-[#f0f0f0]">
-                  {product.productName}
+                  {tr(product.productName)}
                 </h3>
                 <p className="text-xs text-slate-500 dark:text-[#a0a0a0] line-clamp-2 mt-0.5">
-                  {product.description}
+                  {tr(product.description)}
                 </p>
                 {/* Rating badge — only once something has been rated; the
                     detail page always shows the summary, including 0. */}
@@ -290,12 +307,12 @@ export function InputsBrowser({ basePath = "/inputs" }: { basePath?: string }) {
                       product.stockQuantity > 0 ? "text-slate-400" : "text-red-500"
                     }`}
                   >
-                    {product.stockQuantity.toLocaleString()} {product.unit}
+                    {product.stockQuantity.toLocaleString()} {tr(product.unit)}
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5 mt-2.5 pt-2.5 border-t border-slate-100 dark:border-[#1a1a1a] text-[11px] text-slate-400">
                   <Icon name="Info" size={11} />
-                  {t("সর্বনিম্ন অর্ডার", "Min order")}: {product.minimumOrderQuantity} {product.unit}
+                  {t("সর্বনিম্ন অর্ডার", "Min order")}: {product.minimumOrderQuantity} {tr(product.unit)}
                   <span className="ml-auto font-semibold text-blue-600 dark:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity">
                     {t("বিস্তারিত", "Details")} →
                   </span>

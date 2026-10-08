@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { tr } from "@/lib/localize";
+import { tr, trPhrase } from "@/lib/localize";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Sparkles,
   CheckCircle2,
@@ -27,6 +28,7 @@ interface AiRecommendationResultProps {
 export const AiRecommendationResult: React.FC<AiRecommendationResultProps> = ({
   onNavigate,
 }) => {
+  useLanguage();
   const { showToast } = useToast();
   const [loading, setLoading] = useState(true);
   const [diagnostic, setDiagnostic] = useState<AiRecommendationDiagnostic | null>(null);
@@ -160,7 +162,7 @@ export const AiRecommendationResult: React.FC<AiRecommendationResultProps> = ({
             {recommendedFertilizers.map((fert) => (
               <div key={fert.name} className="p-3.5 bg-slate-50 dark:bg-[#111111]/60 rounded-xl border border-slate-200 dark:border-[#222222]/80">
                 <div className="flex items-center justify-between mb-1">
-                  <h4 className="font-bold text-slate-900 dark:text-[#f0f0f0] text-sm">{tr(fert.name)}</h4>
+                  <h4 className="font-bold text-slate-900 dark:text-[#f0f0f0] text-sm">{trPhrase(fert.name)}</h4>
                   <Badge variant="info">{fert.dosagePerAcre}</Badge>
                 </div>
                 <p className="text-[11px] text-slate-500 dark:text-[#a0a0a0] mb-1">

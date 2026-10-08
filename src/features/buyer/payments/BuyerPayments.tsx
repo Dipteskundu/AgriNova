@@ -11,15 +11,18 @@ import {
   getBuyerPayments,
   type BuyerPayment,
 } from "@/lib/marketplaceApi";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { trPhrase } from "@/lib/localize";
+import { bnNum, fmtDateTimeBn } from "@/lib/format";
 
 /** The record-level status union, inlined on `BuyerPayment`. */
 type PaymentRecordStatus = BuyerPayment["status"];
 
-const STATUS_LABEL: Record<PaymentRecordStatus, { label: string; variant: BadgeVariant }> = {
-  completed: { label: "Completed", variant: "success" },
-  pending: { label: "In Escrow", variant: "warning" },
-  failed: { label: "Failed", variant: "danger" },
-  refunded: { label: "Refunded", variant: "neutral" },
+const STATUS_LABEL: Record<PaymentRecordStatus, { variant: BadgeVariant }> = {
+  completed: { variant: "success" },
+  pending: { variant: "warning" },
+  failed: { variant: "danger" },
+  refunded: { variant: "neutral" },
 };
 
 /** Fallbacks are only icons that actually exist in `components/icons.tsx`. */
@@ -32,12 +35,8 @@ const METHOD_ICON: Record<string, IconName> = {
 };
 
 /** ৳ with thousands separators — `toLocaleString` keeps ৳0.50-ish fractions sane. */
-const money = (n: number) => `৳${n.toLocaleString()}`;
-
-const shortDate = (iso: string) => {
-  const d = new Date(iso);
-  return Number.isNaN(d.getTime()) ? iso : d.toLocaleDateString();
-};
+const money = (n: number, bn: boolean) =>
+  `৳${bn ? bnNum(n.toLocaleString()) : n.toLocaleString()}`;
 
 /**
  * Buyer payment history — `GET /api/payments`.
@@ -49,10 +48,39 @@ const shortDate = (iso: string) => {
  */
 export function BuyerPayments() {
   const { user } = useAuth();
+  const { language } = useLanguage();
   const router = useRouter();
   const [payments, setPayments] = useState<BuyerPayment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const statusText = (key: string) =>
+    ({
+      completed: language === "bn" ? "সম্পন্ন" : "Completed",
+      pending: language === "bn" ? "এসক্রোতে" : "In Escrow",
+      failed: language === "bn" ? "ব্যর্থ" : "Failed",
+      refunded: language === "bn" ? "ফেরত" : "Refunded",
+    }[key] ?? key);
+
+  const methodText = (key: string) =>
+    language === "bn"
+      ? ({ "Bank Transfer": "ব্যাংক ট্রান্সফার", Card: "কার্ড" }[key] ?? trPhrase(key))
+      : key;
+
+  /**
+   * The payment title can be a produce name ("Onion (B_paree)") or the
+   * composed Stripe purpose ("Purchase of Himsagar Mango (Stripe)").
+   * Rebuild the template on the Bengali side and translate what we can.
+   */
+  const purposeText = (name: string) => {
+    const m = name.match(/^Purchase of (.*?)(?: \(Stripe\))?$/);
+    if (m) {
+      const item = trPhrase(m[1]);
+      const stripe = name.endsWith("(Stripe)") ? " (Stripe)" : "";
+      return language === "bn" ? `পণ্য ক্রয়: ${item}${stripe}` : `Purchase of ${item}${stripe}`;
+    }
+    return trPhrase(name);
+  };
 
   useEffect(() => {
     if (!user) {
@@ -61,7 +89,7 @@ export function BuyerPayments() {
     }
     getBuyerPayments().then((res) => {
       if (res.success) setPayments(res.data);
-      else setError(res.message || "Could not load payments.");
+      else setError(res.message || (language === "bn" ? "পেমেন্ট লোড করা যায়নি।" : "Could not load payments."));
       setLoading(false);
     });
   }, [user, router]);
@@ -79,24 +107,28 @@ export function BuyerPayments() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-6">
-        <h1 className="text-xl font-bold text-slate-900 dark:text-[#f0f0f0]">Payments</h1>
+        <h1 className="text-xl font-bold text-slate-900 dark:text-[#f0f0f0]">
+          {language === "bn" ? "পেমেন্ট" : "Payments"}
+        </h1>
         <p className="text-xs text-slate-400 mt-0.5">
-          Funds stay in escrow until delivery is confirmed.
+          {language === "bn"
+            ? "ডেলিভারি নিশ্চিত না হওয়া পর্যন্ত টাকা এসক্রোতে থাকে।"
+            : "Funds stay in escrow until delivery is confirmed."}
         </p>
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 mb-6">
         {[
-          { label: "Settled", value: completed, cls: "text-emerald-600 dark:text-emerald-400" },
-          { label: "Held in escrow", value: inEscrow, cls: "text-amber-600 dark:text-amber-400" },
-          { label: "Refunded", value: refunded, cls: "text-slate-500 dark:text-[#a0a0a0]" },
+          { label: language === "bn" ? "পরিশোধিত" : "Settled", value: completed, cls: "text-emerald-600 dark:text-emerald-400" },
+          { label: language === "bn" ? "এসক্রোতে আটক" : "Held in escrow", value: inEscrow, cls: "text-amber-600 dark:text-amber-400" },
+          { label: language === "bn" ? "ফেরত" : "Refunded", value: refunded, cls: "text-slate-500 dark:text-[#a0a0a0]" },
         ].map((s) => (
           <div
             key={s.label}
             className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-[#222] dark:bg-[#0a0a0a]"
           >
             <p className="text-xs text-slate-400">{s.label}</p>
-            <p className={`mt-1 text-lg font-black ${s.cls}`}>{money(s.value)}</p>
+            <p className={`mt-1 text-lg font-black ${s.cls}`}>{money(s.value, language === "bn")}</p>
           </div>
         ))}
       </div>
@@ -111,15 +143,21 @@ export function BuyerPayments() {
           ))}
         </div>
       ) : error ? (
-        <EmptyState icon={AlertTriangle} title="Could not load payments" description={error} />
+        <EmptyState
+          icon={AlertTriangle}
+          title={language === "bn" ? "পেমেন্ট লোড করা যায়নি" : "Could not load payments"}
+          description={error}
+        />
       ) : payments.length === 0 ? (
         <EmptyState
           icon={CreditCard}
-          title="No payments yet"
-          description="Payments appear here as soon as you place an order."
+          title={language === "bn" ? "এখনো কোনো পেমেন্ট নেই" : "No payments yet"}
+          description={language === "bn"
+            ? "অর্ডার করলেই এখানে পেমেন্ট দেখা যাবে।"
+            : "Payments appear here as soon as you place an order."}
           action={
             <a href="/products" className="text-sm font-semibold text-blue-600 hover:underline">
-              Browse Produce →
+              {language === "bn" ? "পণ্য দেখুন →" : "Browse Produce →"}
             </a>
           }
         />
@@ -140,22 +178,22 @@ export function BuyerPayments() {
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
                       <p className="truncate text-sm font-bold text-slate-900 dark:text-[#f0f0f0]">
-                        {p.produceName || "Order payment"}
+                        {purposeText(p.produceName) || (language === "bn" ? "অর্ডার পেমেন্ট" : "Order payment")}
                       </p>
                       <p className="mt-0.5 truncate text-xs text-slate-400">
                         {p.transactionRef}
-                        {p.orderCode ? ` · ${p.orderCode}` : ""} · {p.method}
+                        {p.orderCode ? ` · ${p.orderCode}` : ""} · {methodText(p.method)}
                       </p>
                     </div>
                     <Badge variant={meta.variant} size="sm">
-                      {meta.label}
+                      {statusText(p.status)}
                     </Badge>
                   </div>
 
                   <div className="mt-2 flex items-center justify-between gap-2">
-                    <span className="text-xs text-slate-400">{shortDate(p.paidAt)}</span>
+                    <span className="text-xs text-slate-400">{fmtDateTimeBn(p.paidAt)}</span>
                     <span className="text-sm font-black text-blue-700 dark:text-blue-400">
-                      {money(p.amountBdt)}
+                      {money(p.amountBdt, language === "bn")}
                     </span>
                   </div>
                 </div>

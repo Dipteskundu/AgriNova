@@ -62,7 +62,7 @@ import { getMyProduceListings, type ProduceListing } from '@/lib/marketplaceApi'
 import { getWallet, type WalletSummary } from '@/lib/walletApi';
 import { FarmerModuleKey } from '@/features/layout';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { tr } from '@/lib/localize';
+import { tr, trPhrase } from '@/lib/localize';
 import { bnNum, fmtBdt, fmtBdtShort } from '@/lib/format';
 
 async function safeData<T>(p: Promise<{ success: boolean; data: T }>): Promise<T | null> {
@@ -191,6 +191,28 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
     cropBatches.find((b) => /harvest|ready|মোসম|প্রস্তুত/i.test(b.growthStage || '')) ?? null;
   const soilInsight = diagnostic?.soilDeficiencies[0] ?? null;
   const deficientCount = (diagnostic?.soilDeficiencies ?? []).filter((d) => d.status === 'Deficient').length;
+
+  /**
+   * `buildAiDiagnostic` ships the agronomic rationale as one English paragraph
+   * templated with the field/batch counts and crop names, so a whole-string
+   * dict lookup never matches. Rebuild the sentence bangla-side from its
+   * parts; anything else falls back to the dictionary.
+   */
+  const rationaleText = (rationale: string): string => {
+    const m = rationale.match(
+      /^Nutrient status was aggregated from (\d+) registered field\(s\) and combined with the (\d+) active crop batch\(es\) for (.+)\. Recommendations prioritise correcting measured deficiencies before yield-limiting stages, while keeping leaching losses low under the prevailing rainfall\.$/
+    );
+    if (!m) return tr(rationale);
+    const crops = m[3]
+      .split(", ")
+      .map((c) => tr(c.trim()))
+      .join(", ");
+    return language === 'bn'
+      ? `${bnNum(Number(m[1]))}টি নিবন্ধিত ক্ষেত থেকে পুষ্টির অবস্থা একত্রিত করে ${bnNum(
+          Number(m[2])
+        )}টি সক্রিয় ফসল ব্যাচের সাথে মিলিয়ে বিশ্লেষণ করা হয়েছে (${crops})। ফলন-সীমাবদ্ধ পর্যায়ের আগেই পরিমাপকৃত ঘাটতি পূরণকে অগ্রাধিকার দেওয়া হয়েছে, পাশাপাশি চলমান বৃষ্টিপাতের আওতায় পুষ্টি উপাদানের ক্ষয় কম রাখা হয়েছে।`
+      : rationale;
+  };
   const approvedListings = listings.filter((l) => l.status === 'Approved');
   const pendingListings = listings.filter((l) => l.status !== 'Approved');
 
@@ -506,10 +528,10 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
                     {cropBatches.slice(0, 4).map((crop) => (
                       <div key={crop.id} className="p-2.5 rounded-xl border border-slate-100 dark:border-[#222222] flex items-center justify-between bg-slate-50 dark:bg-[#111111]/60">
                         <div>
-                          <p className="font-bold text-slate-900 dark:text-[#f0f0f0]">{crop.cropName} ({crop.variety})</p>
-                          <p className="text-[11px] text-slate-500 dark:text-[#a0a0a0]">{crop.fieldName} • {crop.growthStage}</p>
+                          <p className="font-bold text-slate-900 dark:text-[#f0f0f0]">{trPhrase(crop.cropName)} ({trPhrase(crop.variety)})</p>
+                          <p className="text-[11px] text-slate-500 dark:text-[#a0a0a0]">{trPhrase(crop.fieldName)} • {trPhrase(crop.growthStage)}</p>
                         </div>
-                        <span className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400">{crop.healthRating}</span>
+                        <span className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400">{trPhrase(crop.healthRating)}</span>
                       </div>
                     ))}
                   </div>
@@ -541,9 +563,9 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
                           </button>
                           <div className="truncate">
                             <p className={`font-semibold ${task.isCompleted ? 'line-through text-slate-400' : 'text-slate-800 dark:text-[#e0e0e0]'}`}>
-                              {tr(task.taskTitle)}
+                              {trPhrase(task.taskTitle)}
                             </p>
-                            <p className="text-[10px] text-slate-500 dark:text-[#a0a0a0]">{tr(task.cropName)} • {task.scheduledDate}</p>
+                            <p className="text-[10px] text-slate-500 dark:text-[#a0a0a0]">{trPhrase(task.cropName)} • {task.scheduledDate}</p>
                           </div>
                         </div>
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ${
@@ -562,7 +584,7 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
                   <div className="p-4 rounded-2xl bg-amber-50/70 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 text-amber-950 dark:text-amber-200 flex items-center justify-between">
                     <div>
                       <span className="text-2xl font-black block">{weather ? `${weather.tempCelsius}°C` : '—'}</span>
-                      <span className="text-xs font-bold text-amber-800 dark:text-amber-300">{weather?.condition ?? '—'}</span>
+                      <span className="text-xs font-bold text-amber-800 dark:text-amber-300">{weather?.condition ? tr(weather.condition) : '—'}</span>
                     </div>
                     <div className="text-right text-[11px] text-amber-900 dark:text-amber-200 space-y-0.5">
                       <p>{language === 'bn' ? 'বৃষ্টির সম্ভাবনা:' : 'Rain chance:'} <strong className="text-amber-950 dark:text-amber-100">{bnNum(weather?.precipitationProbability ?? 0)}%</strong></p>
@@ -596,8 +618,8 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
                       : <strong>Primary Farm:</strong>}{' '}
                     {primaryFarm
                       ? language === 'bn'
-                        ? `${primaryFarm.name} (${primaryFarm.location}), মাটির ধরণ: ${primaryFarm.soilClassification}, সেচ: ${primaryFarm.irrigationType}`
-                        : `${primaryFarm.name} (${primaryFarm.location}), ${primaryFarm.soilClassification}, ${primaryFarm.irrigationType}`
+                        ? `${trPhrase(primaryFarm.name)} (${trPhrase(primaryFarm.location)}), মাটির ধরণ: ${trPhrase(primaryFarm.soilClassification)}, সেচ: ${trPhrase(primaryFarm.irrigationType)}`
+                        : `${trPhrase(primaryFarm.name)} (${trPhrase(primaryFarm.location)}), ${trPhrase(primaryFarm.soilClassification)}, ${trPhrase(primaryFarm.irrigationType)}`
                       : language === 'bn'
                         ? 'কোনো খামার এখনো নিবন্ধিত হয়নি।'
                         : 'No farms registered yet.'}
@@ -615,7 +637,7 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
                     {expenseCategories.length > 0 ? (
                       expenseCategories.map((cat) => (
                         <div key={cat.category} className="flex justify-between p-2 bg-slate-50 dark:bg-[#111111]/60 rounded-lg text-slate-700 dark:text-[#999999]">
-                          <span>{tr(cat.category)}</span>
+                          <span>{trPhrase(cat.category)}</span>
                           <span className="font-bold">{bnNum(fmtBdt(cat.amount))}</span>
                         </div>
                       ))
@@ -644,8 +666,8 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
                   <p className="text-[11px] text-slate-500 dark:text-[#a0a0a0] leading-relaxed">
                     {topMarginCrop
                       ? language === 'bn'
-                        ? `${topMarginCrop.cropName} থেকে সর্বোচ্চ লাভ (${bnNum(topMarginPercent)}%) প্রক্ষেপিত`
-                        : `Highest margin (${topMarginPercent}%) projected from ${topMarginCrop.cropName}`
+                        ? `${trPhrase(topMarginCrop.cropName)} থেকে সর্বোচ্চ লাভ (${bnNum(topMarginPercent)}%) প্রক্ষেপিত`
+                        : `Highest margin (${topMarginPercent}%) projected from ${trPhrase(topMarginCrop.cropName)}`
                       : language === 'bn'
                         ? 'এখনো আয়-ব্যয়ের রেকর্ড নেই।'
                         : 'No revenue or expense records yet.'}
@@ -696,11 +718,11 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
                     </div>
                     <div className="p-2.5 bg-slate-50 dark:bg-[#111111]/60 border border-slate-200 dark:border-[#222222] rounded-xl">
                       <span className="text-slate-500 dark:text-[#a0a0a0] block text-[11px]">{language === 'bn' ? 'প্রাক্কলিত ফলন' : 'Yield Potential'}</span>
-                      <span className="font-bold text-slate-800 dark:text-[#e0e0e0]">{diagnostic ? `${bnNum(diagnostic.yieldPotentialPrediction.minimumYield)}-${bnNum(diagnostic.yieldPotentialPrediction.maximumYield)} ${diagnostic.yieldPotentialPrediction.unit}` : '—'}</span>
+                      <span className="font-bold text-slate-800 dark:text-[#e0e0e0]">{diagnostic ? `${bnNum(diagnostic.yieldPotentialPrediction.minimumYield)}-${bnNum(diagnostic.yieldPotentialPrediction.maximumYield)} ${tr(diagnostic.yieldPotentialPrediction.unit)}` : '—'}</span>
                     </div>
                   </div>
                   <p className="text-[11px] text-slate-500 dark:text-[#a0a0a0] leading-relaxed">
-                    {diagnostic ? diagnostic.agronomicRationale : (language === 'bn' ? 'এইমুহূর্তে কোনো বিশ্লেষণ পাওয়া যায়নি।' : 'No diagnostic available right now.')}
+                    {diagnostic ? rationaleText(diagnostic.agronomicRationale) : (language === 'bn' ? 'এইমুহূর্তে কোনো বিশ্লেষণ পাওয়া যায়নি।' : 'No diagnostic available right now.')}
                   </p>
                 </div>
               )}
@@ -709,7 +731,7 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
                 <div className="space-y-3">
                   <div className="space-y-2">
                     {compareProfiles.slice(0, 3).map((p) => ({
-                        name: `${p.cropName} (${p.variety})`,
+                        name: `${tr(p.cropName)} (${tr(p.variety)})`,
                         roi: `${p.netMarginPercent}%`,
                         cost: `${fmtBdt(p.totalInputCostPerAcre)} / ${language === 'bn' ? 'একর' : 'acre'}`,
                         badge: p.netMarginPercent >= 30 ? (language === 'bn' ? 'সর্বোচ্চ লাভ' : 'Max Profit') : p.netMarginPercent >= 20 ? (language === 'bn' ? 'মধ্যম লাভ' : 'Medium Profit') : (language === 'bn' ? 'কম লাভ' : 'Low Profit'),
@@ -722,7 +744,7 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
                           <p className="text-[10px] text-slate-500 dark:text-[#a0a0a0]">{language === 'bn' ? 'খরচ: ' : 'Cost: '}{item.cost}</p>
                         </div>
                         <div className="text-right">
-                          <span className="text-xs font-black text-emerald-700 dark:text-emerald-400 block">ROI {item.roi}</span>
+                          <span className="text-xs font-black text-emerald-700 dark:text-emerald-400 block">{language === 'bn' ? 'লাভ' : 'ROI'} {item.roi}</span>
                           <span className="text-[10px] font-semibold text-slate-500 dark:text-[#a0a0a0]">{item.badge}</span>
                         </div>
                       </div>
@@ -742,10 +764,10 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
                       recentLogs.slice(0, 3).map((log) => (
                         <div key={log.id} className="p-2.5 bg-slate-50 dark:bg-[#111111]/60 border border-slate-200 dark:border-[#222222] rounded-xl text-xs">
                           <div className="flex items-center justify-between mb-1">
-                            <span className="font-bold text-slate-800 dark:text-[#e0e0e0]">{tr(log.activityType)}</span>
+                            <span className="font-bold text-slate-800 dark:text-[#e0e0e0]">{trPhrase(log.activityType)}</span>
                             <span className="text-[10px] text-slate-400">{log.date}</span>
                           </div>
-                          <p className="text-[11px] text-slate-600 dark:text-[#a0a0a0] line-clamp-2">{tr(log.details)}</p>
+                          <p className="text-[11px] text-slate-600 dark:text-[#a0a0a0] line-clamp-2">{trPhrase(log.details)}</p>
                         </div>
                       ))
                     ) : (
@@ -764,7 +786,7 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
                       {language === 'bn' ? 'চলমান অডিও ও ভিডিও কোর্স' : 'Featured Course'}
                     </span>
                     <p className="text-sm font-bold mt-1 text-amber-950 dark:text-amber-200">
-                      {featuredCourse ? featuredCourse.title : (language === 'bn' ? 'কোনো কোর্স পাওয়া যায়নি' : 'No courses available')}
+                      {featuredCourse ? tr(featuredCourse.title) : (language === 'bn' ? 'কোনো কোর্স পাওয়া যায়নি' : 'No courses available')}
                     </p>
                   </div>
                   <div className="p-2.5 bg-slate-50 dark:bg-[#111111]/60 border border-slate-200 dark:border-[#222222] rounded-xl text-xs space-y-1">
@@ -795,8 +817,8 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
                   <div className="p-2.5 bg-slate-50 dark:bg-[#111111]/60 border border-slate-200 dark:border-[#222222] rounded-xl text-xs text-slate-600 dark:text-[#a0a0a0]">
                     🌾 {upcomingHarvestBatch
                       ? (language === 'bn'
-                        ? `আসন্ন উত্তোলন: ${upcomingHarvestBatch.cropName} (${upcomingHarvestBatch.growthStage})`
-                        : `Upcoming harvest: ${upcomingHarvestBatch.cropName} (${upcomingHarvestBatch.growthStage})`)
+                        ? `আসন্ন উত্তোলন: ${tr(upcomingHarvestBatch.cropName)} (${tr(upcomingHarvestBatch.growthStage)})`
+                        : `Upcoming harvest: ${tr(upcomingHarvestBatch.cropName)} (${tr(upcomingHarvestBatch.growthStage)})`)
                       : (language === 'bn' ? 'কাটার উপযুক্ত কোনো ফসল নেই।' : 'No batches ready for harvest yet.')}
                   </div>
                 </div>
@@ -838,8 +860,8 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
                             : 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20'
                         }`}
                       >
-                        <span className={`font-bold block ${n.priority === 'high' ? 'text-amber-900 dark:text-amber-300' : 'text-emerald-900 dark:text-emerald-300'}`}>{n.title}</span>
-                        <span className={`text-[11px] ${n.priority === 'high' ? 'text-amber-800 dark:text-amber-200' : 'text-emerald-800 dark:text-emerald-200'}`}>{n.message}</span>
+                        <span className={`font-bold block ${n.priority === 'high' ? 'text-amber-900 dark:text-amber-300' : 'text-emerald-900 dark:text-emerald-300'}`}>{tr(n.title)}</span>
+                        <span className={`text-[11px] ${n.priority === 'high' ? 'text-amber-800 dark:text-amber-200' : 'text-emerald-800 dark:text-emerald-200'}`}>{tr(n.message)}</span>
                       </div>
                     ))
                   ) : (
@@ -869,8 +891,8 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onNavigate }) 
                       {listings.slice(0, 4).map((l) => (
                         <ModalRow
                           key={l.id}
-                          title={`${l.cropName}${l.variety ? ` · ${l.variety}` : ''}`}
-                          subtitle={`${l.quantityKg.toLocaleString()} kg · ${fmtBdt(l.pricePerKgBdt)}/kg · ${l.district || l.location || '—'}`}
+                          title={`${trPhrase(l.cropName)}${l.variety ? ` · ${trPhrase(l.variety)}` : ''}`}
+                          subtitle={`${l.quantityKg.toLocaleString()} kg · ${fmtBdt(l.pricePerKgBdt)}/kg · ${trPhrase(l.district || l.location || '—')}`}
                           chip={
                             <ModalChip
                               className={

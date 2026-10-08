@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { tr } from "@/lib/localize";
+import { tr, trPhrase } from "@/lib/localize";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Send,
   AlertTriangle,
@@ -22,7 +23,9 @@ import { WeatherData } from '@/types';
 type MicroclimateAlert = WeatherData['microclimateAlerts'][number];
 
 export const WeatherAlertBroadcast: React.FC = () => {
+  const { language } = useLanguage();
   const { showToast } = useToast();
+  const t = (bn: string, en: string) => (language === 'bn' ? bn : en);
   const [loading, setLoading] = useState(true);
   const [activeAlerts, setActiveAlerts] = useState<MicroclimateAlert[]>([]);
   const [broadcastForm, setBroadcastForm] = useState({
@@ -71,7 +74,10 @@ export const WeatherAlertBroadcast: React.FC = () => {
         });
         showToast(
           'success',
-          `Emergency Weather Advisory dispatched across Northern divisions!`
+          t(
+            'জরুরি আবহাওয়া পরামর্শ উত্তর বিভাগজুড়ে প্রেরণ হয়েছে!',
+            'Emergency Weather Advisory dispatched across Northern divisions!'
+          )
         );
       }
     } catch (err) {
@@ -207,7 +213,7 @@ export const WeatherAlertBroadcast: React.FC = () => {
         <div className="lg:col-span-2 space-y-4">
           <Card>
             <CardHeader
-              title={`Active Agronomic Bulletins (${activeAlerts.length})`}
+              title={`${t('সক্রিয় কৃষি বুলেটিন', 'Active Agronomic Bulletins')} (${activeAlerts.length})`}
               subtitle={tr('Currently transmitting to field officers, farmer portals, and regional SMS gateways')}
             />
 
@@ -234,7 +240,7 @@ export const WeatherAlertBroadcast: React.FC = () => {
                             : 'text-blue-600'
                         }`}
                       />
-                      <h4 className="font-bold text-slate-900 dark:text-[#f0f0f0] text-sm">{alert.title}</h4>
+                      <h4 className="font-bold text-slate-900 dark:text-[#f0f0f0] text-sm">{trPhrase(alert.title)}</h4>
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -247,7 +253,13 @@ export const WeatherAlertBroadcast: React.FC = () => {
                             : 'info'
                         }
                       >
-                        {alert.severity.toUpperCase()}
+                        {language === 'bn'
+                          ? alert.severity === 'critical'
+                            ? 'গুরুতর'
+                            : alert.severity === 'warning'
+                              ? 'সতর্ক'
+                              : 'তথ্য'
+                          : alert.severity.toUpperCase()}
                       </Badge>
                       <button
                         onClick={() => handleDismiss(alert.id)}
@@ -259,16 +271,16 @@ export const WeatherAlertBroadcast: React.FC = () => {
                     </div>
                   </div>
 
-                  <p className="text-xs text-slate-700 dark:text-[#999999] leading-relaxed">{alert.message}</p>
+                  <p className="text-xs text-slate-700 dark:text-[#999999] leading-relaxed">{trPhrase(alert.message)}</p>
 
                   <div className="p-2.5 bg-white dark:bg-[#0a0a0a]/80 rounded-lg border border-slate-200 dark:border-[#222222]/60 text-xs">
                     <span className="font-bold text-slate-800 dark:text-[#e0e0e0] block text-[10px] uppercase">{tr('Required Field Action')}</span>
-                    <span className="text-slate-700 dark:text-[#999999]">{alert.actionRequired}</span>
+                    <span className="text-slate-700 dark:text-[#999999]">{trPhrase(alert.actionRequired)}</span>
                   </div>
 
                   <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-[#a0a0a0] pt-1">
                     <span className="flex items-center gap-1">
-                      <Clock className="w-3 h-3" />{tr('Expires:')}{alert.validUntil}
+                      <Clock className="w-3 h-3" />                      {tr('Expires:')}{trPhrase(alert.validUntil)}
                     </span>
                     <span className="font-mono">{tr('ID:')}{alert.id}</span>
                   </div>

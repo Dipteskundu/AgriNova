@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { tr } from "@/lib/localize";
 import { X } from "@/components/icons";
 
@@ -30,6 +31,8 @@ export const Modal: React.FC<ModalProps> = ({
   children,
   maxWidth = "lg",
 }) => {
+  useLanguage();
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isOpen) onClose();
@@ -51,8 +54,8 @@ export const Modal: React.FC<ModalProps> = ({
       >
         <div className="flex items-center justify-between gap-3 px-4 sm:px-6 py-4 border-b border-slate-100 bg-slate-50/50 dark:border-[#1a1a1a] dark:bg-[#111111]/60">
           <div className="min-w-0 flex-1">
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-[#f0f0f0] truncate">{title}</h3>
-            {subtitle && <p className="text-xs text-slate-500 dark:text-[#a0a0a0] mt-0.5 line-clamp-2">{subtitle}</p>}
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-[#f0f0f0] truncate">{tr(title)}</h3>
+            {subtitle && <p className="text-xs text-slate-500 dark:text-[#a0a0a0] mt-0.5 line-clamp-2">{tr(subtitle)}</p>}
           </div>
           <button
             onClick={onClose}

@@ -32,7 +32,7 @@ export const AuthScreen: React.FC = () => {
       await login(email, password);
       showToast('success', language === 'bn' ? 'সফলভাবে লগিন হয়েছে।' : 'Signed in successfully.');
     } catch (err: any) {
-      showToast('error', err.message || 'Login failed. Please check your credentials.');
+      showToast('error', err.message || (language === 'bn' ? 'লগইনব্যর্থ হয়েছে। আপনার পরিচয়পত্র যাচাই করুন।' : 'Login failed. Please check your credentials.'));
     } finally {
       setLoading(false);
     }
@@ -47,7 +47,7 @@ export const AuthScreen: React.FC = () => {
       await login(demoEmail, demoPassword);
       showToast('success', language === 'bn' ? 'সফলভাবে লগিন হয়েছে।' : 'Signed in successfully.');
     } catch (err: any) {
-      showToast('error', err.message || 'Demo login failed.');
+      showToast('error', err.message || (language === 'bn' ? 'ডেমো লগইন ব্যর্থ হয়েছে।' : 'Demo login failed.'));
     } finally {
       setLoading(false);
     }
@@ -60,7 +60,7 @@ export const AuthScreen: React.FC = () => {
       showToast('success', language === 'bn' ? 'সফলভাবে লগিন হয়েছে।' : 'Signed in successfully.');
     } catch (err: any) {
       if (err.code !== 'auth/popup-closed-by-user') {
-        showToast('error', err.message || 'Google sign-in failed.');
+        showToast('error', err.message || (language === 'bn' ? 'গুগল সাইন-ইন ব্যর্থ হয়েছে।' : 'Google sign-in failed.'));
       }
     } finally {
       setSocialLoading(false);
@@ -74,7 +74,7 @@ export const AuthScreen: React.FC = () => {
       showToast('success', language === 'bn' ? 'সফলভাবে লগিন হয়েছে।' : 'Signed in successfully.');
     } catch (err: any) {
       if (err.code !== 'auth/popup-closed-by-user') {
-        showToast('error', err.message || 'GitHub sign-in failed.');
+        showToast('error', err.message || (language === 'bn' ? 'গিটহাব সাইন-ইন ব্যর্থ হয়েছে।' : 'GitHub sign-in failed.'));
       }
     } finally {
       setSocialLoading(false);
@@ -165,7 +165,7 @@ export const AuthScreen: React.FC = () => {
                   className="py-2 px-2 border border-white/20 text-white/70 text-[11px] font-medium rounded-xl hover:bg-white/10 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1"
                 >
                   <Sprout className="w-3 h-3 shrink-0" />
-                  Farmer
+                  {language === 'bn' ? 'কৃষক' : 'Farmer'}
                 </button>
                 <button
                   type="button"
@@ -174,7 +174,7 @@ export const AuthScreen: React.FC = () => {
                   className="py-2 px-2 border border-white/20 text-white/70 text-[11px] font-medium rounded-xl hover:bg-white/10 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1"
                 >
                   <Sprout className="w-3 h-3 shrink-0" />
-                  Multi
+                  {language === 'bn' ? 'একাধিক ভূমিকা' : 'Multi'}
                 </button>
                 <button
                   type="button"
@@ -183,7 +183,7 @@ export const AuthScreen: React.FC = () => {
                   className="py-2 px-2 border border-white/20 text-white/70 text-[11px] font-medium rounded-xl hover:bg-white/10 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1"
                 >
                   <ShieldCheck className="w-3 h-3 shrink-0" />
-                  Admin
+                  {language === 'bn' ? 'এডমিন' : 'Admin'}
                 </button>
                 <button
                   type="button"
@@ -191,7 +191,7 @@ export const AuthScreen: React.FC = () => {
                   disabled={loading}
                   className="py-2 px-2 border border-white/20 text-white/70 text-[11px] font-medium rounded-xl hover:bg-white/10 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1"
                 >
-                  🛒 Buyer
+                  {language === 'bn' ? '🛒 ক্রেতা' : '🛒 Buyer'}
                 </button>
                 <button
                   type="button"
@@ -199,7 +199,7 @@ export const AuthScreen: React.FC = () => {
                   disabled={loading}
                   className="py-2 px-2 border border-white/20 text-white/70 text-[11px] font-medium rounded-xl hover:bg-white/10 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1"
                 >
-                  📦 Supplier
+                  {language === 'bn' ? '📦 সরবরাহকারী' : '📦 Supplier'}
                 </button>
                 <button
                   type="button"
@@ -207,7 +207,7 @@ export const AuthScreen: React.FC = () => {
                   disabled={loading}
                   className="py-2 px-2 border border-white/20 text-white/70 text-[11px] font-medium rounded-xl hover:bg-white/10 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1"
                 >
-                  🔍 Inspector
+                  {language === 'bn' ? '🔍 পরিদর্শক' : '🔍 Inspector'}
                 </button>
                 <button
                   type="button"
@@ -215,7 +215,7 @@ export const AuthScreen: React.FC = () => {
                   disabled={loading}
                   className="py-2 px-2 border border-white/20 text-white/70 text-[11px] font-medium rounded-xl hover:bg-white/10 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1"
                 >
-                  🚚 Logistics
+                  {language === 'bn' ? '🚚 লজিস্টিকস' : '🚚 Logistics'}
                 </button>
                 <button
                   type="button"
@@ -223,7 +223,7 @@ export const AuthScreen: React.FC = () => {
                   disabled={loading}
                   className="py-2 px-2 border border-white/20 text-white/70 text-[11px] font-medium rounded-xl hover:bg-white/10 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1"
                 >
-                  🎧 Support
+                  {language === 'bn' ? '🎧 সাপোর্ট' : '🎧 Support'}
                 </button>
               </div>
             </div>

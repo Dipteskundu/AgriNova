@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { tr } from "@/lib/localize";
+import { tr, trPhrase } from "@/lib/localize";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Sprout,
   Plus,
@@ -22,7 +23,9 @@ import { getMasterCrops, createMasterCrop } from '@/lib/adminApi';
 import { MasterCrop } from '@/types';
 
 export const CropCatalog: React.FC = () => {
+  const { language } = useLanguage();
   const { showToast } = useToast();
+  const t = (bn: string, en: string) => (language === 'bn' ? bn : en);
   const [loading, setLoading] = useState(true);
   const [crops, setCrops] = useState<MasterCrop[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -158,11 +161,11 @@ export const CropCatalog: React.FC = () => {
           <Card key={crop.id} className="flex flex-col justify-between hover:border-slate-300 dark:border-[#333333] transition-all">
             <div>
               <div className="flex items-start justify-between gap-2 mb-2">
-                <Badge variant="success">{crop.category}</Badge>
+                <Badge variant="success">{trPhrase(crop.category)}</Badge>
                 <span className="text-[11px] font-mono text-slate-400">{crop.id}</span>
               </div>
 
-              <h3 className="text-base font-bold text-slate-900 dark:text-[#f0f0f0]">{crop.cropName}</h3>
+              <h3 className="text-base font-bold text-slate-900 dark:text-[#f0f0f0]">{trPhrase(crop.cropName)}</h3>
               <p className="text-xs italic text-slate-500 dark:text-[#a0a0a0] mb-3">{crop.scientificName}</p>
 
               <div className="grid grid-cols-2 gap-2 p-3 bg-slate-50 dark:bg-[#111111]/60 rounded-xl text-xs mb-3">
@@ -282,7 +285,7 @@ export const CropCatalog: React.FC = () => {
             />
             <FormInput
               id="price"
-              label="Benchmark ৳/Kg"
+              label={t('বেঞ্চমার্ক ৳/কেজি', 'Benchmark ৳/Kg')}
               type="number"
               value={newCrop.benchmarkPriceBdtPerKg}
               onChange={(e) =>

@@ -28,7 +28,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
         type="button"
         onClick={toggleLanguage}
         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-[#333333] bg-white hover:bg-slate-50 text-xs font-bold text-slate-700 dark:bg-[#111111] dark:hover:bg-[#1a1a1a] dark:text-[#e0e0e0] shadow-2xs transition-all cursor-pointer ${className}`}
-        title="ভাষা পরিবর্তন / Switch Language"
+        title={language === 'bn' ? 'ভাষা পরিবর্তন করুন' : 'Switch language'}
       >
         <Globe className="w-3.5 h-3.5 text-emerald-600" />
         <span>{language === 'bn' ? 'English' : 'বাংলা'}</span>
@@ -44,7 +44,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
           type="button"
           onClick={toggleLanguage}
           className={`sm:hidden flex items-center justify-center p-1.5 rounded-xl border border-slate-200 dark:border-[#333333] bg-white hover:bg-slate-50 text-xs font-bold text-slate-700 dark:bg-[#111111] dark:hover:bg-[#1a1a1a] dark:text-[#e0e0e0] shadow-2xs transition-all cursor-pointer ${className}`}
-          title="ভাষা পরিবর্তন / Switch Language"
+          title={language === 'bn' ? 'ভাষা পরিবর্তন করুন' : 'Switch language'}
         >
           <Globe className="w-4 h-4 text-emerald-600" />
         </button>

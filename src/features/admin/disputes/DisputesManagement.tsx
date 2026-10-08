@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { tr } from "@/lib/localize";
+import { tr, trPhrase } from "@/lib/localize";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Scale,
   Search,
@@ -24,7 +25,9 @@ import { getDisputesAdmin, resolveDisputeAdmin } from '@/lib/adminApi';
 import { DisputeCase } from '@/types';
 
 export const DisputesManagement: React.FC = () => {
+  const { language } = useLanguage();
   const { showToast } = useToast();
+  const t = (bn: string, en: string) => (language === 'bn' ? bn : en);
   const [loading, setLoading] = useState(true);
   const [disputes, setDisputes] = useState<DisputeCase[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -62,7 +65,12 @@ export const DisputesManagement: React.FC = () => {
       );
       if (res.success) {
         setDisputes((prev) => prev.map((d) => (d.id === selectedCase.id ? res.data : d)));
-        showToast('success', `Case ${selectedCase.caseNumber} resolved as: ${newStatus}`);
+        showToast(
+          'success',
+          language === 'bn'
+            ? `মামলা ${selectedCase.caseNumber} নিষ্পত্তি হয়েছে: ${tr(newStatus)}`
+            : `Case ${selectedCase.caseNumber} resolved as: ${newStatus}`
+        );
         setSelectedCase(null);
         setResolutionNotes('');
       }
@@ -89,6 +97,39 @@ export const DisputesManagement: React.FC = () => {
   ).length;
 
   const totalAtStake = disputes.reduce((acc, d) => acc + d.disputedAmountBdt, 0);
+
+  const caseStatusLabel = (s: DisputeCase['caseStatus']) => {
+    switch (s) {
+      case 'Open - Under Review':
+        return t('খোলা — পর্যালোচনায়', 'Open - Under Review');
+      case 'Mediation In Progress':
+        return t('মধ্যস্থতা চলছে', 'Mediation In Progress');
+      case 'Resolved - Farmer Compensated':
+        return t('নিষ্পত্তি — কৃষককে ক্ষতিপূরণ', 'Resolved - Farmer Compensated');
+      case 'Resolved - Buyer Refunded':
+        return t('নিষ্পত্তি — ক্রেতাকে ফেরত', 'Resolved - Buyer Refunded');
+      case 'Dismissed':
+        return t('খারিজ', 'Dismissed');
+      default:
+        return s;
+    }
+  };
+
+  const noteText = (n: string) => {
+    const m = n.match(/^Arbitration completed by Central Admin Committee: (.+)$/);
+    if (m) {
+      return `${t('কেন্দ্রীয় প্রশাসনিক কমিটি কর্তৃক মধ্যস্থতা সম্পন্ন', 'Arbitration completed by Central Admin Committee')}: ${tr(m[1])}`;
+    }
+    return tr(n);
+  };
+
+  const roleLabel = (r: string) => {
+    if (r === 'Farmer') return t('কৃষক', 'Farmer');
+    if (r === 'Buyer') return t('ক্রেতা', 'Buyer');
+    if (r === 'Logistics Provider') return t('লজিস্টিক সরবরাহকারী', 'Logistics Provider');
+    if (r === 'Logistics Partner') return t('লজিস্টিক অংশীদার', 'Logistics Partner');
+    return r;
+  };
 
   if (loading) {
     return (
@@ -183,7 +224,7 @@ export const DisputesManagement: React.FC = () => {
                         : 'neutral'
                     }
                   >
-                    {d.caseStatus}
+                    {caseStatusLabel(d.caseStatus)}
                   </Badge>
                   <span className="text-xs text-slate-400 font-mono">{tr('Order:')}{d.relatedOrderCode}</span>
                 </div>
@@ -191,17 +232,17 @@ export const DisputesManagement: React.FC = () => {
                 <div className="flex flex-wrap items-center gap-4 text-xs">
                   <div>
                     <span className="text-slate-400">{tr('Complainant (Plaintiff):')}</span>{' '}
-                    <strong className="text-slate-800 dark:text-[#e0e0e0]">{d.plaintiff.name}</strong> ({d.plaintiff.role})
+                    <strong className="text-slate-800 dark:text-[#e0e0e0]">{d.plaintiff.name}</strong> ({roleLabel(d.plaintiff.role)})
                   </div>
                   <span className="text-slate-300">{tr('vs')}</span>
                   <div>
                     <span className="text-slate-400">{tr('Respondent (Defendant):')}</span>{' '}
-                    <strong className="text-slate-800 dark:text-[#e0e0e0]">{d.defendant.name}</strong> ({d.defendant.role})
+                    <strong className="text-slate-800 dark:text-[#e0e0e0]">{d.defendant.name}</strong> ({roleLabel(d.defendant.role)})
                   </div>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-4 text-xs pt-1 text-slate-600 dark:text-[#a0a0a0]">
-                  <span className="font-medium text-slate-800 dark:text-[#e0e0e0]">{tr('Reason:')}<span className="text-red-700 font-bold">{d.disputeReason}</span>
+                  <span className="font-medium text-slate-800 dark:text-[#e0e0e0]">{tr('Reason:')}<span className="text-red-700 font-bold">{tr(d.disputeReason)}</span>
                   </span>
                   <span>{tr('Disputed Escrow Fund:')}{' '}
                     <strong className="text-slate-900 dark:text-[#f0f0f0] font-mono">৳{d.disputedAmountBdt.toLocaleString()}{tr('BDT')}</strong>
@@ -213,14 +254,14 @@ export const DisputesManagement: React.FC = () => {
                 {d.openedNote && (
                   <div className="p-2.5 bg-blue-50/60 dark:bg-blue-950/20 rounded-lg text-xs text-slate-600 dark:text-[#a0a0a0] border border-blue-100 dark:border-blue-900/40">
                     <span className="font-bold text-slate-700 dark:text-[#999999] block text-[10px] uppercase">{tr('Buyer Report:')}</span>
-                    {d.openedNote}
+                    {tr(d.openedNote)}
                   </div>
                 )}
 
                 {d.resolutionNotes && (
                   <div className="p-2.5 bg-slate-50 dark:bg-[#111111]/60 rounded-lg text-xs text-slate-600 dark:text-[#a0a0a0] border border-slate-100">
-                    <span className="font-bold text-slate-700 dark:text-[#999999] block text-[10px] uppercase">{tr('Tribunal Findings & Resolution:')}</span>
-                    {d.resolutionNotes}
+                  <span className="font-bold text-slate-700 dark:text-[#999999] block text-[10px] uppercase">{tr('Tribunal Findings & Resolution:')}</span>
+                  {noteText(d.resolutionNotes)}
                   </div>
                 )}
               </div>
@@ -235,7 +276,9 @@ export const DisputesManagement: React.FC = () => {
                     setResolutionNotes(d.resolutionNotes || '');
                   }}
                 >
-                  {d.caseStatus.includes('Resolved') ? 'Review Verdict' : 'Arbitrate Case'}
+                  {d.caseStatus.includes('Resolved')
+                    ? t('প্রত্যালোচনা করুন', 'Review Verdict')
+                    : t('মামলা নিষ্পত্তি করুন', 'Arbitrate Case')}
                 </Button>
               </div>
             </div>
@@ -248,33 +291,33 @@ export const DisputesManagement: React.FC = () => {
         <Modal
           isOpen={true}
           onClose={() => setSelectedCase(null)}
-          title={`Arbitrate Case - ${selectedCase.caseNumber}`}
-          subtitle={`Disputed Amount: ৳${selectedCase.disputedAmountBdt.toLocaleString()} BDT • Order ${selectedCase.relatedOrderCode}`}
+          title={`${t('মামলা নিষ্পত্তি', 'Arbitrate Case')} - ${selectedCase.caseNumber}`}
+          subtitle={`${t('বিতর্কিত পরিমাণ', 'Disputed Amount')}: ৳${selectedCase.disputedAmountBdt.toLocaleString()} ${t('টাকা', 'BDT')} • ${t('অর্ডার', 'Order')} ${selectedCase.relatedOrderCode}`}
           maxWidth="lg"
         >
           <div className="space-y-4 text-xs">
             <div className="p-3 bg-slate-50 dark:bg-[#111111]/60 rounded-xl space-y-2">
               <div className="flex justify-between">
                 <span className="text-slate-500 dark:text-[#a0a0a0]">{tr('Allegation:')}</span>
-                <span className="font-bold text-red-700">{selectedCase.disputeReason}</span>
+                <span className="font-bold text-red-700">{trPhrase(selectedCase.disputeReason)}</span>
               </div>
               {selectedCase.openedNote && (
                 <div className="pt-1 border-t border-slate-200 dark:border-[#2a2a2a]">
                   <span className="text-slate-500 dark:text-[#a0a0a0] block">{tr('Buyer Report:')}</span>
-                  <span className="text-slate-700 dark:text-[#e0e0e0]">{selectedCase.openedNote}</span>
+                  <span className="text-slate-700 dark:text-[#e0e0e0]">{trPhrase(selectedCase.openedNote)}</span>
                 </div>
               )}
               <div className="flex justify-between">
                 <span className="text-slate-500 dark:text-[#a0a0a0]">{tr('Plaintiff:')}</span>
-                <span className="font-bold text-slate-800 dark:text-[#e0e0e0]">{selectedCase.plaintiff.name} ({selectedCase.plaintiff.role})</span>
+                <span className="font-bold text-slate-800 dark:text-[#e0e0e0]">{selectedCase.plaintiff.name} ({roleLabel(selectedCase.plaintiff.role)})</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500 dark:text-[#a0a0a0]">{tr('Defendant:')}</span>
-                <span className="font-bold text-slate-800 dark:text-[#e0e0e0]">{selectedCase.defendant.name} ({selectedCase.defendant.role})</span>
+                <span className="font-bold text-slate-800 dark:text-[#e0e0e0]">{selectedCase.defendant.name} ({roleLabel(selectedCase.defendant.role)})</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500 dark:text-[#a0a0a0]">{tr('Status:')}</span>
-                <span className="font-bold text-slate-800 dark:text-[#e0e0e0]">{selectedCase.caseStatus}</span>
+                <span className="font-bold text-slate-800 dark:text-[#e0e0e0]">{caseStatusLabel(selectedCase.caseStatus)}</span>
               </div>
             </div>
 

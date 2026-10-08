@@ -1,5 +1,9 @@
+"use client";
+
 import React from "react";
 import { LucideIcon } from "@/components/icons";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { tr } from "@/lib/localize";
 
 interface MetricCardProps {
   id?: string;
@@ -57,6 +61,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
   colorScheme = "emerald",
   onClick,
 }) => {
+  useLanguage();
   const colors = colorMap[colorScheme];
 
   return (
@@ -68,7 +73,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
       }`}
     >
       <div className="flex items-center justify-between">
-        <span className="text-xs font-medium text-slate-500 dark:text-[#a0a0a0] uppercase tracking-wider">{title}</span>
+        <span className="text-xs font-medium text-slate-500 dark:text-[#a0a0a0] uppercase tracking-wider">{tr(title)}</span>
         <div className={`p-2.5 rounded-lg ${colors.bg} ${colors.border} border`}>
           <Icon className={`w-5 h-5 ${colors.iconColor}`} />
         </div>
@@ -85,11 +90,11 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                 : "bg-slate-100 text-slate-700 dark:bg-[#1a1a1a] dark:text-[#a0a0a0]"
             }`}
           >
-            {change}
+            {tr(change)}
           </span>
         )}
       </div>
-      {subtitle && <p className="mt-1 text-xs text-slate-400 dark:text-[#666666] font-normal">{subtitle}</p>}
+      {subtitle && <p className="mt-1 text-xs text-slate-400 dark:text-[#666666] font-normal">{tr(subtitle)}</p>}
     </div>
   );
 };

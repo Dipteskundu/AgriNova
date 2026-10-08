@@ -22,6 +22,31 @@ interface PortalGateProps {
   fallback?: React.ReactNode;
 }
 
+/** Bengali names for the English `moduleLabel` values the dashboard pages pass. */
+const MODULE_LABEL_BN: Record<string, string> = {
+  Disputes: "বিতর্ক",
+  Inspections: "পরিদর্শন",
+  Orders: "অর্ডার",
+  "My Listings": "আমার পোস্টিং",
+  Inventory: "ইনভেন্টরি",
+  "Sales & Wallet": "বিক্রয় ও ওয়ালেট",
+  Reports: "রিপোর্ট",
+  Payments: "পেমেন্ট",
+  "My Schedule": "আমার শিডিউল",
+  Saved: "সংরক্ষিত",
+  Profile: "প্রোফাইল",
+};
+
+const ROLE_LABEL_BN: Record<string, string> = {
+  admin: "প্রশাসক",
+  buyer: "ক্রেতা",
+  farmer: "কৃষক",
+  inspector: "পরিদর্শক",
+  logistics: "লজিস্টিকস",
+  supplier: "সরবরাহকারী",
+  support: "সহায়তা",
+};
+
 /**
  * Keeps a module from rendering for roles the backend would reject with 403.
  *
@@ -68,12 +93,12 @@ export function PortalGate({
         icon={Lock}
         title={
           language === "bn"
-            ? `${moduleLabel} এই ভূমিকার জন্য উপলব্ধ নয়`
+            ? `${MODULE_LABEL_BN[moduleLabel] ?? moduleLabel} এই ভূমিকার জন্য উপলব্ধ নয়`
             : `${moduleLabel} is not available for your role`
         }
         description={
           language === "bn"
-            ? `আপনার অ্যাকাউন্ট (${roles.join(", ") || "no role"}) এই মডিউলটি দেখার অনুমতি পায় না।`
+            ? `আপনার অ্যাকাউন্ট (${roles.map((role) => ROLE_LABEL_BN[role] ?? role).join(", ") || "কোনো ভূমিকা নেই"}) এই মডিউলটি দেখার অনুমতি পায় না।`
             : `Your account (${roles.join(", ") || "no role"}) does not have access to this module.`
         }
       />

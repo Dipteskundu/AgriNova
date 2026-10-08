@@ -1,4 +1,8 @@
+"use client";
+
 import React from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { tr } from "@/lib/localize";
 
 export type BadgeVariant =
   | "success"
@@ -32,6 +36,7 @@ export const Badge: React.FC<BadgeProps> = ({
   size = "sm",
   className = "",
 }) => {
+  useLanguage();
   const sizeStyle = size === "sm" ? "text-xs px-2.5 py-0.5" : "text-sm px-3 py-1";
 
   return (
@@ -40,7 +45,7 @@ export const Badge: React.FC<BadgeProps> = ({
       className={`inline-flex items-center gap-1.5 font-medium rounded-full border whitespace-nowrap ${sizeStyle} ${variantStyles[variant]} ${className}`}
     >
       <span className="w-1.5 h-1.5 rounded-full bg-current opacity-70" />
-      {children}
+      {typeof children === "string" ? tr(children) : children}
     </span>
   );
 };

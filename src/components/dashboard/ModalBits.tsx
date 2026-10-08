@@ -2,6 +2,8 @@
 
 import React from "react";
 import { CheckCircle2 } from "@/components/icons";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { tr } from "@/lib/localize";
 
 /**
  * Small building blocks for the body of `ServiceInfoModal`.
@@ -61,13 +63,16 @@ export const ModalRow: React.FC<{
 export const ModalChip: React.FC<{
   children: React.ReactNode;
   className?: string;
-}> = ({ children, className = "" }) => (
-  <span
-    className={`text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap ${className}`}
-  >
-    {children}
-  </span>
-);
+}> = ({ children, className = "" }) => {
+  useLanguage();
+  return (
+    <span
+      className={`text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap ${className}`}
+    >
+      {typeof children === "string" ? tr(children) : children}
+    </span>
+  );
+};
 
 /** Neutral empty state with the "everything is in sync" reassurance line. */
 export const ModalEmpty: React.FC<{ children: React.ReactNode }> = ({

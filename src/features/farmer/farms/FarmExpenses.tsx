@@ -24,6 +24,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 export const FarmExpenses: React.FC = () => {
   const { showToast } = useToast();
   const { language } = useLanguage();
+  const t = (bn: string, en: string) => (language === 'bn' ? bn : en);
   const [loading, setLoading] = useState(true);
   const [expenses, setExpenses] = useState<FarmExpense[]>([]);
   const [cropBatches, setCropBatches] = useState<CropBatch[]>([]);
@@ -238,7 +239,7 @@ export const FarmExpenses: React.FC = () => {
                   <td className="p-4">
                     <span className="font-bold text-slate-900 dark:text-[#f0f0f0] block">{tr(exp.description)}</span>
                     <span className="text-[11px] text-slate-400">
-                      {exp.date} {exp.receiptReference && `• Ref: ${exp.receiptReference}`}
+                      {exp.date} {exp.receiptReference && `• ${t("রেফ:", "Ref:")} ${exp.receiptReference}`}
                     </span>
                   </td>
                   <td className="p-4">

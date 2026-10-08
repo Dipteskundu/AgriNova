@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { tr } from "@/lib/localize";
+import { tr, trPhrase } from "@/lib/localize";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   ShoppingCart,
   Search,
@@ -23,7 +24,9 @@ import { getOrderAuditsAdmin } from '@/lib/adminApi';
 import { OrderAuditAdminView } from '@/types';
 
 export const OrdersManagement: React.FC = () => {
+  const { language } = useLanguage();
   const { showToast } = useToast();
+  const t = (bn: string, en: string) => (language === 'bn' ? bn : en);
   const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState<OrderAuditAdminView[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -46,6 +49,36 @@ export const OrdersManagement: React.FC = () => {
     }
     load();
   }, [showToast]);
+
+  const escrowStatusLabel = (s: OrderAuditAdminView['escrowStatus']) => {
+    switch (s) {
+      case 'Held in Escrow':
+        return t('এসক্রোতে জমা', 'Held in Escrow');
+      case 'Released to Farmer':
+        return t('কৃষককে প্রদান', 'Released to Farmer');
+      case 'Refunded':
+        return t('ফেরত', 'Refunded');
+      case 'Disputed':
+        return t('বিতর্কিত', 'Disputed');
+      default:
+        return s;
+    }
+  };
+
+  const fulfillmentStatusLabel = (s: OrderAuditAdminView['fulfillmentStatus']) => {
+    switch (s) {
+      case 'Order Placed':
+        return t('অর্ডার করা হয়েছে', 'Order Placed');
+      case 'Quality Passed':
+        return t('মান পরীক্ষায় উত্তীর্ণ', 'Quality Passed');
+      case 'In Transit':
+        return t('পরিবহনে', 'In Transit');
+      case 'Delivered':
+        return t('পৌঁছেছে', 'Delivered');
+      default:
+        return s;
+    }
+  };
 
   const filtered = orders.filter((o) => {
     const matchesSearch =
@@ -187,13 +220,13 @@ export const OrdersManagement: React.FC = () => {
                           : 'neutral'
                       }
                     >
-                      {order.escrowStatus}
+                      {escrowStatusLabel(order.escrowStatus)}
                     </Badge>
                   </td>
                   <td className="p-4">
                     <span className="inline-flex items-center gap-1.5 font-medium text-slate-700 dark:text-[#999999]">
                       <Truck className="w-3.5 h-3.5 text-slate-400" />
-                      {order.fulfillmentStatus}
+                      {fulfillmentStatusLabel(order.fulfillmentStatus)}
                     </span>
                   </td>
                   <td className="p-4 text-slate-500 dark:text-[#a0a0a0] text-[11px]">{order.logisticsPartner}</td>
@@ -217,8 +250,8 @@ export const OrdersManagement: React.FC = () => {
         <Modal
           isOpen={true}
           onClose={() => setSelectedOrder(null)}
-          title={`Order Escrow Audit - ${selectedOrder.orderCode}`}
-          subtitle={`Placed on ${selectedOrder.orderDate}`}
+          title={`${t('অর্ডার এসক্রো নিরীক্ষা', 'Order Escrow Audit')} - ${selectedOrder.orderCode}`}
+          subtitle={`${t('দেওয়া হয়েছে', 'Placed on')} ${selectedOrder.orderDate}`}
           maxWidth="md"
         >
           <div className="space-y-4 text-xs">
@@ -229,7 +262,7 @@ export const OrdersManagement: React.FC = () => {
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500 dark:text-[#a0a0a0]">{tr('Produce:')}</span>
-                <span className="font-bold text-slate-800 dark:text-[#e0e0e0]">{selectedOrder.produceItem}</span>
+                <span className="font-bold text-slate-800 dark:text-[#e0e0e0]">{trPhrase(selectedOrder.produceItem)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500 dark:text-[#a0a0a0]">{tr('Consignment Weight:')}</span>

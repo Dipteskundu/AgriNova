@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { trPhrase } from "@/lib/localize";
 import { Icon, Calendar } from "@/components/icons";
 import { Badge, type BadgeVariant } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -11,12 +12,12 @@ import { getInspectorSchedule } from "@/lib/inspectorApi";
 
 const STATUS_META: Record<
   InspectorScheduleEntry["status"],
-  { label: string; variant: BadgeVariant }
+  { label: [string, string]; variant: BadgeVariant }
 > = {
-  upcoming: { label: "Upcoming", variant: "info" },
-  in_progress: { label: "In progress", variant: "warning" },
-  done: { label: "Done", variant: "success" },
-  cancelled: { label: "Cancelled", variant: "danger" },
+  upcoming: { label: ["আসন্ন", "Upcoming"], variant: "info" },
+  in_progress: { label: ["চলমান", "In progress"], variant: "warning" },
+  done: { label: ["সম্পন্ন", "Done"], variant: "success" },
+  cancelled: { label: ["বাতিল", "Cancelled"], variant: "danger" },
 };
 
 /**
@@ -34,9 +35,10 @@ function groupByDate(rows: InspectorScheduleEntry[]) {
   return groups;
 }
 
-const MONTHS = [
-  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+const MONTHS: Array<[string, string]> = [
+  ["জানু", "Jan"], ["ফেব্রু", "Feb"], ["মার্চ", "Mar"], ["এপ্রিল", "Apr"],
+  ["মে", "May"], ["জুন", "Jun"], ["জুলাই", "Jul"], ["আগস্ট", "Aug"],
+  ["সেপ্ট", "Sep"], ["অক্টো", "Oct"], ["নভে", "Nov"], ["ডিসে", "Dec"],
 ];
 
 function dayParts(iso: string) {
@@ -58,7 +60,7 @@ export function InspectorSchedule() {
     getInspectorSchedule()
       .then((res) => {
         if (res.success) setRows(res.data);
-        else setError(res.message || "Could not load your schedule.");
+        else setError(res.message || t("সময়সূচি আনা যায়নি।", "Could not load your schedule."));
       })
       .finally(() => setLoading(false));
   }, []);
@@ -120,11 +122,11 @@ export function InspectorSchedule() {
             <section key={group.date}>
               <div className="mb-2 flex items-baseline gap-2">
                 <h2 className="text-sm font-bold text-slate-700 dark:text-[#e0e0e0]">
-                  {group.date}
+                  {parts ? `${parts.day} ${t(parts.month[0], parts.month[1])} ${parts.year}` : group.date}
                 </h2>
                 <span className="text-xs text-slate-400">
                   {parts
-                    ? `${parts.day} ${parts.month} ${parts.year}`
+                    ? `${parts.day} ${t(parts.month[0], parts.month[1])} ${parts.year}`
                     : ""}
                 </span>
               </div>
@@ -139,7 +141,7 @@ export function InspectorSchedule() {
                     >
                       <div className="flex h-11 w-11 shrink-0 flex-col items-center justify-center rounded-lg bg-slate-100 dark:bg-[#1a1a1a]">
                         <span className="text-[9px] font-bold uppercase text-slate-400">
-                          {parts?.month}
+                          {parts ? t(parts.month[0], parts.month[1]) : ""}
                         </span>
                         <span className="text-sm font-black leading-none">
                           {parts?.day}
@@ -152,17 +154,19 @@ export function InspectorSchedule() {
                           {row.time || "—"}
                         </p>
                         <p className="font-semibold text-slate-900 dark:text-[#f0f0f0]">
-                          {row.cropName}
+                          {trPhrase(row.cropName)}
                           <span className="ml-2 text-sm font-normal text-slate-500">
                             {row.farmerName}
                           </span>
                         </p>
                         {row.location && (
-                          <p className="text-xs text-slate-400">{row.location}</p>
+                          <p className="text-xs text-slate-400">{trPhrase(row.location)}</p>
                         )}
                       </div>
 
-                      <Badge variant={meta.variant}>{meta.label}</Badge>
+                      <Badge variant={meta.variant}>
+                        {t(meta.label[0], meta.label[1])}
+                      </Badge>
                     </div>
                   );
                 })}

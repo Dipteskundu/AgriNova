@@ -692,6 +692,12 @@ export interface SupplierProduct {
   productName: string;
   category: 'Seeds' | 'Fertilizers' | 'Pesticides' | 'Tools' | 'Equipment' | 'Irrigation' | 'Packaging';
   description: string;
+  /**
+   * Bengali counterpart of `description`, shown when the site language is
+   * Bengali. Optional — the UI falls back to the English `description` when a
+   * product was published without one.
+   */
+  descriptionBn?: string;
   pricePerUnitBdt: number;
   unit: 'kg' | 'liter' | 'piece' | 'bag' | 'set';
   stockQuantity: number;

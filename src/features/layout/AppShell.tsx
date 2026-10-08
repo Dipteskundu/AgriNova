@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { tr } from "@/lib/localize";
+import { tr, trPhrase } from "@/lib/localize";
 import { usePathname, useRouter } from "next/navigation";
 import {
   Menu,
@@ -120,9 +120,10 @@ export const AgriPortalShell: React.FC<AgriPortalShellProps> = ({ children }) =>
   const navGroups = portal ? getNavGroups(portal, roles) : [];
   const totalModules = navGroups.reduce((n, g) => n + g.items.length, 0);
 
-  const activeTitle =
+  const activeTitle = tr(
     navGroups.flatMap((g) => g.items).find((i) => i.key === activeModule)?.label ||
-    (portal === "admin" ? "Admin Portal" : portal === "operations" ? "Operations" : portal === "support" ? "Support" : "Dashboard");
+    (portal === "admin" ? "Admin Portal" : portal === "operations" ? "Operations" : portal === "support" ? "Support" : "Dashboard")
+  );
 
   const badgeClass = {
     main:       'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400',
@@ -146,15 +147,17 @@ export const AgriPortalShell: React.FC<AgriPortalShellProps> = ({ children }) =>
     if (!portal) return '';
     const userRoles = user?.roles ?? [];
     if (portal === 'main') {
-      if (userRoles.includes('supplier')) return 'Supplier';
+      if (userRoles.includes('supplier')) return language === 'bn' ? 'সরবরাহকারী' : 'Supplier';
       if (userRoles.includes('farmer')) return language === 'bn' ? 'কৃষক' : 'Farmer';
-      if (userRoles.includes('buyer')) return 'Buyer';
-      return 'User';
+      if (userRoles.includes('buyer')) return language === 'bn' ? 'ক্রেতা' : 'Buyer';
+      return language === 'bn' ? 'ব্যবহারকারী' : 'User';
     }
     if (portal === 'admin')       return language === 'bn' ? 'এডমিন'  : 'Admin';
     if (portal === 'support')     return language === 'bn' ? 'সাপোর্ট': 'Support';
     if (portal === 'operations')
-      return userRoles.includes('logistics') ? 'Logistics' : 'Inspector';
+      return userRoles.includes('logistics')
+        ? (language === 'bn' ? 'লজিস্টিকস' : 'Logistics')
+        : (language === 'bn' ? 'পরিদর্শক' : 'Inspector');
     return '';
   })();
 
@@ -162,7 +165,7 @@ export const AgriPortalShell: React.FC<AgriPortalShellProps> = ({ children }) =>
     groups.map((group) => (
       <div key={group.group}>
         <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-[#666666] mb-1">
-          {group.group}
+          {tr(group.group)}
         </p>
         <div className="space-y-0.5">
           {group.items.map((item) => {
@@ -182,7 +185,7 @@ export const AgriPortalShell: React.FC<AgriPortalShellProps> = ({ children }) =>
                   <Icon
                     className={`w-4 h-4 shrink-0 ${isActive ? "text-white" : "text-slate-400 dark:text-[#666666]"}`}
                   />
-                  <span className="truncate">{item.label}</span>
+                  <span className="truncate">{tr(item.label)}</span>
                 </div>
                 {item.badge !== undefined && item.badge > 0 && (
                   <span
@@ -233,7 +236,7 @@ export const AgriPortalShell: React.FC<AgriPortalShellProps> = ({ children }) =>
               onClick={() => setMobileMenuOpen(true)}
               className="flex items-center justify-center w-8 h-8 rounded-lg text-slate-600 dark:text-[#a0a0a0] hover:bg-slate-100 dark:hover:bg-[#1a1a1a] hover:text-slate-900 dark:hover:text-[#f0f0f0] transition-colors cursor-pointer shrink-0"
               title={language === "bn" ? "মেনু খুলুন" : "Open menu"}
-              aria-label="Open navigation menu"
+              aria-label={language === "bn" ? "নেভিগেশন মেনু খুলুন" : "Open navigation menu"}
             >
               <Menu className="w-4.5 h-4.5" />
             </button>
@@ -241,7 +244,7 @@ export const AgriPortalShell: React.FC<AgriPortalShellProps> = ({ children }) =>
             <button
               onClick={navigateHome}
               className="flex items-center gap-2 cursor-pointer focus:outline-none shrink-0"
-              title="Dashboard"
+              title={language === "bn" ? "ড্যাশবোর্ড" : "Dashboard"}
             >
               <img src="/logo.png" alt="FarmPath" className="w-8 h-8 rounded-xl object-cover shrink-0" />
               <span className="hidden sm:inline font-black text-slate-900 dark:text-[#f0f0f0] tracking-tight text-sm sm:text-base">
@@ -313,14 +316,14 @@ export const AgriPortalShell: React.FC<AgriPortalShellProps> = ({ children }) =>
                         }`}
                       >
                         <div className="flex items-center justify-between">
-                          <span className="font-semibold text-slate-900 dark:text-slate-100">{notif.title}</span>
+                          <span className="font-semibold text-slate-900 dark:text-slate-100">{trPhrase(notif.title)}</span>
                           {!notif.isRead && <span className="w-2 h-2 rounded-full bg-emerald-600" />}
                         </div>
                         <p className="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                          {notif.message}
+                          {trPhrase(notif.message)}
                         </p>
                         <span className="text-[10px] text-slate-400 mt-1 block">
-                          {notif.timestamp}
+                          {trPhrase(notif.timestamp)}
                         </span>
                       </div>
                     ))}
@@ -337,7 +340,7 @@ export const AgriPortalShell: React.FC<AgriPortalShellProps> = ({ children }) =>
                 }
               }}
               className="flex items-center justify-center w-8 h-8 rounded-full bg-emerald-100 border border-emerald-300 text-emerald-800 font-bold text-[11px] hover:ring-2 hover:ring-emerald-400 transition-all cursor-pointer shrink-0"
-              title="Profile"
+              title={language === "bn" ? "প্রোফাইল" : "Profile"}
             >
               {user?.name?.charAt(0)?.toUpperCase() || "U"}
             </button>
@@ -433,7 +436,7 @@ export const AgriPortalShell: React.FC<AgriPortalShellProps> = ({ children }) =>
             }`}
           >
             <item.Icon className="w-5 h-5 mb-0.5" />
-            <span>{item.label}</span>
+            <span>{tr(item.label)}</span>
           </button>
         ))}
         <button
