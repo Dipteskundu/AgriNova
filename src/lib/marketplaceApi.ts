@@ -777,7 +777,9 @@ export async function getBuyerPayments(): Promise<ApiResponse<BuyerPayment[]>> {
 export async function checkoutCart(
   items: CartItem[],
   deliveryAddress: string,
-  paymentMethod: string
+  paymentMethod: string,
+  phone: string,
+  notes: string
 ): Promise<ApiResponse<BuyerOrder[]>> {
   if (!items.length) return fail([], "Your cart is empty.");
 
@@ -796,6 +798,8 @@ export async function checkoutCart(
           quantityKg: item.quantityKg,
           deliveryAddress,
           paymentMethod,
+          phone,
+          notes,
         })
       );
     } catch (err) {
@@ -857,7 +861,9 @@ export interface StripeCheckoutStatus {
  */
 export async function createStripeCheckout(
   items: CartItem[],
-  deliveryAddress: string
+  deliveryAddress: string,
+  phone: string,
+  notes: string
 ): Promise<ApiResponse<StripeCheckoutInit | null>> {
   if (!items.length) return fail(null, "Your cart is empty.");
   try {
@@ -869,6 +875,8 @@ export async function createStripeCheckout(
         quantityKg: i.quantityKg,
       })),
       deliveryAddress,
+      phone,
+      notes,
     });
     return ok(data);
   } catch (err) {

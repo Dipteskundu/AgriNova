@@ -135,18 +135,52 @@ export function CheckoutPage() {
   const deliveryFee = 500;
   const total = subtotal + deliveryFee;
 
-  const handlePlaceOrder = async () => {
-    if (!address.trim() || !phone.trim()) {
-      showToast("error", t(
-        "ডেলিভারি ঠিকানা ও ফোন নম্বর দিন।",
-        "Please fill in delivery address and phone number."
-      ));
-      return;
+  const [addrErr, setAddrErr] = useState("");
+  const [phoneErr, setPhoneErr] = useState("");
+
+  const validateDetails = () => {
+    const phoneClean = phone.replace(/[\s-]/g, "");
+    const addressTrim = address.trim();
+    if (!addressTrim) {
+      setAddrErr(t("ডেলিভারি ঠিকানা দিন।", "Please fill in delivery address."));
+      setPhoneErr(phoneErr);
+      return false;
     }
+    if (addressTrim.length < 10) {
+      setAddrErr(t("ঠিকানাটি কমপক্ষে ১০টি অক্ষর হতে হবে।", "Address must be at least 10 characters."));
+      return false;
+    }
+    if (addressTrim.length > 240) {
+      setAddrErr(t("ঠিকানা ২৪০ অক্ষরের বেশি হতে পারবে না।", "Address must be 240 characters or fewer."));
+      return false;
+    }
+    setAddrErr("");
+    if (!phoneClean) {
+      setPhoneErr(t("ফোন নম্বর দিন।", "Please fill in phone number."));
+      return false;
+    }
+    if (!/^01[3-9]\d{8}$/.test(phoneClean)) {
+      setPhoneErr(t("সঠিক বাংলাদেশি মোবাইল নম্বর দিন (যেমন: 01XXXXXXXXX)।", "Please enter a valid Bangladeshi mobile number (e.g., 01XXXXXXXXX)."));
+      return false;
+    }
+    setPhoneErr("");
+    return true;
+  };
+
+  const handleGoToPayment = () => {
+    if (validateDetails()) {
+      setStep("payment");
+    }
+  };
+
+  const handlePlaceOrder = async () => {
+    if (!validateDetails()) return;
+    const phoneClean = phone.replace(/[\s-]/g, "");
+    const addressTrim = address.trim();
     setPlacing(true);
 
     if (paymentMethod === "Card") {
-      const res = await createStripeCheckout(items, address.trim());
+      const res = await createStripeCheckout(items, addressTrim, phoneClean, notes.trim());
       if (!res.success || !res.data?.sessionUrl) {
         showToast("error", res.message || t(
           "স্ট্রাইপ চেকআউট শুরু করা যায়নি।",
@@ -159,7 +193,7 @@ export function CheckoutPage() {
       return;
     }
 
-    const res = await checkoutCart(items, address.trim(), paymentMethod);
+    const res = await checkoutCart(items, addressTrim, paymentMethod, phoneClean, notes.trim());
     if (!res.success) {
       showToast("error", res.message || t(
         "অর্ডার বসানো যায়নি।",
@@ -438,20 +472,35 @@ export function CheckoutPage() {
                 <label className="block text-xs font-medium text-slate-600 dark:text-[#a0a0a0] mb-1.5">{t("সম্পূর্ণ ডেলিভারি ঠিকানা *", "Full Delivery Address *")}</label>
                 <textarea
                   value={address}
-                  onChange={(e) => setAddress(e.target.value)}
+                  onChange={(e) => { setAddress(e.target.value); setAddrErr(""); }}
+                  onBlur={() => {
+                    const addressTrim = address.trim();
+                    if (!addressTrim) { setAddrErr(t("ডেলিভারি ঠিকানা দিন।", "Please fill in delivery address.")); return; }
+                    if (addressTrim.length < 10) { setAddrErr(t("ঠিকানাটি কমপক্ষে ১০টি অক্ষর হতে হবে।", "Address must be at least 10 characters.")); return; }
+                    if (addressTrim.length > 240) { setAddrErr(t("ঠিকানা ২৪০ অক্ষরের বেশি হতে পারবে না।", "Address must be 240 characters or fewer.")); return; }
+                    setAddrErr("");
+                  }}
                   placeholder={t("বাসা #, রাস্তা #, এলাকা, জেলা, পোস্ট কোড", "House #, Road #, Area, District, Postal Code")}
                   rows={3}
                   className="w-full px-3 py-2.5 text-sm border border-slate-200 dark:border-[#333] rounded-xl bg-white dark:bg-[#111] text-slate-900 dark:text-[#f0f0f0] placeholder-slate-400 focus:outline-none focus:border-blue-400 transition-colors resize-none"
                 />
+                {addrErr && <p className="mt-1 text-xs text-red-600">{addrErr}</p>}
               </div>
               <div>
                 <label className="block text-xs font-medium text-slate-600 dark:text-[#a0a0a0] mb-1.5">{t("যোগাযোগের ফোন *", "Contact Phone *")}</label>
                 <input
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  onChange={(e) => { setPhone(e.target.value); setPhoneErr(""); }}
+                  onBlur={() => {
+                    const phoneClean = phone.replace(/[\s-]/g, "");
+                    if (!phoneClean) { setPhoneErr(t("ফোন নম্বর দিন।", "Please fill in phone number.")); return; }
+                    if (!/^01[3-9]\d{8}$/.test(phoneClean)) { setPhoneErr(t("সঠিক বাংলাদেশি মোবাইল নম্বর দিন (যেমন: 01XXXXXXXXX)।", "Please enter a valid Bangladeshi mobile number (e.g., 01XXXXXXXXX).")); return; }
+                    setPhoneErr("");
+                  }}
                   placeholder="01XXXXXXXXX"
                   className="w-full px-3 py-2.5 text-sm border border-slate-200 dark:border-[#333] rounded-xl bg-white dark:bg-[#111] text-slate-900 dark:text-[#f0f0f0] placeholder-slate-400 focus:outline-none focus:border-blue-400 transition-colors"
                 />
+                {phoneErr && <p className="mt-1 text-xs text-red-600">{phoneErr}</p>}
               </div>
               <div>
                 <label className="block text-xs font-medium text-slate-600 dark:text-[#a0a0a0] mb-1.5">{t("বিশেষ নির্দেশনা (ঐচ্ছিক)", "Special Instructions (optional)")}</label>
@@ -462,7 +511,7 @@ export function CheckoutPage() {
                   className="w-full px-3 py-2.5 text-sm border border-slate-200 dark:border-[#333] rounded-xl bg-white dark:bg-[#111] text-slate-900 dark:text-[#f0f0f0] placeholder-slate-400 focus:outline-none focus:border-blue-400 transition-colors"
                 />
               </div>
-              <Button className="w-full" size="lg" onClick={() => setStep("payment")} disabled={!address.trim() || !phone.trim()}>
+              <Button className="w-full" size="lg" onClick={handleGoToPayment}>
                 {t("পেমেন্টে চালিয়ে যান", "Continue to Payment")}
               </Button>
             </div>
