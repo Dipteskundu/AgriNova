@@ -797,7 +797,7 @@ export interface DeliveryAssignment {
   cargoDescription: string;
   cargoWeightKg: number;
   vehicleType: string;
-  status: 'assigned' | 'picked_up' | 'in_transit' | 'delivered' | 'failed';
+  status: 'assigned' | 'picked_up' | 'in_transit' | 'out_for_delivery' | 'delivered' | 'failed';
   scheduledPickup: string;
   estimatedDelivery: string;
   actualDelivery?: string;

@@ -1,23 +1,17 @@
 /**
- * Logistics Partner Portal API — mock data layer.
+ * Logistics delivery data is live; fleet, earnings and notification modules
+ * remain local fixtures until their backend endpoints are available.
  */
 import { ApiResponse, DeliveryAssignment, FleetVehicle, LogisticsEarning } from "@/types";
+import { api } from "@/lib/api";
 
 function ok<T>(data: T): ApiResponse<T> {
   return { success: true, data, timestamp: new Date().toISOString() };
 }
 
-const MOCK_DELIVERIES: DeliveryAssignment[] = [
-  { id: "del-001", consignmentCode: "CON-2026-001", orderCode: "MP-2026-001", farmerName: "Abdul Malek", pickupAddress: "Bogura Sadar, Bogura", buyerName: "Rahim Trading Co.", deliveryAddress: "Tejgaon, Dhaka-1215", cargoDescription: "Rice Paddy — 500 kg", cargoWeightKg: 500, vehicleType: "Open Truck", status: "delivered", scheduledPickup: "2026-09-16T08:00:00Z", estimatedDelivery: "2026-09-17T18:00:00Z", actualDelivery: "2026-09-17T15:30:00Z", specialInstructions: "Handle with care. Keep dry." },
-  { id: "del-002", consignmentCode: "CON-2026-002", orderCode: "MP-2026-002", farmerName: "Fatema Khatun", pickupAddress: "Comilla Sadar, Comilla", buyerName: "Fresh Foods Ltd.", deliveryAddress: "Gulshan-2, Dhaka-1212", cargoDescription: "Tomato — 200 kg", cargoWeightKg: 200, vehicleType: "Refrigerated", status: "in_transit", scheduledPickup: "2026-09-25T07:00:00Z", estimatedDelivery: "2026-09-27T12:00:00Z", temperatureCelsius: 8, specialInstructions: "Maintain temperature 6–10°C throughout transit." },
-  { id: "del-003", consignmentCode: "CON-2026-003", orderCode: "MP-2026-003", farmerName: "Jamal Hossain", pickupAddress: "Narayanganj Sadar", buyerName: "Mirpur Grocers", deliveryAddress: "Mirpur-10, Dhaka-1216", cargoDescription: "Onion — 300 kg", cargoWeightKg: 300, vehicleType: "Open Truck", status: "picked_up", scheduledPickup: "2026-09-29T09:00:00Z", estimatedDelivery: "2026-10-02T17:00:00Z", specialInstructions: "No stacking above 3 bags high." },
-  { id: "del-004", consignmentCode: "CON-2026-004", orderCode: "MP-2026-004", farmerName: "Nasrin Akter", pickupAddress: "Mymensingh Sadar", buyerName: "Uttara Superstore", deliveryAddress: "Uttara, Dhaka-1230", cargoDescription: "Lentil — 150 kg", cargoWeightKg: 150, vehicleType: "Insulated Van", status: "assigned", scheduledPickup: "2026-10-01T08:00:00Z", estimatedDelivery: "2026-10-05T16:00:00Z", specialInstructions: "Sealed bags. Keep away from moisture." },
-];
-
-const MOCK_COMPLETED: DeliveryAssignment[] = [
-  { id: "del-c-001", consignmentCode: "CON-2026-H01", orderCode: "MP-2026-H01", farmerName: "Rahim Chowdhury", pickupAddress: "Rangpur Sadar", buyerName: "Potato Processing Ltd.", deliveryAddress: "Tejgaon Industrial, Dhaka", cargoDescription: "Potato — 1000 kg", cargoWeightKg: 1000, vehicleType: "Open Truck", status: "delivered", scheduledPickup: "2026-09-08T07:00:00Z", estimatedDelivery: "2026-09-09T18:00:00Z", actualDelivery: "2026-09-09T17:15:00Z", specialInstructions: "" },
-  { id: "del-c-002", consignmentCode: "CON-2026-H02", orderCode: "MP-2026-H02", farmerName: "Sumon Sarker", pickupAddress: "Sylhet Sadar", buyerName: "Agro Oil Mill", deliveryAddress: "Narayanganj Industrial", cargoDescription: "Mustard — 500 kg", cargoWeightKg: 500, vehicleType: "Open Truck", status: "delivered", scheduledPickup: "2026-09-05T09:00:00Z", estimatedDelivery: "2026-09-06T20:00:00Z", actualDelivery: "2026-09-06T19:30:00Z", specialInstructions: "" },
-];
+function fail<T>(data: T, message: string): ApiResponse<T> {
+  return { success: false, data, message, timestamp: new Date().toISOString() };
+}
 
 const MOCK_FLEET: FleetVehicle[] = [
   { id: "fv-001", vehicleNumber: "DHK-CHA-1234", type: "Refrigerated", capacityKg: 3000, currentStatus: "on_route", lastServiceDate: "2026-08-15", nextServiceDate: "2026-11-15", currentDriverName: "Kamal Hossain", currentDriverPhone: "01811-001001" },
@@ -42,26 +36,63 @@ export interface LogisticsDashboardStats {
   totalEarningsBdt: number;
 }
 
+const toApiStatus: Partial<Record<DeliveryAssignment["status"], string>> = {
+  assigned: "Pending",
+  picked_up: "Picked up",
+  in_transit: "In transit",
+  out_for_delivery: "Out for delivery",
+  delivered: "Delivered",
+};
+
 export async function getLogisticsDashboardStats(): Promise<ApiResponse<LogisticsDashboardStats>> {
+  const deliveries = await getActiveDeliveries();
+  if (!deliveries.success) {
+    return fail(
+      { activeDeliveriesCount: 0, onTimeRatePercent: 0, deliveriesThisWeek: 0, totalEarningsBdt: 0 },
+      deliveries.message || "Could not load delivery statistics."
+    );
+  }
   return ok({
-    activeDeliveriesCount: MOCK_DELIVERIES.filter(d => d.status !== "delivered" && d.status !== "failed").length,
+    activeDeliveriesCount: deliveries.data.length,
     onTimeRatePercent: 92,
     deliveriesThisWeek: 3,
-    totalEarningsBdt: MOCK_EARNINGS.filter(e => e.paymentStatus === "paid").reduce((s, e) => s + e.feeAmountBdt, 0),
+    totalEarningsBdt: MOCK_EARNINGS.filter((e) => e.paymentStatus === "paid")
+      .reduce((sum, earning) => sum + earning.feeAmountBdt, 0),
   });
 }
 
 export async function getActiveDeliveries(): Promise<ApiResponse<DeliveryAssignment[]>> {
-  return ok(MOCK_DELIVERIES);
+  try {
+    const deliveries = await api.get<DeliveryAssignment[]>("/deliveries");
+    return ok(deliveries.filter((delivery) => delivery.status !== "delivered"));
+  } catch (error) {
+    return fail([], error instanceof Error ? error.message : "Could not load deliveries.");
+  }
 }
 
 export async function getDeliveryById(id: string): Promise<ApiResponse<DeliveryAssignment>> {
-  return ok([...MOCK_DELIVERIES, ...MOCK_COMPLETED].find(d => d.id === id) ?? MOCK_DELIVERIES[0]);
+  const data = await api.get<DeliveryAssignment>(`/deliveries/${id}`);
+  return ok(data);
 }
 
-export async function updateDeliveryStatus(id: string, status: DeliveryAssignment["status"]): Promise<ApiResponse<DeliveryAssignment>> {
-  const delivery = MOCK_DELIVERIES.find(d => d.id === id) ?? MOCK_DELIVERIES[0];
-  return ok({ ...delivery, status, ...(status === "delivered" ? { actualDelivery: new Date().toISOString() } : {}) });
+export async function updateDeliveryStatus(
+  id: string,
+  status: DeliveryAssignment["status"]
+): Promise<ApiResponse<DeliveryAssignment>> {
+  const apiStatus = toApiStatus[status];
+  if (!apiStatus) throw new Error(`Unsupported delivery status: ${status}`);
+  const data = await api.patch<DeliveryAssignment>(`/deliveries/${id}/status`, {
+    status: apiStatus,
+  });
+  return ok(data);
+}
+
+export async function updateDeliveryDetails(
+  id: string,
+  details: { consignmentNo?: string; vehicle?: string; driver?: string }
+): Promise<ApiResponse<DeliveryAssignment>> {
+  const data = await api.patch<DeliveryAssignment>(`/deliveries/${id}`, details);
+  return ok(data);
 }
 
 export async function getFleetVehicles(): Promise<ApiResponse<FleetVehicle[]>> {
@@ -69,7 +100,12 @@ export async function getFleetVehicles(): Promise<ApiResponse<FleetVehicle[]>> {
 }
 
 export async function getDeliveryHistory(): Promise<ApiResponse<DeliveryAssignment[]>> {
-  return ok(MOCK_COMPLETED);
+  try {
+    const deliveries = await api.get<DeliveryAssignment[]>("/deliveries");
+    return ok(deliveries.filter((delivery) => delivery.status === "delivered"));
+  } catch (error) {
+    return fail([], error instanceof Error ? error.message : "Could not load delivery history.");
+  }
 }
 
 export async function getLogisticsEarnings(): Promise<ApiResponse<LogisticsEarning[]>> {

@@ -29,6 +29,7 @@ import {
   getLogisticsDashboardStats,
   getActiveDeliveries,
   getDeliveryHistory,
+  updateDeliveryStatus,
   getFleetVehicles,
   getLogisticsEarnings,
   getLogisticsNotifications,
@@ -60,11 +61,30 @@ const deliveryChip = (status: DeliveryAssignment["status"]) => {
       return "bg-emerald-100 text-emerald-800 dark:bg-emerald-500/15 dark:text-emerald-300";
     case "in_transit":
     case "picked_up":
+    case "out_for_delivery":
       return "bg-blue-100 text-blue-800 dark:bg-blue-500/15 dark:text-blue-300";
     case "failed":
       return "bg-rose-100 text-rose-800 dark:bg-rose-500/15 dark:text-rose-300";
     default:
       return "bg-amber-100 text-amber-800 dark:bg-amber-500/15 dark:text-amber-300";
+  }
+};
+
+const NEXT_DELIVERY_STATUS: Partial<Record<DeliveryAssignment["status"], DeliveryAssignment["status"]>> = {
+  assigned: "picked_up",
+  picked_up: "in_transit",
+  in_transit: "out_for_delivery",
+  out_for_delivery: "delivered",
+};
+
+const statusLabel = (status: DeliveryAssignment["status"], t: (bn: string, en: string) => string) => {
+  switch (status) {
+    case "assigned": return t("বরাদ্দকৃত", "Pending");
+    case "picked_up": return t("তোলা হয়েছে", "Picked up");
+    case "in_transit": return t("পরিবহণে", "In transit");
+    case "out_for_delivery": return t("ডেলিভারির জন্য বের হয়েছে", "Out for delivery");
+    case "delivered": return t("পৌঁছেছে", "Delivered");
+    default: return t("ব্যর্থ", "Failed");
   }
 };
 
@@ -103,6 +123,8 @@ export const LogisticsDashboard: React.FC<LogisticsDashboardProps> = ({
     Array<{ id: string; title: string; message: string; isRead: boolean; timestamp: string }>
   >([]);
   const [selected, setSelected] = useState<ServiceCardItem | null>(null);
+  const [updatingDeliveryId, setUpdatingDeliveryId] = useState<string | null>(null);
+  const [deliveryError, setDeliveryError] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -122,7 +144,11 @@ export const LogisticsDashboard: React.FC<LogisticsDashboardProps> = ({
         if (cancelled) return;
         if (statsRes?.success) setStats(statsRes.data);
         if (activeRes?.success) setActive(activeRes.data);
+        else setDeliveryError(
+          activeRes?.message || t("ডেলিভারি লোড করা যায়নি।", "Could not load deliveries.")
+        );
         if (historyRes?.success) setHistory(historyRes.data);
+        else if (historyRes?.message) setDeliveryError(historyRes.message);
         if (fleetRes?.success) setFleet(fleetRes.data);
         if (earningsRes?.success) setEarnings(earningsRes.data);
         if (notifRes?.success) setNotifications(notifRes.data);
@@ -138,11 +164,35 @@ export const LogisticsDashboard: React.FC<LogisticsDashboardProps> = ({
   }, []);
 
   const transit = active.filter(
-    (d) => d.status === "in_transit" || d.status === "picked_up"
+    (d) => d.status === "in_transit" || d.status === "picked_up" || d.status === "out_for_delivery"
   );
-  const assigned = active.filter((d) => d.status === "assigned");
   const availableVehicles = fleet.filter((v) => v.currentStatus === "available");
   const paidEarnings = earnings.filter((e) => e.paymentStatus === "paid");
+
+  const advanceDelivery = async (delivery: DeliveryAssignment) => {
+    const nextStatus = NEXT_DELIVERY_STATUS[delivery.status];
+    if (!nextStatus) return;
+    setUpdatingDeliveryId(delivery.id);
+    setDeliveryError("");
+    try {
+      const response = await updateDeliveryStatus(delivery.id, nextStatus);
+      if (!response.success) {
+        setDeliveryError(response.message || t("স্ট্যাটাস আপডেট হয়নি।", "Status update failed."));
+        return;
+      }
+      setActive((current) =>
+        current.map((item) => (item.id === delivery.id ? response.data : item))
+          .filter((item) => item.status !== "delivered")
+      );
+      if (nextStatus === "delivered") {
+        setHistory((current) => [response.data, ...current]);
+      }
+    } catch (error) {
+      setDeliveryError(error instanceof Error ? error.message : t("স্ট্যাটাস আপডেট হয়নি।", "Status update failed."));
+    } finally {
+      setUpdatingDeliveryId(null);
+    }
+  };
   const pendingPayout = earnings
     .filter((e) => e.paymentStatus === "pending")
     .reduce((sum, e) => sum + e.feeAmountBdt, 0);
@@ -335,27 +385,36 @@ export const LogisticsDashboard: React.FC<LogisticsDashboardProps> = ({
                   valueClassName="text-blue-700 dark:text-blue-400"
                 />
               </div>
+              {deliveryError && <p role="alert" className="text-xs text-rose-600">{deliveryError}</p>}
               {active.length > 0 ? (
                 <div className="space-y-2">
-                  {[...transit, ...assigned].slice(0, 4).map((d) => (
-                    <ModalRow
-                      key={d.id}
-                      title={`${d.consignmentCode} · ${trPhrase(d.cargoDescription)}`}
-                      subtitle={`${trPhrase(d.pickupAddress)} → ${trPhrase(d.deliveryAddress)} · ETA ${fmtDate(d.estimatedDelivery)}`}
-                      chip={
-                        <ModalChip className={deliveryChip(d.status)}>
-                          {d.status === "assigned"
-                            ? t("বরাদ্দকৃত", "Assigned")
-                            : d.status === "picked_up"
-                              ? t("তোলা হয়েছে", "Picked Up")
-                              : d.status === "in_transit"
-                                ? t("পরিবহণে", "In Transit")
-                                : d.status === "delivered"
-                                  ? t("পৌঁছেছে", "Delivered")
-                                  : t("ব্যর্থ", "Failed")}
-                        </ModalChip>
-                      }
-                    />
+                  {active.map((d) => (
+                    <div key={d.id} className="space-y-1">
+                      <ModalRow
+                        title={`${d.consignmentCode} · ${trPhrase(d.cargoDescription)}`}
+                        subtitle={`${trPhrase(d.pickupAddress)} → ${trPhrase(d.deliveryAddress)} · ETA ${fmtDate(d.estimatedDelivery)}`}
+                        chip={
+                          <ModalChip className={deliveryChip(d.status)}>
+                            {statusLabel(d.status, t)}
+                          </ModalChip>
+                        }
+                      />
+                      {NEXT_DELIVERY_STATUS[d.status] && (
+                        <button
+                          type="button"
+                          disabled={updatingDeliveryId !== null}
+                          onClick={() => advanceDelivery(d)}
+                          className="ml-3 rounded-lg border border-blue-200 px-3 py-1.5 text-xs font-semibold text-blue-700 disabled:opacity-50 dark:border-blue-900 dark:text-blue-300"
+                        >
+                          {updatingDeliveryId === d.id
+                            ? t("আপডেট হচ্ছে…", "Updating…")
+                            : t(
+                                `পরের ধাপ: ${statusLabel(NEXT_DELIVERY_STATUS[d.status]!, t)}`,
+                                `Advance to ${statusLabel(NEXT_DELIVERY_STATUS[d.status]!, t)}`
+                              )}
+                        </button>
+                      )}
+                    </div>
                   ))}
                 </div>
               ) : (
@@ -371,6 +430,7 @@ export const LogisticsDashboard: React.FC<LogisticsDashboardProps> = ({
 
           {selected.id === "history" && (
             <div className="space-y-3">
+              {deliveryError && <p role="alert" className="text-xs text-rose-600">{deliveryError}</p>}
               <div className="grid grid-cols-2 gap-2">
                 <ModalStat
                   label={t("সম্পন্ন", "Completed")}

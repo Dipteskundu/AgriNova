@@ -42,6 +42,9 @@ const STEP_LABEL: Record<string, { bn: string; en: string }> = {
   "Dispute opened": { bn: "বিরোধ খোলা হয়েছে", en: "Dispute opened" },
   "Payment released": { bn: "পেমেন্ট মুক্ত করা হয়েছে", en: "Payment released" },
   "Receipt confirmed": { bn: "রসিদ নিশ্চিত হয়েছে", en: "Receipt confirmed" },
+  "Picked up": { bn: "পণ্য সংগ্রহ করা হয়েছে", en: "Picked up" },
+  "In transit": { bn: "পরিবহণে রয়েছে", en: "In transit" },
+  "Out for delivery": { bn: "ডেলিভারির জন্য বের হয়েছে", en: "Out for delivery" },
 };
 
 function translateStep(label: string, t: (bn: string, en: string) => string) {
@@ -58,11 +61,26 @@ export function OrderDetail({ id }: { id: string }) {
   const t = (bn: string, en: string) => (language === "bn" ? bn : en);
 
   useEffect(() => {
+    let cancelled = false;
     getOrderById(id).then(res => {
+      if (cancelled) return;
       if (res.success) setOrder(res.data);
       setLoading(false);
     });
+    return () => {
+      cancelled = true;
+    };
   }, [id]);
+
+  useEffect(() => {
+    if (!order || order.status === "delivered" || order.status === "cancelled") return;
+    const interval = window.setInterval(() => {
+      getOrderById(id).then((res) => {
+        if (res.success) setOrder(res.data);
+      });
+    }, 20_000);
+    return () => window.clearInterval(interval);
+  }, [id, order?.status]);
 
   const receipt = useConfirmReceipt(setOrder);
 
@@ -91,6 +109,7 @@ export function OrderDetail({ id }: { id: string }) {
   const escrow = ESCROW_CONFIG[order.escrowStatus] || ESCROW_CONFIG["Held in Escrow"];
   const canAct = canActOnOrder(order);
   const confirming = receipt.busyId === order.id;
+  const delivery = order.delivery;
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -184,7 +203,66 @@ export function OrderDetail({ id }: { id: string }) {
         )}
       </Card>
 
-      {/* Tracking */}
+      <Card className="mb-4">
+        <h2 className="font-semibold text-slate-900 dark:text-[#f0f0f0] mb-4 text-sm">
+          {t("ডেলিভারি ট্র্যাকিং", "Delivery Tracking")}
+        </h2>
+        {delivery?.events.length ? (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5 rounded-xl bg-slate-50 dark:bg-[#111] p-3 text-xs">
+              <div>
+                <p className="text-slate-400">{t("কনসাইনমেন্ট", "Consignment")}</p>
+                <p className="font-semibold text-slate-800 dark:text-[#e0e0e0]">
+                  {delivery.consignmentNo || "—"}
+                </p>
+              </div>
+              <div>
+                <p className="text-slate-400">{t("গাড়ি", "Vehicle")}</p>
+                <p className="font-semibold text-slate-800 dark:text-[#e0e0e0]">
+                  {delivery.vehicle || "—"}
+                </p>
+              </div>
+              <div>
+                <p className="text-slate-400">{t("চালক", "Driver")}</p>
+                <p className="font-semibold text-slate-800 dark:text-[#e0e0e0]">
+                  {delivery.driverName || "—"}
+                </p>
+              </div>
+            </div>
+            <div>
+              {delivery.events.map((event, idx) => (
+                <div key={`${event.at}-${idx}`} className="flex gap-3 pb-4 last:pb-0">
+                  <div className="flex flex-col items-center">
+                    <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center shrink-0">
+                      <Icon name="Check" size={12} />
+                    </div>
+                    {idx < delivery.events.length - 1 && (
+                      <div className="w-0.5 flex-1 mt-1 bg-blue-300 dark:bg-blue-800" />
+                    )}
+                  </div>
+                  <div className="pb-1">
+                    <p className="text-sm font-semibold text-slate-900 dark:text-[#f0f0f0]">
+                      {translateStep(event.status, t)}
+                    </p>
+                    {event.note && <p className="text-xs text-slate-500">{event.note}</p>}
+                    <p className="text-xs text-slate-400">
+                      {event.at
+                        ? new Date(event.at).toLocaleString(language === "bn" ? "bn-BD" : "en")
+                        : ""}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        ) : (
+          <p className="text-xs text-slate-500">
+            {t("ডেলিভারির তথ্য এখনো যোগ করা হয়নি।", "Delivery tracking is not available yet.")}
+          </p>
+        )}
+      </Card>
+
+      {/* Order lifecycle steps */}
       <Card className="mb-4">
         <h2 className="font-semibold text-slate-900 dark:text-[#f0f0f0] mb-4 text-sm">
           {t("অর্ডার ট্র্যাকিং", "Order Tracking")}

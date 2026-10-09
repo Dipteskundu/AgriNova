@@ -52,6 +52,12 @@ export type OrderStatus =
   | "cancelled";
 export type PaymentStatus = "pending" | "paid" | "refunded";
 export type DemandStatus = "open" | "matched" | "fulfilled" | "expired";
+export type DeliveryStatus =
+  | "Pending"
+  | "Picked up"
+  | "In transit"
+  | "Out for delivery"
+  | "Delivered";
 
 export interface ProduceListing {
   id: string;
@@ -204,6 +210,13 @@ export interface BuyerOrder {
   deliveryAddress: string;
   estimatedDelivery: string;
   deliveredAt?: string;
+  delivery: {
+    consignmentNo: string;
+    vehicle: string;
+    driverName: string;
+    status: DeliveryStatus;
+    events: Array<{ status: DeliveryStatus; note: string; at: string }>;
+  } | null;
   trackingSteps: Array<{
     label: string;
     date: string;
