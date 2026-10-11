@@ -51,3 +51,28 @@ dev-server.err.log
 # agent tooling
 /.kilo/
 /.kiro/
+# Python environments and caches
+**/.venv/
+**/venv/
+**/__pycache__/
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/*.py[cod]
+
+# Local environment and secrets in nested projects
+**/.env
+**/.env.*
+!**/.env.example
+
+# Dependencies and generated output in nested projects
+**/node_modules/
+**/.next/
+**/coverage/
+
+# Temporary backups and logs
+**/*.bak
+**/*.bak-*
+**/*.before-ai.js
+**/*.location-backup
+**/*.log

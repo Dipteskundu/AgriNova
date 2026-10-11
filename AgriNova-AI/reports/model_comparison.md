@@ -1,0 +1,17 @@
+# Model Comparison & Benchmark Report
+
+**Evaluation Timestamp**: 2026-09-19 12:20:59 UTC
+
+**Dataset**: SPAS-Dataset-BD (v2.0 cleaned, 4608 records, 72 crop classes, 64 districts)
+
+| Model               |   Test Accuracy |   Test Macro F1 |   Test Macro Precision |   Test Macro Recall |   Test Weighted F1 |   CV Acc Mean |   CV Acc Std |   CV Macro-F1 Mean |   CV Macro-F1 Std |   Training Time (s) |
+|:--------------------|----------------:|----------------:|-----------------------:|--------------------:|-------------------:|--------------:|-------------:|-------------------:|------------------:|--------------------:|
+| XGBoost             |          0.9197 |          0.9188 |                 0.9199 |              0.9194 |             0.9191 |        0.9083 |       0.009  |             0.907  |            0.0083 |               18.01 |
+| Random Forest       |          0.8644 |          0.8651 |                 0.8719 |              0.864  |             0.8654 |        0.8749 |       0.0045 |             0.8739 |            0.0035 |                2.82 |
+| Logistic Regression |          0.8037 |          0.8032 |                 0.803  |              0.8034 |             0.8034 |        0.8123 |       0.002  |             0.8092 |            0.0026 |                4.42 |
+| K-Nearest Neighbors |          0.6117 |          0.611  |                 0.6513 |              0.613  |             0.6101 |        0.6834 |       0.0093 |             0.6858 |            0.0072 |                0.23 |
+
+### Key Selection Criteria
+1. **Macro F1-Score**: Primary metric given 72 balanced crop classes across Bangladesh.
+2. **Generalization Stability**: Evaluated via 5-Fold Stratified Cross-Validation on the training partition.
+3. **Inference Latency**: Crucial for responsive FastAPI microservice endpoints.
