@@ -157,7 +157,9 @@ export interface CalendarTask {
   notes: string;
 }
 
+
 export interface CropRecommendationInput {
+  farmId?: string;
   soilType: string;
   nitrogen: number;
   phosphorus: number;
@@ -169,24 +171,27 @@ export interface CropRecommendationInput {
   targetLandSizeAcres: number;
 }
 
+
+
 export interface CropRecommendationItem {
   id: string;
   cropName: string;
   scientificName: string;
   suitabilityScore: number; // 0 - 100
   recommendedVariety: string;
-  maturityPeriodDays: number;
-  estimatedYieldKgPerAcre: number;
-  estimatedCostPerAcre: number;
-  expectedMarketPricePerKg: number;
-  estimatedRevenuePerAcre: number;
-  estimatedProfitPerAcre: number;
-  roiPercentage: number;
-  riskFactor: 'Low' | 'Medium' | 'High';
-  waterRequirementMm: number;
+  maturityPeriodDays: number | null;
+  estimatedYieldKgPerAcre: number | null;
+  estimatedCostPerAcre: number | null;
+  expectedMarketPricePerKg: number | null;
+  estimatedRevenuePerAcre: number | null;
+  estimatedProfitPerAcre: number | null;
+  roiPercentage: number | null;
+  riskFactor: 'Low' | 'Medium' | 'High' | 'Unknown';
+  waterRequirementMm: number | null;
   keyAdvantages: string[];
   climateResilience: string;
 }
+
 
 export interface CropComparisonProfile {
   id: string;
@@ -246,6 +251,12 @@ export interface ProfitabilityMetrics {
 }
 
 export interface WeatherData {
+  retrievedAt?: string | null;
+  location?: {
+    district: string;
+    latitude: number | null;
+    longitude: number | null;
+  };
   current: {
     tempCelsius: number;
     feelsLike: number;

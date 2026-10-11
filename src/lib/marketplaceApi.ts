@@ -817,10 +817,101 @@ export async function checkoutCart(
   return ok(placed);
 }
 
+// --- Cart persistence ----------------------------------------
+// localStorage only by design � see the plan's Architecture Decisions table.
+// ─── Stripe Checkout (test mode) ─────────────────────────────
+
+/** What `POST /orders/stripe-checkout` returns: the hosted page to go to. */
+export interface StripeCheckoutInit {
+  sessionId: string;
+  sessionUrl: string;
+  orders: string[];
+}
+
+/** Backend-verified state of a Stripe Checkout Session, read after the buyer
+ *  returns. The backend verifies with Stripe directly if the webhook has not
+ *  stamped the order yet; the `?success=1` URL param alone is never trusted. */
+export interface StripeCheckoutStatus {
+  confirmed: boolean;
+  status: "paid" | "open" | "complete" | "expired" | string;
+  paymentStatus: string;
+  totalAmountBdt: number;
+  orders: Array<{
+    orderCode: string;
+    status: string;
+    escrowStatus: string;
+    productName: string;
+    quantity: number;
+    unit: string;
+    unitPriceBdt: number;
+    totalAmountBdt: number;
+  }>;
+}
+
+/**
+ * Start a Stripe-hosted Checkout for the whole cart. Unlike `checkoutCart`,
+ * every line is sent in ONE request so one Checkout Session covers the full
+ * basket. Prices, stock and minimums are all re-validated server-side; the
+ * client only supplies item ids and quantities. The returned `sessionUrl` is
+ * a `checkout.stripe.com` page the browser should navigate to; the cart is
+ * intentionally NOT cleared here — it is wiped on the success return only
+ * after `getStripeCheckoutStatus` confirms the charge.
+ */
+export async function createStripeCheckout(
+  items: CartItem[],
+  deliveryAddress: string
+): Promise<ApiResponse<StripeCheckoutInit | null>> {
+  if (!items.length) return fail(null, "Your cart is empty.");
+  try {
+    const data = await api.post<StripeCheckoutInit>("/orders/stripe-checkout", {
+      items: items.map((i) => ({
+        ...(i.kind === "input"
+          ? { productId: i.productId }
+          : { listingId: i.listingId }),
+        quantityKg: i.quantityKg,
+      })),
+      deliveryAddress,
+    });
+    return ok(data);
+  } catch (err) {
+    return fail(
+      null,
+      err instanceof Error ? err.message : "Could not start Stripe checkout."
+    );
+  }
+}
+
+/** Read the backend's verified payment state for a returned Stripe session. */
+export async function getStripeCheckoutStatus(
+  sessionId: string
+): Promise<ApiResponse<StripeCheckoutStatus | null>> {
+  try {
+    const data = await api.get<StripeCheckoutStatus>(
+      `/orders/stripe-checkout/${sessionId}`
+    );
+    return ok(data);
+  } catch (err) {
+    return fail(
+      null,
+      err instanceof Error ? err.message : "Could not check the payment status."
+    );
+  }
+}
+
 // ─── Cart persistence ────────────────────────────────────────
 // localStorage only by design — see the plan's Architecture Decisions table.
 
-const CART_KEY = "farmPath_cart";
+function getCartStorageKey(): string {
+  try {
+    const raw = localStorage.getItem("farmPath_user");
+    if (!raw) return "farmPath_cart_guest";
+    const user = JSON.parse(raw) as { id?: unknown };
+    if (typeof user.id !== "string" || !user.id.trim()) return "farmPath_cart_guest";
+    return `farmPath_cart_${user.id}`;
+  } catch {
+    return "farmPath_cart_guest";
+  }
+}
 
 /** `produce:<listingId>` / `input:<productId>` — see `CartItem.lineId`. */
 export function lineIdOf(kind: CartLineKind, refId: string): string {
@@ -837,7 +928,7 @@ export function lineIdOf(kind: CartLineKind, refId: string): string {
 export function getCart(): CartItem[] {
   if (typeof window === "undefined") return [];
   try {
-    const raw: unknown = JSON.parse(localStorage.getItem(CART_KEY) ?? "[]");
+    const raw: unknown = JSON.parse(localStorage.getItem(getCartStorageKey()) ?? "[]");
     if (!Array.isArray(raw)) return [];
     return raw.filter(isCartLine);
   } catch {
@@ -870,7 +961,7 @@ export const CART_EVENT = "farmpath:cart";
 
 export function saveCart(items: CartItem[]): void {
   if (typeof window === "undefined") return;
-  localStorage.setItem(CART_KEY, JSON.stringify(items));
+  localStorage.setItem(getCartStorageKey(), JSON.stringify(items));
   // Same-tab listeners: `storage` only fires in *other* tabs, and the site
   // navbar badge needs to move the moment a line is added here.
   window.dispatchEvent(new CustomEvent(CART_EVENT, { detail: items.length }));
