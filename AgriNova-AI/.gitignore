@@ -1,0 +1,28 @@
+﻿# Python virtual environments
+.venv/
+venv/
+env/
+
+# Python caches and test artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Node.js dependencies
+node_modules/
+
+# Logs
+*.log
+
+# Generated weather cache
+data/processed/weather_cache.json
+/ai-service/data/processed/weather_cache.json

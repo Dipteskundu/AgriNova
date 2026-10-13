@@ -1,0 +1,2199 @@
+{
+  "Aman": {
+    "spas_label": "Aman",
+    "canonical_name": "Aman Rice",
+    "bangla_name": "আমন ধান",
+    "aliases": [
+      "aman",
+      "roba aman",
+      "broadcast aman",
+      "aman rice"
+    ],
+    "barc_crop_name": "Aman",
+    "has_barc_suitability": true,
+    "has_frg_fertilizer": true,
+    "category": "Cereal",
+    "spas_default_season": "Kharif 2",
+    "verified_seasons": [
+      "Kharif 2",
+      "Aman"
+    ],
+    "lifecycle": {
+      "transplant_window": "June",
+      "growth_window": "July to  Oct",
+      "harvest_window": "Nov to Dec"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 26.0,
+      "optimal_avg_humidity_pct": 72.5,
+      "max_temp_c": 40.0,
+      "min_temp_c": 12.0,
+      "max_rh_pct": 60.0,
+      "min_rh_pct": 85.0
+    }
+  },
+  "Amra": {
+    "spas_label": "Amra",
+    "canonical_name": "Amra",
+    "bangla_name": "Amra",
+    "aliases": [
+      "amra"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 1",
+    "verified_seasons": [
+      "Kharif 1"
+    ],
+    "lifecycle": {
+      "transplant_window": "June",
+      "growth_window": "June to August",
+      "harvest_window": "August to September"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 25.0,
+      "optimal_avg_humidity_pct": 70.0,
+      "max_temp_c": 30.0,
+      "min_temp_c": 20.0,
+      "max_rh_pct": 60.0,
+      "min_rh_pct": 80.0
+    }
+  },
+  "Arhar": {
+    "spas_label": "Arhar",
+    "canonical_name": "Arhar",
+    "bangla_name": "Arhar",
+    "aliases": [
+      "arhar"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 2",
+    "verified_seasons": [
+      "Kharif 2"
+    ],
+    "lifecycle": {
+      "transplant_window": "Aug",
+      "growth_window": "Sep to Oct",
+      "harvest_window": "Nov"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 28.0,
+      "optimal_avg_humidity_pct": 35.0,
+      "max_temp_c": 30.0,
+      "min_temp_c": 26.0,
+      "max_rh_pct": 20.0,
+      "min_rh_pct": 50.0
+    }
+  },
+  "Aus": {
+    "spas_label": "Aus",
+    "canonical_name": "Aus Rice",
+    "bangla_name": "আউশ ধান",
+    "aliases": [
+      "aus",
+      "aus dhan",
+      "aus rice",
+      "summer rice"
+    ],
+    "barc_crop_name": "Aus",
+    "has_barc_suitability": true,
+    "has_frg_fertilizer": true,
+    "category": "Cereal",
+    "spas_default_season": "Kharif 1",
+    "verified_seasons": [
+      "Kharif 1",
+      "Aus"
+    ],
+    "lifecycle": {
+      "transplant_window": "March",
+      "growth_window": "April to july",
+      "harvest_window": "Aug"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 26.0,
+      "optimal_avg_humidity_pct": 72.5,
+      "max_temp_c": 40.0,
+      "min_temp_c": 12.0,
+      "max_rh_pct": 60.0,
+      "min_rh_pct": 85.0
+    }
+  },
+  "Banana": {
+    "spas_label": "Banana",
+    "canonical_name": "Banana",
+    "bangla_name": "Banana",
+    "aliases": [
+      "banana"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Rabi",
+    "verified_seasons": [
+      "Rabi"
+    ],
+    "lifecycle": {
+      "transplant_window": "Jan",
+      "growth_window": "Jan to Jan",
+      "harvest_window": "Jan"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 25.0,
+      "optimal_avg_humidity_pct": 80.0,
+      "max_temp_c": 35.0,
+      "min_temp_c": 15.0,
+      "max_rh_pct": 75.0,
+      "min_rh_pct": 85.0
+    }
+  },
+  "Barbati": {
+    "spas_label": "Barbati",
+    "canonical_name": "Barbati",
+    "bangla_name": "Barbati",
+    "aliases": [
+      "barbati"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 2",
+    "verified_seasons": [
+      "Kharif 2"
+    ],
+    "lifecycle": {
+      "transplant_window": "Sep",
+      "growth_window": "Oct to Dec",
+      "harvest_window": "December to April"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 25.0,
+      "optimal_avg_humidity_pct": 72.5,
+      "max_temp_c": 30.0,
+      "min_temp_c": 20.0,
+      "max_rh_pct": 60.0,
+      "min_rh_pct": 85.0
+    }
+  },
+  "Beans": {
+    "spas_label": "Beans",
+    "canonical_name": "Beans",
+    "bangla_name": "Beans",
+    "aliases": [
+      "beans"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 1",
+    "verified_seasons": [
+      "Kharif 1"
+    ],
+    "lifecycle": {
+      "transplant_window": "June",
+      "growth_window": "July to Nov",
+      "harvest_window": "Nov to April"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 16.0,
+      "optimal_avg_humidity_pct": 67.5,
+      "max_temp_c": 22.0,
+      "min_temp_c": 10.0,
+      "max_rh_pct": 60.0,
+      "min_rh_pct": 75.0
+    }
+  },
+  "Betelnut": {
+    "spas_label": "Betelnut",
+    "canonical_name": "Betelnut (Areca Nut)",
+    "bangla_name": "সুপারি",
+    "aliases": [
+      "betelnut",
+      "supari",
+      "areca nut"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "Plantation / Fruit",
+    "spas_default_season": "Kharif 2",
+    "verified_seasons": [
+      "Kharif 2"
+    ],
+    "lifecycle": {
+      "transplant_window": "July",
+      "growth_window": "Aug to Jan",
+      "harvest_window": "Jan to March"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 30.0,
+      "optimal_avg_humidity_pct": 80.0,
+      "max_temp_c": 35.0,
+      "min_temp_c": 25.0,
+      "max_rh_pct": 70.0,
+      "min_rh_pct": 90.0
+    }
+  },
+  "Black Berry": {
+    "spas_label": "Black Berry",
+    "canonical_name": "Black Berry",
+    "bangla_name": "Black Berry",
+    "aliases": [
+      "black berry"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 2",
+    "verified_seasons": [
+      "Kharif 2"
+    ],
+    "lifecycle": {
+      "transplant_window": "June",
+      "growth_window": "July to August",
+      "harvest_window": "June  to September"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 25.0,
+      "optimal_avg_humidity_pct": 70.0,
+      "max_temp_c": 30.0,
+      "min_temp_c": 20.0,
+      "max_rh_pct": 65.0,
+      "min_rh_pct": 75.0
+    }
+  },
+  "Boro": {
+    "spas_label": "Boro",
+    "canonical_name": "Boro Rice",
+    "bangla_name": "বোরো ধান",
+    "aliases": [
+      "boro",
+      "boro dhan",
+      "boro rice",
+      "winter rice"
+    ],
+    "barc_crop_name": "Boro",
+    "has_barc_suitability": true,
+    "has_frg_fertilizer": true,
+    "category": "Cereal",
+    "spas_default_season": "Rabi",
+    "verified_seasons": [
+      "Rabi",
+      "Boro"
+    ],
+    "lifecycle": {
+      "transplant_window": "Nov",
+      "growth_window": "Dec to March",
+      "harvest_window": "April"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 26.0,
+      "optimal_avg_humidity_pct": 72.5,
+      "max_temp_c": 40.0,
+      "min_temp_c": 12.0,
+      "max_rh_pct": 60.0,
+      "min_rh_pct": 85.0
+    }
+  },
+  "Boroi": {
+    "spas_label": "Boroi",
+    "canonical_name": "Boroi",
+    "bangla_name": "Boroi",
+    "aliases": [
+      "boroi"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Rabi",
+    "verified_seasons": [
+      "Rabi"
+    ],
+    "lifecycle": {
+      "transplant_window": "July",
+      "growth_window": "No need to do",
+      "harvest_window": "February to March"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 20.0,
+      "optimal_avg_humidity_pct": 60.0,
+      "max_temp_c": 25.0,
+      "min_temp_c": 15.0,
+      "max_rh_pct": 50.0,
+      "min_rh_pct": 70.0
+    }
+  },
+  "Cabbage": {
+    "spas_label": "Cabbage",
+    "canonical_name": "Cabbage",
+    "bangla_name": "বাঁধাকপি",
+    "aliases": [
+      "cabbage",
+      "badhakopi"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": true,
+    "category": "Vegetable",
+    "spas_default_season": "Kharif 2",
+    "verified_seasons": [
+      "Rabi"
+    ],
+    "lifecycle": {
+      "transplant_window": "Sep",
+      "growth_window": "Oct to Jan",
+      "harvest_window": "Feb"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 17.0,
+      "optimal_avg_humidity_pct": 75.0,
+      "max_temp_c": 24.0,
+      "min_temp_c": 10.0,
+      "max_rh_pct": 60.0,
+      "min_rh_pct": 90.0
+    }
+  },
+  "Carrot": {
+    "spas_label": "Carrot",
+    "canonical_name": "Carrot",
+    "bangla_name": "Carrot",
+    "aliases": [
+      "carrot"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 2",
+    "verified_seasons": [
+      "Kharif 2"
+    ],
+    "lifecycle": {
+      "transplant_window": "Oct",
+      "growth_window": "Nov to Feb",
+      "harvest_window": "March"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 18.0,
+      "optimal_avg_humidity_pct": 66.5,
+      "max_temp_c": 21.0,
+      "min_temp_c": 15.0,
+      "max_rh_pct": 47.0,
+      "min_rh_pct": 86.0
+    }
+  },
+  "Cauliflower": {
+    "spas_label": "Cauliflower",
+    "canonical_name": "Cauliflower",
+    "bangla_name": "ফুলকপি",
+    "aliases": [
+      "cauliflower",
+      "fulkopi",
+      "phulkopi"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": true,
+    "category": "Vegetable",
+    "spas_default_season": "Kharif 2",
+    "verified_seasons": [
+      "Rabi"
+    ],
+    "lifecycle": {
+      "transplant_window": "Sep",
+      "growth_window": "Nov to Jan",
+      "harvest_window": "Feb"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 19.0,
+      "optimal_avg_humidity_pct": 77.5,
+      "max_temp_c": 30.0,
+      "min_temp_c": 8.0,
+      "max_rh_pct": 70.0,
+      "min_rh_pct": 85.0
+    }
+  },
+  "Chalkumra": {
+    "spas_label": "Chalkumra",
+    "canonical_name": "Chalkumra",
+    "bangla_name": "Chalkumra",
+    "aliases": [
+      "chalkumra"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 1",
+    "verified_seasons": [
+      "Kharif 1"
+    ],
+    "lifecycle": {
+      "transplant_window": "March",
+      "growth_window": "April to July",
+      "harvest_window": "July to Oct"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 22.5,
+      "optimal_avg_humidity_pct": 75.0,
+      "max_temp_c": 27.0,
+      "min_temp_c": 18.0,
+      "max_rh_pct": 65.0,
+      "min_rh_pct": 85.0
+    }
+  },
+  "Cheena": {
+    "spas_label": "Cheena",
+    "canonical_name": "Cheena (Proso Millet)",
+    "bangla_name": "চীনা (কাউন / বাজরা)",
+    "aliases": [
+      "cheena",
+      "china millet",
+      "proso millet"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "Millet / Minor Grain",
+    "spas_default_season": "Rabi",
+    "verified_seasons": [
+      "Rabi"
+    ],
+    "lifecycle": {
+      "transplant_window": "Nov",
+      "growth_window": "Dec to Feb",
+      "harvest_window": "Feb to April"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 21.0,
+      "optimal_avg_humidity_pct": 62.5,
+      "max_temp_c": 25.0,
+      "min_temp_c": 17.0,
+      "max_rh_pct": 40.0,
+      "min_rh_pct": 85.0
+    }
+  },
+  "Chili": {
+    "spas_label": "Chili",
+    "canonical_name": "Chili",
+    "bangla_name": "মরিচ",
+    "aliases": [
+      "chili",
+      "chilli",
+      "morich",
+      "kacha morich"
+    ],
+    "barc_crop_name": "Chili",
+    "has_barc_suitability": true,
+    "has_frg_fertilizer": true,
+    "category": "Spice",
+    "spas_default_season": "Rabi",
+    "verified_seasons": [
+      "Rabi",
+      "Kharif 1"
+    ],
+    "lifecycle": {
+      "transplant_window": "Oct",
+      "growth_window": "Nov to March",
+      "harvest_window": "March to April"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 22.5,
+      "optimal_avg_humidity_pct": 60.0,
+      "max_temp_c": 30.0,
+      "min_temp_c": 15.0,
+      "max_rh_pct": 50.0,
+      "min_rh_pct": 70.0
+    }
+  },
+  "Cucumber": {
+    "spas_label": "Cucumber",
+    "canonical_name": "Cucumber",
+    "bangla_name": "শসা",
+    "aliases": [
+      "cucumber",
+      "shosa",
+      "sosha"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": true,
+    "category": "Vegetable",
+    "spas_default_season": "Kharif 2",
+    "verified_seasons": [
+      "Kharif 1",
+      "Rabi"
+    ],
+    "lifecycle": {
+      "transplant_window": "Sep",
+      "growth_window": "Nov to March",
+      "harvest_window": "March to jun"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 26.5,
+      "optimal_avg_humidity_pct": 75.0,
+      "max_temp_c": 35.0,
+      "min_temp_c": 18.0,
+      "max_rh_pct": 60.0,
+      "min_rh_pct": 90.0
+    }
+  },
+  "Dalim": {
+    "spas_label": "Dalim",
+    "canonical_name": "Dalim",
+    "bangla_name": "Dalim",
+    "aliases": [
+      "dalim"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 1",
+    "verified_seasons": [
+      "Kharif 1"
+    ],
+    "lifecycle": {
+      "transplant_window": "April",
+      "growth_window": "No need to do",
+      "harvest_window": "Throuout The year"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 21.5,
+      "optimal_avg_humidity_pct": 82.5,
+      "max_temp_c": 38.0,
+      "min_temp_c": 5.0,
+      "max_rh_pct": 70.0,
+      "min_rh_pct": 95.0
+    }
+  },
+  "Danta": {
+    "spas_label": "Danta",
+    "canonical_name": "Danta",
+    "bangla_name": "Danta",
+    "aliases": [
+      "danta"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Rabi",
+    "verified_seasons": [
+      "Rabi"
+    ],
+    "lifecycle": {
+      "transplant_window": "March",
+      "growth_window": "April to Aug",
+      "harvest_window": "Sep"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 25.0,
+      "optimal_avg_humidity_pct": 80.0,
+      "max_temp_c": 32.0,
+      "min_temp_c": 18.0,
+      "max_rh_pct": 75.0,
+      "min_rh_pct": 85.0
+    }
+  },
+  "Danta Shak": {
+    "spas_label": "Danta Shak",
+    "canonical_name": "Danta Shak",
+    "bangla_name": "Danta Shak",
+    "aliases": [
+      "danta shak"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Rabi",
+    "verified_seasons": [
+      "Rabi"
+    ],
+    "lifecycle": {
+      "transplant_window": "March",
+      "growth_window": "April to Aug",
+      "harvest_window": "Sep"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 25.0,
+      "optimal_avg_humidity_pct": 80.0,
+      "max_temp_c": 32.0,
+      "min_temp_c": 18.0,
+      "max_rh_pct": 75.0,
+      "min_rh_pct": 85.0
+    }
+  },
+  "Date Palm": {
+    "spas_label": "Date Palm",
+    "canonical_name": "Date Palm",
+    "bangla_name": "Date Palm",
+    "aliases": [
+      "date palm"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 1",
+    "verified_seasons": [
+      "Kharif 1"
+    ],
+    "lifecycle": {
+      "transplant_window": "April",
+      "growth_window": "No need to do",
+      "harvest_window": "Feb to March"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 20.5,
+      "optimal_avg_humidity_pct": 72.5,
+      "max_temp_c": 35.0,
+      "min_temp_c": 6.0,
+      "max_rh_pct": 60.0,
+      "min_rh_pct": 85.0
+    }
+  },
+  "Garlic": {
+    "spas_label": "Garlic",
+    "canonical_name": "Garlic",
+    "bangla_name": "রসুন",
+    "aliases": [
+      "garlic",
+      "roshun",
+      "roshon"
+    ],
+    "barc_crop_name": "Onion and Garlic",
+    "has_barc_suitability": true,
+    "has_frg_fertilizer": true,
+    "category": "Spice",
+    "spas_default_season": "Kharif 2",
+    "verified_seasons": [
+      "Rabi"
+    ],
+    "lifecycle": {
+      "transplant_window": "Oct",
+      "growth_window": "Nov to Jan",
+      "harvest_window": "Feb"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 25.0,
+      "optimal_avg_humidity_pct": 67.5,
+      "max_temp_c": 30.0,
+      "min_temp_c": 20.0,
+      "max_rh_pct": 65.0,
+      "min_rh_pct": 70.0
+    }
+  },
+  "Ginger": {
+    "spas_label": "Ginger",
+    "canonical_name": "Ginger",
+    "bangla_name": "আদা",
+    "aliases": [
+      "ginger",
+      "ada"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": true,
+    "category": "Spice",
+    "spas_default_season": "Rabi",
+    "verified_seasons": [
+      "Kharif 1",
+      "Rabi"
+    ],
+    "lifecycle": {
+      "transplant_window": "Oct",
+      "growth_window": "Nov to March",
+      "harvest_window": "March to April"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 20.0,
+      "optimal_avg_humidity_pct": 67.5,
+      "max_temp_c": 25.0,
+      "min_temp_c": 15.0,
+      "max_rh_pct": 60.0,
+      "min_rh_pct": 75.0
+    }
+  },
+  "Gourd": {
+    "spas_label": "Gourd",
+    "canonical_name": "Gourd",
+    "bangla_name": "Gourd",
+    "aliases": [
+      "gourd"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 2",
+    "verified_seasons": [
+      "Kharif 2"
+    ],
+    "lifecycle": {
+      "transplant_window": "July",
+      "growth_window": "Aug to Jan",
+      "harvest_window": "Jan to March"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 26.5,
+      "optimal_avg_humidity_pct": 80.0,
+      "max_temp_c": 35.0,
+      "min_temp_c": 18.0,
+      "max_rh_pct": 75.0,
+      "min_rh_pct": 85.0
+    }
+  },
+  "Gram": {
+    "spas_label": "Gram",
+    "canonical_name": "Chickpea (Gram)",
+    "bangla_name": "ছোলা / বুট",
+    "aliases": [
+      "gram",
+      "chola",
+      "chana",
+      "chickpea",
+      "boot"
+    ],
+    "barc_crop_name": "Gram",
+    "has_barc_suitability": true,
+    "has_frg_fertilizer": true,
+    "category": "Pulse",
+    "spas_default_season": "Kharif 2",
+    "verified_seasons": [
+      "Rabi"
+    ],
+    "lifecycle": {
+      "transplant_window": "Aug",
+      "growth_window": "Sep to Oct",
+      "harvest_window": "Nov"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 27.5,
+      "optimal_avg_humidity_pct": 35.0,
+      "max_temp_c": 35.0,
+      "min_temp_c": 20.0,
+      "max_rh_pct": 25.0,
+      "min_rh_pct": 45.0
+    }
+  },
+  "Green Coconut": {
+    "spas_label": "Green Coconut",
+    "canonical_name": "Green Coconut",
+    "bangla_name": "Green Coconut",
+    "aliases": [
+      "green coconut"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 1",
+    "verified_seasons": [
+      "Kharif 1"
+    ],
+    "lifecycle": {
+      "transplant_window": "May",
+      "growth_window": "June to August",
+      "harvest_window": "August to September"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 25.0,
+      "optimal_avg_humidity_pct": 70.0,
+      "max_temp_c": 30.0,
+      "min_temp_c": 20.0,
+      "max_rh_pct": 60.0,
+      "min_rh_pct": 80.0
+    }
+  },
+  "Green Palmyra": {
+    "spas_label": "Green Palmyra",
+    "canonical_name": "Green Palmyra",
+    "bangla_name": "Green Palmyra",
+    "aliases": [
+      "green palmyra"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 2",
+    "verified_seasons": [
+      "Kharif 2"
+    ],
+    "lifecycle": {
+      "transplant_window": "April",
+      "growth_window": "No need to do",
+      "harvest_window": "May"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 30.0,
+      "optimal_avg_humidity_pct": 75.0,
+      "max_temp_c": 35.0,
+      "min_temp_c": 25.0,
+      "max_rh_pct": 60.0,
+      "min_rh_pct": 90.0
+    }
+  },
+  "Green Papaya": {
+    "spas_label": "Green Papaya",
+    "canonical_name": "Green Papaya",
+    "bangla_name": "Green Papaya",
+    "aliases": [
+      "green papaya"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 1",
+    "verified_seasons": [
+      "Kharif 1"
+    ],
+    "lifecycle": {
+      "transplant_window": "June",
+      "growth_window": "June to August",
+      "harvest_window": "August to September"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 25.0,
+      "optimal_avg_humidity_pct": 70.0,
+      "max_temp_c": 30.0,
+      "min_temp_c": 20.0,
+      "max_rh_pct": 60.0,
+      "min_rh_pct": 80.0
+    }
+  },
+  "Groundnut": {
+    "spas_label": "Groundnut",
+    "canonical_name": "Groundnut (Peanut)",
+    "bangla_name": "চীনাবাদাম",
+    "aliases": [
+      "groundnut",
+      "chinabadam",
+      "peanut",
+      "badam"
+    ],
+    "barc_crop_name": "Groundnut",
+    "has_barc_suitability": true,
+    "has_frg_fertilizer": true,
+    "category": "Oilseed",
+    "spas_default_season": "Rabi",
+    "verified_seasons": [
+      "Rabi",
+      "Kharif 1"
+    ],
+    "lifecycle": {
+      "transplant_window": "Oct",
+      "growth_window": "Nov to March",
+      "harvest_window": "March to April"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 27.5,
+      "optimal_avg_humidity_pct": 85.0,
+      "max_temp_c": 35.0,
+      "min_temp_c": 20.0,
+      "max_rh_pct": 80.0,
+      "min_rh_pct": 90.0
+    }
+  },
+  "Guava": {
+    "spas_label": "Guava",
+    "canonical_name": "Guava",
+    "bangla_name": "Guava",
+    "aliases": [
+      "guava"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 1",
+    "verified_seasons": [
+      "Kharif 1"
+    ],
+    "lifecycle": {
+      "transplant_window": "April",
+      "growth_window": "No need to do",
+      "harvest_window": "Throuout The year"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 29.0,
+      "optimal_avg_humidity_pct": 67.5,
+      "max_temp_c": 35.0,
+      "min_temp_c": 23.0,
+      "max_rh_pct": 50.0,
+      "min_rh_pct": 85.0
+    }
+  },
+  "Jack Fruit": {
+    "spas_label": "Jack Fruit",
+    "canonical_name": "Jack Fruit",
+    "bangla_name": "Jack Fruit",
+    "aliases": [
+      "jack fruit"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 1",
+    "verified_seasons": [
+      "Kharif 1"
+    ],
+    "lifecycle": {
+      "transplant_window": "April",
+      "growth_window": "No need to do",
+      "harvest_window": "April to June"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 34.5,
+      "optimal_avg_humidity_pct": 82.5,
+      "max_temp_c": 47.0,
+      "min_temp_c": 22.0,
+      "max_rh_pct": 70.0,
+      "min_rh_pct": 95.0
+    }
+  },
+  "Jambura": {
+    "spas_label": "Jambura",
+    "canonical_name": "Jambura",
+    "bangla_name": "Jambura",
+    "aliases": [
+      "jambura"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 1",
+    "verified_seasons": [
+      "Kharif 1"
+    ],
+    "lifecycle": {
+      "transplant_window": "April",
+      "growth_window": "No need to do",
+      "harvest_window": "May to June"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 27.5,
+      "optimal_avg_humidity_pct": 80.0,
+      "max_temp_c": 30.0,
+      "min_temp_c": 25.0,
+      "max_rh_pct": 70.0,
+      "min_rh_pct": 90.0
+    }
+  },
+  "Jamrul": {
+    "spas_label": "Jamrul",
+    "canonical_name": "Jamrul",
+    "bangla_name": "Jamrul",
+    "aliases": [
+      "jamrul"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 2",
+    "verified_seasons": [
+      "Kharif 2"
+    ],
+    "lifecycle": {
+      "transplant_window": "June",
+      "growth_window": "July to August",
+      "harvest_window": "June  to September"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 30.0,
+      "optimal_avg_humidity_pct": 80.0,
+      "max_temp_c": 35.0,
+      "min_temp_c": 25.0,
+      "max_rh_pct": 70.0,
+      "min_rh_pct": 90.0
+    }
+  },
+  "Jhinga": {
+    "spas_label": "Jhinga",
+    "canonical_name": "Jhinga",
+    "bangla_name": "Jhinga",
+    "aliases": [
+      "jhinga"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 1",
+    "verified_seasons": [
+      "Kharif 1"
+    ],
+    "lifecycle": {
+      "transplant_window": "April",
+      "growth_window": "May to June",
+      "harvest_window": "June to Aug"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 23.0,
+      "optimal_avg_humidity_pct": 80.0,
+      "max_temp_c": 28.0,
+      "min_temp_c": 18.0,
+      "max_rh_pct": 70.0,
+      "min_rh_pct": 90.0
+    }
+  },
+  "Jute": {
+    "spas_label": "Jute",
+    "canonical_name": "Jute",
+    "bangla_name": "পাট",
+    "aliases": [
+      "jute",
+      "pat",
+      "tosha pat",
+      "deshi pat"
+    ],
+    "barc_crop_name": "Jute",
+    "has_barc_suitability": true,
+    "has_frg_fertilizer": true,
+    "category": "Fiber",
+    "spas_default_season": "Kharif 1",
+    "verified_seasons": [
+      "Kharif 1"
+    ],
+    "lifecycle": {
+      "transplant_window": "March",
+      "growth_window": "April to Aug",
+      "harvest_window": "Sep"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 30.0,
+      "optimal_avg_humidity_pct": 75.0,
+      "max_temp_c": 40.0,
+      "min_temp_c": 20.0,
+      "max_rh_pct": 70.0,
+      "min_rh_pct": 80.0
+    }
+  },
+  "Kakrol": {
+    "spas_label": "Kakrol",
+    "canonical_name": "Kakrol",
+    "bangla_name": "Kakrol",
+    "aliases": [
+      "kakrol"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 1",
+    "verified_seasons": [
+      "Kharif 1"
+    ],
+    "lifecycle": {
+      "transplant_window": "April",
+      "growth_window": "May to July",
+      "harvest_window": "July to Sep"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 25.0,
+      "optimal_avg_humidity_pct": 72.5,
+      "max_temp_c": 30.0,
+      "min_temp_c": 20.0,
+      "max_rh_pct": 60.0,
+      "min_rh_pct": 85.0
+    }
+  },
+  "Karala": {
+    "spas_label": "Karala",
+    "canonical_name": "Karala",
+    "bangla_name": "Karala",
+    "aliases": [
+      "karala"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Rabi",
+    "verified_seasons": [
+      "Rabi"
+    ],
+    "lifecycle": {
+      "transplant_window": "Feb",
+      "growth_window": "March to July",
+      "harvest_window": "Aug to Sep"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 25.5,
+      "optimal_avg_humidity_pct": 87.5,
+      "max_temp_c": 27.0,
+      "min_temp_c": 24.0,
+      "max_rh_pct": 85.0,
+      "min_rh_pct": 90.0
+    }
+  },
+  "Kolmi Shak": {
+    "spas_label": "Kolmi Shak",
+    "canonical_name": "Kolmi Shak",
+    "bangla_name": "Kolmi Shak",
+    "aliases": [
+      "kolmi shak"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 1",
+    "verified_seasons": [
+      "Kharif 1"
+    ],
+    "lifecycle": {
+      "transplant_window": "March",
+      "growth_window": "April to Aug",
+      "harvest_window": "Sep to Oct"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 27.5,
+      "optimal_avg_humidity_pct": 90.0,
+      "max_temp_c": 35.0,
+      "min_temp_c": 20.0,
+      "max_rh_pct": 80.0,
+      "min_rh_pct": 100.0
+    }
+  },
+  "Lady's Finger": {
+    "spas_label": "Lady's Finger",
+    "canonical_name": "Lady's Finger (Okra)",
+    "bangla_name": "ঢেঁড়শ",
+    "aliases": [
+      "lady's finger",
+      "okra",
+      "dherosh",
+      "bhendi"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": true,
+    "category": "Vegetable",
+    "spas_default_season": "Kharif 1",
+    "verified_seasons": [
+      "Kharif 1",
+      "Kharif 2"
+    ],
+    "lifecycle": {
+      "transplant_window": "April",
+      "growth_window": "May to June",
+      "harvest_window": "June to Sep"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 20.0,
+      "optimal_avg_humidity_pct": 80.0,
+      "max_temp_c": 30.0,
+      "min_temp_c": 10.0,
+      "max_rh_pct": 75.0,
+      "min_rh_pct": 85.0
+    }
+  },
+  "Lal Shak": {
+    "spas_label": "Lal Shak",
+    "canonical_name": "Lal Shak",
+    "bangla_name": "Lal Shak",
+    "aliases": [
+      "lal shak"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Rabi",
+    "verified_seasons": [
+      "Rabi"
+    ],
+    "lifecycle": {
+      "transplant_window": "Sep",
+      "growth_window": "Oct to Nov",
+      "harvest_window": "Nov to Feb"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 20.0,
+      "optimal_avg_humidity_pct": 75.0,
+      "max_temp_c": 25.0,
+      "min_temp_c": 15.0,
+      "max_rh_pct": 70.0,
+      "min_rh_pct": 80.0
+    }
+  },
+  "Laushak": {
+    "spas_label": "Laushak",
+    "canonical_name": "Laushak",
+    "bangla_name": "Laushak",
+    "aliases": [
+      "laushak"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Rabi",
+    "verified_seasons": [
+      "Rabi"
+    ],
+    "lifecycle": {
+      "transplant_window": "Sep",
+      "growth_window": "Oct to Nov",
+      "harvest_window": "Nov to Feb"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 20.0,
+      "optimal_avg_humidity_pct": 80.0,
+      "max_temp_c": 25.0,
+      "min_temp_c": 15.0,
+      "max_rh_pct": 70.0,
+      "min_rh_pct": 90.0
+    }
+  },
+  "Lemon": {
+    "spas_label": "Lemon",
+    "canonical_name": "Lemon",
+    "bangla_name": "Lemon",
+    "aliases": [
+      "lemon"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Rabi",
+    "verified_seasons": [
+      "Rabi"
+    ],
+    "lifecycle": {
+      "transplant_window": "Jan",
+      "growth_window": "Jan to Jan",
+      "harvest_window": "Jan"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 17.5,
+      "optimal_avg_humidity_pct": 77.5,
+      "max_temp_c": 25.0,
+      "min_temp_c": 10.0,
+      "max_rh_pct": 60.0,
+      "min_rh_pct": 95.0
+    }
+  },
+  "Lentil": {
+    "spas_label": "Lentil",
+    "canonical_name": "Lentil",
+    "bangla_name": "মসুর ডাল",
+    "aliases": [
+      "lentil",
+      "mosur",
+      "masur dal"
+    ],
+    "barc_crop_name": "Lentil",
+    "has_barc_suitability": true,
+    "has_frg_fertilizer": true,
+    "category": "Pulse",
+    "spas_default_season": "Kharif 2",
+    "verified_seasons": [
+      "Rabi"
+    ],
+    "lifecycle": {
+      "transplant_window": "Oct",
+      "growth_window": "Nov  to  Feb",
+      "harvest_window": "Feb to March"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 15.0,
+      "optimal_avg_humidity_pct": 90.0,
+      "max_temp_c": 20.0,
+      "min_temp_c": 10.0,
+      "max_rh_pct": 85.0,
+      "min_rh_pct": 95.0
+    }
+  },
+  "Maize 1": {
+    "spas_label": "Maize 1",
+    "canonical_name": "Maize (Rabi)",
+    "bangla_name": "ভুট্টা (রবি)",
+    "aliases": [
+      "maize 1",
+      "rabi maize",
+      "corn"
+    ],
+    "barc_crop_name": "Maize",
+    "has_barc_suitability": true,
+    "has_frg_fertilizer": true,
+    "category": "Cereal",
+    "spas_default_season": "Kharif 1",
+    "verified_seasons": [
+      "Rabi"
+    ],
+    "lifecycle": {
+      "transplant_window": "March",
+      "growth_window": "April to May",
+      "harvest_window": "June to July"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 27.0,
+      "optimal_avg_humidity_pct": 72.5,
+      "max_temp_c": 34.0,
+      "min_temp_c": 20.0,
+      "max_rh_pct": 60.0,
+      "min_rh_pct": 85.0
+    }
+  },
+  "Maize 2": {
+    "spas_label": "Maize 2",
+    "canonical_name": "Maize (Kharif)",
+    "bangla_name": "ভুট্টা (খরিফ)",
+    "aliases": [
+      "maize 2",
+      "summer maize",
+      "kharif maize"
+    ],
+    "barc_crop_name": "Maize",
+    "has_barc_suitability": true,
+    "has_frg_fertilizer": true,
+    "category": "Cereal",
+    "spas_default_season": "Rabi",
+    "verified_seasons": [
+      "Kharif 1",
+      "Kharif 2"
+    ],
+    "lifecycle": {
+      "transplant_window": "Dec",
+      "growth_window": "Jan  to  March",
+      "harvest_window": "April"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 20.5,
+      "optimal_avg_humidity_pct": 60.0,
+      "max_temp_c": 27.0,
+      "min_temp_c": 14.0,
+      "max_rh_pct": 50.0,
+      "min_rh_pct": 70.0
+    }
+  },
+  "Malta": {
+    "spas_label": "Malta",
+    "canonical_name": "Malta",
+    "bangla_name": "Malta",
+    "aliases": [
+      "malta"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 1",
+    "verified_seasons": [
+      "Kharif 1"
+    ],
+    "lifecycle": {
+      "transplant_window": "June",
+      "growth_window": "June to August",
+      "harvest_window": "August to September"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 27.5,
+      "optimal_avg_humidity_pct": 85.0,
+      "max_temp_c": 35.0,
+      "min_temp_c": 20.0,
+      "max_rh_pct": 80.0,
+      "min_rh_pct": 90.0
+    }
+  },
+  "Mango": {
+    "spas_label": "Mango",
+    "canonical_name": "Mango",
+    "bangla_name": "Mango",
+    "aliases": [
+      "mango"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 1",
+    "verified_seasons": [
+      "Kharif 1"
+    ],
+    "lifecycle": {
+      "transplant_window": "April",
+      "growth_window": "No need to do",
+      "harvest_window": "April to June"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 31.5,
+      "optimal_avg_humidity_pct": 70.0,
+      "max_temp_c": 36.0,
+      "min_temp_c": 27.0,
+      "max_rh_pct": 50.0,
+      "min_rh_pct": 90.0
+    }
+  },
+  "Mashkalai": {
+    "spas_label": "Mashkalai",
+    "canonical_name": "Mashkalai",
+    "bangla_name": "Mashkalai",
+    "aliases": [
+      "mashkalai"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 2",
+    "verified_seasons": [
+      "Kharif 2"
+    ],
+    "lifecycle": {
+      "transplant_window": "Aug",
+      "growth_window": "Sep to Oct",
+      "harvest_window": "Nov"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 27.5,
+      "optimal_avg_humidity_pct": 35.0,
+      "max_temp_c": 35.0,
+      "min_temp_c": 20.0,
+      "max_rh_pct": 25.0,
+      "min_rh_pct": 45.0
+    }
+  },
+  "Motor": {
+    "spas_label": "Motor",
+    "canonical_name": "Motor",
+    "bangla_name": "Motor",
+    "aliases": [
+      "motor"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 2",
+    "verified_seasons": [
+      "Kharif 2"
+    ],
+    "lifecycle": {
+      "transplant_window": "Oct",
+      "growth_window": "Nov to March",
+      "harvest_window": "March to April"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 22.5,
+      "optimal_avg_humidity_pct": 82.5,
+      "max_temp_c": 30.0,
+      "min_temp_c": 15.0,
+      "max_rh_pct": 75.0,
+      "min_rh_pct": 90.0
+    }
+  },
+  "Mug": {
+    "spas_label": "Mug",
+    "canonical_name": "Mungbean",
+    "bangla_name": "মুগ ডাল",
+    "aliases": [
+      "mug",
+      "mung",
+      "mungbean",
+      "mug dal"
+    ],
+    "barc_crop_name": "Mungbean",
+    "has_barc_suitability": true,
+    "has_frg_fertilizer": true,
+    "category": "Pulse",
+    "spas_default_season": "Kharif 2",
+    "verified_seasons": [
+      "Kharif 1",
+      "Rabi"
+    ],
+    "lifecycle": {
+      "transplant_window": "Feb",
+      "growth_window": "March to May",
+      "harvest_window": "May"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 30.0,
+      "optimal_avg_humidity_pct": 70.0,
+      "max_temp_c": 35.0,
+      "min_temp_c": 25.0,
+      "max_rh_pct": 60.0,
+      "min_rh_pct": 80.0
+    }
+  },
+  "Mukhi Kachu": {
+    "spas_label": "Mukhi Kachu",
+    "canonical_name": "Mukhi Kachu",
+    "bangla_name": "Mukhi Kachu",
+    "aliases": [
+      "mukhi kachu"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 1",
+    "verified_seasons": [
+      "Kharif 1"
+    ],
+    "lifecycle": {
+      "transplant_window": "April",
+      "growth_window": "May to Sep",
+      "harvest_window": "Sep to Feb"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 11.5,
+      "optimal_avg_humidity_pct": 77.5,
+      "max_temp_c": 15.0,
+      "min_temp_c": 8.0,
+      "max_rh_pct": 65.0,
+      "min_rh_pct": 90.0
+    }
+  },
+  "Oal Kachu": {
+    "spas_label": "Oal Kachu",
+    "canonical_name": "Oal Kachu",
+    "bangla_name": "Oal Kachu",
+    "aliases": [
+      "oal kachu"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 2",
+    "verified_seasons": [
+      "Kharif 2"
+    ],
+    "lifecycle": {
+      "transplant_window": "Sep",
+      "growth_window": "Oct to Dec",
+      "harvest_window": "Dec to Feb"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 23.5,
+      "optimal_avg_humidity_pct": 61.0,
+      "max_temp_c": 32.0,
+      "min_temp_c": 15.0,
+      "max_rh_pct": 52.0,
+      "min_rh_pct": 70.0
+    }
+  },
+  "Onion": {
+    "spas_label": "Onion",
+    "canonical_name": "Onion",
+    "bangla_name": "পেঁয়াজ",
+    "aliases": [
+      "onion",
+      "peyaj",
+      "piaj"
+    ],
+    "barc_crop_name": "Onion and Garlic",
+    "has_barc_suitability": true,
+    "has_frg_fertilizer": true,
+    "category": "Spice",
+    "spas_default_season": "Rabi",
+    "verified_seasons": [
+      "Rabi"
+    ],
+    "lifecycle": {
+      "transplant_window": "Oct",
+      "growth_window": "Nov to March",
+      "harvest_window": "March to April"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 20.0,
+      "optimal_avg_humidity_pct": 67.5,
+      "max_temp_c": 25.0,
+      "min_temp_c": 15.0,
+      "max_rh_pct": 65.0,
+      "min_rh_pct": 70.0
+    }
+  },
+  "Palmyra Palm": {
+    "spas_label": "Palmyra Palm",
+    "canonical_name": "Palmyra Palm",
+    "bangla_name": "Palmyra Palm",
+    "aliases": [
+      "palmyra palm"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Rabi",
+    "verified_seasons": [
+      "Rabi"
+    ],
+    "lifecycle": {
+      "transplant_window": "Sep",
+      "growth_window": "Oct to Nov",
+      "harvest_window": "Nov to Feb"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 20.0,
+      "optimal_avg_humidity_pct": 60.0,
+      "max_temp_c": 25.0,
+      "min_temp_c": 15.0,
+      "max_rh_pct": 50.0,
+      "min_rh_pct": 70.0
+    }
+  },
+  "Palong Shak": {
+    "spas_label": "Palong Shak",
+    "canonical_name": "Palong Shak",
+    "bangla_name": "Palong Shak",
+    "aliases": [
+      "palong shak"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 2",
+    "verified_seasons": [
+      "Kharif 2"
+    ],
+    "lifecycle": {
+      "transplant_window": "Aug",
+      "growth_window": "Sep to Jan",
+      "harvest_window": "Feb"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 21.0,
+      "optimal_avg_humidity_pct": 70.0,
+      "max_temp_c": 30.0,
+      "min_temp_c": 12.0,
+      "max_rh_pct": 65.0,
+      "min_rh_pct": 75.0
+    }
+  },
+  "Patal": {
+    "spas_label": "Patal",
+    "canonical_name": "Patal",
+    "bangla_name": "Patal",
+    "aliases": [
+      "patal"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 2",
+    "verified_seasons": [
+      "Kharif 2"
+    ],
+    "lifecycle": {
+      "transplant_window": "Aug",
+      "growth_window": "Sep to Jan",
+      "harvest_window": "Jan to March"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 27.5,
+      "optimal_avg_humidity_pct": 72.5,
+      "max_temp_c": 35.0,
+      "min_temp_c": 20.0,
+      "max_rh_pct": 60.0,
+      "min_rh_pct": 85.0
+    }
+  },
+  "Pineapple": {
+    "spas_label": "Pineapple",
+    "canonical_name": "Pineapple",
+    "bangla_name": "Pineapple",
+    "aliases": [
+      "pineapple"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 2",
+    "verified_seasons": [
+      "Kharif 2"
+    ],
+    "lifecycle": {
+      "transplant_window": "Sep",
+      "growth_window": "Sep to May",
+      "harvest_window": "June to Aug"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 26.5,
+      "optimal_avg_humidity_pct": 75.0,
+      "max_temp_c": 35.0,
+      "min_temp_c": 18.0,
+      "max_rh_pct": 70.0,
+      "min_rh_pct": 80.0
+    }
+  },
+  "Puishak": {
+    "spas_label": "Puishak",
+    "canonical_name": "Puishak",
+    "bangla_name": "Puishak",
+    "aliases": [
+      "puishak"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 2",
+    "verified_seasons": [
+      "Kharif 2"
+    ],
+    "lifecycle": {
+      "transplant_window": "Aug",
+      "growth_window": "Sep to Jan",
+      "harvest_window": "Feb"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 21.0,
+      "optimal_avg_humidity_pct": 70.0,
+      "max_temp_c": 30.0,
+      "min_temp_c": 12.0,
+      "max_rh_pct": 65.0,
+      "min_rh_pct": 75.0
+    }
+  },
+  "Pumpkin": {
+    "spas_label": "Pumpkin",
+    "canonical_name": "Pumpkin",
+    "bangla_name": "মিষ্টি কুমড়া",
+    "aliases": [
+      "pumpkin",
+      "misti kumra",
+      "misti kumda"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": true,
+    "category": "Vegetable",
+    "spas_default_season": "Rabi",
+    "verified_seasons": [
+      "Rabi",
+      "Kharif 1"
+    ],
+    "lifecycle": {
+      "transplant_window": "Sep",
+      "growth_window": "Oct to Nov",
+      "harvest_window": "Nov to Feb"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 20.0,
+      "optimal_avg_humidity_pct": 60.0,
+      "max_temp_c": 25.0,
+      "min_temp_c": 15.0,
+      "max_rh_pct": 50.0,
+      "min_rh_pct": 70.0
+    }
+  },
+  "Radish": {
+    "spas_label": "Radish",
+    "canonical_name": "Radish",
+    "bangla_name": "মুলা",
+    "aliases": [
+      "radish",
+      "mula"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": true,
+    "category": "Vegetable",
+    "spas_default_season": "Kharif 2",
+    "verified_seasons": [
+      "Rabi"
+    ],
+    "lifecycle": {
+      "transplant_window": "Oct",
+      "growth_window": "Nov to Feb",
+      "harvest_window": "March"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 16.0,
+      "optimal_avg_humidity_pct": 85.0,
+      "max_temp_c": 22.0,
+      "min_temp_c": 10.0,
+      "max_rh_pct": 75.0,
+      "min_rh_pct": 95.0
+    }
+  },
+  "Rape & Mustard": {
+    "spas_label": "Rape & Mustard",
+    "canonical_name": "Mustard",
+    "bangla_name": "সরিষা",
+    "aliases": [
+      "mustard",
+      "sorisha",
+      "shorshe",
+      "sarson",
+      "rape & mustard"
+    ],
+    "barc_crop_name": "Mustard",
+    "has_barc_suitability": true,
+    "has_frg_fertilizer": true,
+    "category": "Oilseed",
+    "spas_default_season": "Kharif 2",
+    "verified_seasons": [
+      "Rabi"
+    ],
+    "lifecycle": {
+      "transplant_window": "Oct",
+      "growth_window": "Nov to Feb",
+      "harvest_window": "Feb to April"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 22.5,
+      "optimal_avg_humidity_pct": 75.0,
+      "max_temp_c": 30.0,
+      "min_temp_c": 15.0,
+      "max_rh_pct": 65.0,
+      "min_rh_pct": 85.0
+    }
+  },
+  "Ripe Papaya": {
+    "spas_label": "Ripe Papaya",
+    "canonical_name": "Ripe Papaya",
+    "bangla_name": "Ripe Papaya",
+    "aliases": [
+      "ripe papaya"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 1",
+    "verified_seasons": [
+      "Kharif 1"
+    ],
+    "lifecycle": {
+      "transplant_window": "April",
+      "growth_window": "No need to do",
+      "harvest_window": "April to May"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 30.0,
+      "optimal_avg_humidity_pct": 80.0,
+      "max_temp_c": 35.0,
+      "min_temp_c": 25.0,
+      "max_rh_pct": 70.0,
+      "min_rh_pct": 90.0
+    }
+  },
+  "Safeda": {
+    "spas_label": "Safeda",
+    "canonical_name": "Safeda",
+    "bangla_name": "Safeda",
+    "aliases": [
+      "safeda"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 1",
+    "verified_seasons": [
+      "Kharif 1"
+    ],
+    "lifecycle": {
+      "transplant_window": "April",
+      "growth_window": "No need to do",
+      "harvest_window": "Jan to March"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 24.0,
+      "optimal_avg_humidity_pct": 70.0,
+      "max_temp_c": 38.0,
+      "min_temp_c": 10.0,
+      "max_rh_pct": 60.0,
+      "min_rh_pct": 80.0
+    }
+  },
+  "Sesame": {
+    "spas_label": "Sesame",
+    "canonical_name": "Sesame",
+    "bangla_name": "তিল",
+    "aliases": [
+      "sesame",
+      "til"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": true,
+    "category": "Oilseed",
+    "spas_default_season": "Rabi",
+    "verified_seasons": [
+      "Kharif 1",
+      "Rabi"
+    ],
+    "lifecycle": {
+      "transplant_window": "Nov",
+      "growth_window": "Dec to Jan",
+      "harvest_window": "Feb"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 31.0,
+      "optimal_avg_humidity_pct": 45.0,
+      "max_temp_c": 35.0,
+      "min_temp_c": 27.0,
+      "max_rh_pct": 40.0,
+      "min_rh_pct": 50.0
+    }
+  },
+  "Shalgom": {
+    "spas_label": "Shalgom",
+    "canonical_name": "Shalgom",
+    "bangla_name": "Shalgom",
+    "aliases": [
+      "shalgom"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 2",
+    "verified_seasons": [
+      "Kharif 2"
+    ],
+    "lifecycle": {
+      "transplant_window": "Sep",
+      "growth_window": "Oct to Nov",
+      "harvest_window": "Nov to Feb"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 14.5,
+      "optimal_avg_humidity_pct": 82.5,
+      "max_temp_c": 24.0,
+      "min_temp_c": 5.0,
+      "max_rh_pct": 70.0,
+      "min_rh_pct": 95.0
+    }
+  },
+  "Sugarcane": {
+    "spas_label": "Sugarcane",
+    "canonical_name": "Sugarcane",
+    "bangla_name": "আখ / কুশিয়ার",
+    "aliases": [
+      "sugarcane",
+      "aakh",
+      "kushiar"
+    ],
+    "barc_crop_name": "Sugarcane",
+    "has_barc_suitability": true,
+    "has_frg_fertilizer": true,
+    "category": "Cash Crop",
+    "spas_default_season": "Kharif 2",
+    "verified_seasons": [
+      "Rabi",
+      "Kharif 1"
+    ],
+    "lifecycle": {
+      "transplant_window": "Oct",
+      "growth_window": "Nov to Aug",
+      "harvest_window": "Aug to Sep"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 29.0,
+      "optimal_avg_humidity_pct": 65.0,
+      "max_temp_c": 38.0,
+      "min_temp_c": 20.0,
+      "max_rh_pct": 45.0,
+      "min_rh_pct": 85.0
+    }
+  },
+  "Sweet Potato": {
+    "spas_label": "Sweet Potato",
+    "canonical_name": "Sweet Potato",
+    "bangla_name": "মিষ্টি আলু",
+    "aliases": [
+      "sweet potato",
+      "misti alu",
+      "sakarkand"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": true,
+    "category": "Tuber",
+    "spas_default_season": "Rabi",
+    "verified_seasons": [
+      "Rabi"
+    ],
+    "lifecycle": {
+      "transplant_window": "Nov",
+      "growth_window": "Dec to March",
+      "harvest_window": "April"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 20.5,
+      "optimal_avg_humidity_pct": 80.0,
+      "max_temp_c": 24.0,
+      "min_temp_c": 17.0,
+      "max_rh_pct": 70.0,
+      "min_rh_pct": 90.0
+    }
+  },
+  "Taramind": {
+    "spas_label": "Taramind",
+    "canonical_name": "Tamarind",
+    "bangla_name": "তেঁতুল",
+    "aliases": [
+      "taramind",
+      "tamarind",
+      "tentul",
+      "tetul"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "Fruit / Minor Crop",
+    "spas_default_season": "Kharif 1",
+    "verified_seasons": [
+      "Kharif 1"
+    ],
+    "lifecycle": {
+      "transplant_window": "February",
+      "growth_window": "March to April",
+      "harvest_window": "February to May"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 32.5,
+      "optimal_avg_humidity_pct": 65.0,
+      "max_temp_c": 40.0,
+      "min_temp_c": 25.0,
+      "max_rh_pct": 50.0,
+      "min_rh_pct": 80.0
+    }
+  },
+  "Tobacco": {
+    "spas_label": "Tobacco",
+    "canonical_name": "Tobacco",
+    "bangla_name": "Tobacco",
+    "aliases": [
+      "tobacco"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 2",
+    "verified_seasons": [
+      "Kharif 2"
+    ],
+    "lifecycle": {
+      "transplant_window": "Oct",
+      "growth_window": "Nov to Feb",
+      "harvest_window": "Feb to April"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 17.5,
+      "optimal_avg_humidity_pct": 67.5,
+      "max_temp_c": 20.0,
+      "min_temp_c": 15.0,
+      "max_rh_pct": 50.0,
+      "min_rh_pct": 85.0
+    }
+  },
+  "Wheat": {
+    "spas_label": "Wheat",
+    "canonical_name": "Wheat",
+    "bangla_name": "গম",
+    "aliases": [
+      "wheat",
+      "gom"
+    ],
+    "barc_crop_name": "Wheat",
+    "has_barc_suitability": true,
+    "has_frg_fertilizer": true,
+    "category": "Cereal",
+    "spas_default_season": "Rabi",
+    "verified_seasons": [
+      "Rabi"
+    ],
+    "lifecycle": {
+      "transplant_window": "Dec",
+      "growth_window": "Jan  to  March",
+      "harvest_window": "April"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 17.75,
+      "optimal_avg_humidity_pct": 55.0,
+      "max_temp_c": 20.0,
+      "min_temp_c": 15.5,
+      "max_rh_pct": 50.0,
+      "min_rh_pct": 60.0
+    }
+  },
+  "Wood Apple": {
+    "spas_label": "Wood Apple",
+    "canonical_name": "Wood Apple",
+    "bangla_name": "Wood Apple",
+    "aliases": [
+      "wood apple"
+    ],
+    "barc_crop_name": null,
+    "has_barc_suitability": false,
+    "has_frg_fertilizer": false,
+    "category": "General Crop",
+    "spas_default_season": "Kharif 1",
+    "verified_seasons": [
+      "Kharif 1"
+    ],
+    "lifecycle": {
+      "transplant_window": "May",
+      "growth_window": "June to August",
+      "harvest_window": "August to September"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 25.0,
+      "optimal_avg_humidity_pct": 70.0,
+      "max_temp_c": 30.0,
+      "min_temp_c": 20.0,
+      "max_rh_pct": 60.0,
+      "min_rh_pct": 80.0
+    }
+  },
+  "Potato": {
+    "spas_label": "Potato",
+    "canonical_name": "Potato (Irish Potato)",
+    "bangla_name": "গোল আলু",
+    "aliases": [
+      "potato",
+      "alu",
+      "gol alu",
+      "irish potato"
+    ],
+    "barc_crop_name": "Potato",
+    "has_barc_suitability": true,
+    "has_frg_fertilizer": true,
+    "category": "Tuber",
+    "spas_default_season": "Rabi",
+    "verified_seasons": [
+      "Rabi"
+    ],
+    "lifecycle": {
+      "transplant_window": "November to December",
+      "growth_window": "December to February",
+      "harvest_window": "February to March"
+    },
+    "climate_envelope": {
+      "optimal_avg_temp_c": 18.0,
+      "optimal_avg_humidity_pct": 65.0,
+      "max_temp_c": 28.0,
+      "min_temp_c": 8.0,
+      "max_rh_pct": 80.0,
+      "min_rh_pct": 50.0
+    }
+  }
+}
