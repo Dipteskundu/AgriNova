@@ -12,12 +12,12 @@ const options = {
         },
         servers: [
             {
-                url: process.env.NODE_ENV === "production"
-                    ? "https://agrinova-backend1.onrender.com"
-                    : "http://localhost:5000",
-                description: process.env.NODE_ENV === "production"
-                    ? "Production server"
-                    : "Local development server",
+                url: "https://agrinova-backend1.onrender.com",
+                description: "Production server",
+            },
+            {
+                url: "http://localhost:5000",
+                description: "Local development server",
             },
         ],
         components: {
