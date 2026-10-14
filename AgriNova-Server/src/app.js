@@ -6,6 +6,8 @@ const fs = require("fs");
 const path = require("path");
 const connectDB = require("./config/db");
 const errorHandler = require("./middleware/error.middleware");
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./docs/swagger");
 
 const app = express();
 
@@ -68,6 +70,11 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
+
+app.get("/docs/swagger.json", (req, res) => res.json(swaggerSpec));
+
+// Swagger API documentation
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Health check
 app.get("/api/health", (req, res) => {
