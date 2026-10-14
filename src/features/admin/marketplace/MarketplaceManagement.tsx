@@ -21,8 +21,10 @@ import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
+import { Pager } from '@/components/ui/Pager';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
+import { usePagination } from '@/hooks/usePagination';
 import { getMarketplaceListingsAdmin, updateListingStatusAdmin } from '@/lib/adminApi';
 import { requestListingInspection } from '@/lib/marketplaceApi';
 import { MarketplaceListingAdminView } from '@/types';
@@ -200,6 +202,10 @@ export const MarketplaceManagement: React.FC = () => {
     return matchesSearch && matchesStatus;
   });
 
+  // 8 supervision cards at a time; search or status changes rewind.
+  const { page, setPage, pageSize, totalPages, total, pagedItems: pagedListings } =
+    usePagination(filtered, 8, `${searchQuery}|${statusFilter}`);
+
   const totalVolumeKg = listings.reduce((acc, l) => acc + l.quantityAvailableKg, 0);
   const approvedCount = listings.filter((l) => l.status === 'Approved').length;
   const pendingCount = listings.filter((l) => l.status === 'Pending Review').length;
@@ -284,7 +290,7 @@ export const MarketplaceManagement: React.FC = () => {
 
       {/* Listings Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {filtered.map((item) => {
+        {pagedListings.map((item) => {
           const isPriceHigh = item.askingPricePerKg > item.suggestedCeilingPrice;
           const isPriceLow = item.askingPricePerKg < item.suggestedFloorPrice;
 
@@ -378,6 +384,13 @@ export const MarketplaceManagement: React.FC = () => {
           );
         })}
       </div>
+      <Pager
+        page={page}
+        totalPages={totalPages}
+        total={total}
+        pageSize={pageSize}
+        onPageChange={setPage}
+      />
 
       {/* Details Modal */}
       {selectedListing && (

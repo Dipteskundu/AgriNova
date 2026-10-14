@@ -1,28 +1,60 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Sprout,
+  Users,
   ShieldCheck,
+  Store,
+  PackageCheck,
+  Search,
+  Truck,
+  HeartPulse,
   Lock,
-  ArrowRight,
   Mail,
-} from '@/components/icons';
-import { useToast } from '@/components/ui/Toast';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { useAuth } from '@/contexts/AuthContext';
-import { PublicNavbar } from '@/components/public/PublicNavbar';
-import Link from 'next/link';
+  ArrowRight,
+  Sparkles,
+  ChevronDown,
+} from "@/components/icons";
+import { useToast } from "@/components/ui/Toast";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { AuthShell, authContainer, authItem } from "./AuthShell";
+import { AuthField } from "./AuthField";
+import { SocialButtons } from "./SocialButtons";
+
+/** One-click demo logins, revealed by the collapsible "demo access" strip. */
+const DEMOS = [
+  { email: "farmer@demo.com", Icon: Sprout, bn: "কৃষক", en: "Farmer" },
+  { email: "multi@demo.com", Icon: Users, bn: "বহু-ভূমিকা", en: "Multi" },
+  { email: "admin@demo.com", Icon: ShieldCheck, bn: "এডমিন", en: "Admin" },
+  { email: "buyer@demo.com", Icon: Store, bn: "ক্রেতা", en: "Buyer" },
+  { email: "supplier@demo.com", Icon: PackageCheck, bn: "সরবরাহকারী", en: "Supplier" },
+  { email: "inspector@demo.com", Icon: Search, bn: "পরিদর্শক", en: "Inspector" },
+  { email: "logistics@demo.com", Icon: Truck, bn: "লজিস্টিকস", en: "Logistics" },
+  { email: "support@demo.com", Icon: HeartPulse, bn: "সাপোর্ট", en: "Support" },
+];
+
+const Spinner = () => (
+  <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+  </svg>
+);
 
 export const AuthScreen: React.FC = () => {
   const { showToast } = useToast();
   const { language } = useLanguage();
   const { login, loginWithGoogle, loginWithGitHub } = useAuth();
+  const t = (bn: string, en: string) => (language === "bn" ? bn : en);
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState(false);
+  const [demoOpen, setDemoOpen] = useState(false);
 
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -30,9 +62,13 @@ export const AuthScreen: React.FC = () => {
 
     try {
       await login(email, password);
-      showToast('success', language === 'bn' ? 'সফলভাবে লগিন হয়েছে।' : 'Signed in successfully.');
-    } catch (err: any) {
-      showToast('error', err.message || (language === 'bn' ? 'লগইনব্যর্থ হয়েছে। আপনার পরিচয়পত্র যাচাই করুন।' : 'Login failed. Please check your credentials.'));
+      showToast("success", t("সফলভাবে লগিন হয়েছে।", "Signed in successfully."));
+    } catch (err) {
+      const { message } = (err ?? {}) as { message?: string };
+      showToast(
+        "error",
+        message || t("লগইনব্যর্থ হয়েছে। আপনার পরিচয়পত্র যাচাই করুন।", "Login failed. Please check your credentials.")
+      );
     } finally {
       setLoading(false);
     }
@@ -45,9 +81,10 @@ export const AuthScreen: React.FC = () => {
 
     try {
       await login(demoEmail, demoPassword);
-      showToast('success', language === 'bn' ? 'সফলভাবে লগিন হয়েছে।' : 'Signed in successfully.');
-    } catch (err: any) {
-      showToast('error', err.message || (language === 'bn' ? 'ডেমো লগইন ব্যর্থ হয়েছে।' : 'Demo login failed.'));
+      showToast("success", t("সফলভাবে লগিন হয়েছে।", "Signed in successfully."));
+    } catch (err) {
+      const { message } = (err ?? {}) as { message?: string };
+      showToast("error", message || t("ডেমো লগইন ব্যর্থ হয়েছে।", "Demo login failed."));
     } finally {
       setLoading(false);
     }
@@ -57,10 +94,11 @@ export const AuthScreen: React.FC = () => {
     setSocialLoading(true);
     try {
       await loginWithGoogle();
-      showToast('success', language === 'bn' ? 'সফলভাবে লগিন হয়েছে।' : 'Signed in successfully.');
-    } catch (err: any) {
-      if (err.code !== 'auth/popup-closed-by-user') {
-        showToast('error', err.message || (language === 'bn' ? 'গুগল সাইন-ইন ব্যর্থ হয়েছে।' : 'Google sign-in failed.'));
+      showToast("success", t("সফলভাবে লগিন হয়েছে।", "Signed in successfully."));
+    } catch (err) {
+      const { message, code } = (err ?? {}) as { message?: string; code?: string };
+      if (code !== "auth/popup-closed-by-user") {
+        showToast("error", message || t("গুগল সাইন-ইন ব্যর্থ হয়েছে।", "Google sign-in failed."));
       }
     } finally {
       setSocialLoading(false);
@@ -71,10 +109,11 @@ export const AuthScreen: React.FC = () => {
     setSocialLoading(true);
     try {
       await loginWithGitHub();
-      showToast('success', language === 'bn' ? 'সফলভাবে লগিন হয়েছে।' : 'Signed in successfully.');
-    } catch (err: any) {
-      if (err.code !== 'auth/popup-closed-by-user') {
-        showToast('error', err.message || (language === 'bn' ? 'গিটহাব সাইন-ইন ব্যর্থ হয়েছে।' : 'GitHub sign-in failed.'));
+      showToast("success", t("সফলভাবে লগিন হয়েছে।", "Signed in successfully."));
+    } catch (err) {
+      const { message, code } = (err ?? {}) as { message?: string; code?: string };
+      if (code !== "auth/popup-closed-by-user") {
+        showToast("error", message || t("গিটহাব সাইন-ইন ব্যর্থ হয়েছে।", "GitHub sign-in failed."));
       }
     } finally {
       setSocialLoading(false);
@@ -82,215 +121,133 @@ export const AuthScreen: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-cover bg-center bg-no-repeat text-white flex flex-col antialiased selection:bg-emerald-500 selection:text-white" style={{ backgroundImage: 'url(/auth-bg-login.jpg)' }}>
-      <div className="fixed inset-0 bg-black/30" />
+    <AuthShell mode="login">
+      <motion.div
+        variants={authContainer}
+        initial="hidden"
+        animate="show"
+        className="space-y-6"
+      >
+        <motion.div variants={authItem} className="text-center">
+          <h1 className="text-2xl font-bold tracking-tight">
+            {t("স্বাগতম", "Welcome back")}
+          </h1>
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">
+            {t("আপনার অ্যাকাউন্টে প্রবেশ করুন", "Sign in to your account")}
+          </p>
+        </motion.div>
 
-      <div className="relative z-10 min-h-screen flex flex-col">
-        <PublicNavbar transparent />
+        <motion.form variants={authItem} onSubmit={handleSubmit} className="space-y-4">
+          <AuthField
+            id="login-email"
+            label={t("ইমেইল", "Email")}
+            icon={<Mail className="h-4 w-4" />}
+            type="email"
+            required
+            value={email}
+            onChange={setEmail}
+            placeholder="you@example.com"
+            autoComplete="email"
+          />
+          <AuthField
+            id="login-password"
+            label={t("পাসওয়ার্ড", "Password")}
+            icon={<Lock className="h-4 w-4" />}
+            type="password"
+            required
+            value={password}
+            onChange={setPassword}
+            placeholder="••••••••"
+            autoComplete="current-password"
+          />
 
-        <main className="flex-1 flex items-center justify-center px-4 py-8">
-          <div className="w-full max-w-md bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 sm:p-8 shadow-2xl">
-            <div className="text-center mb-6">
-              <h1 className="text-2xl font-bold text-white tracking-tight">
-                {language === 'bn' ? 'স্বাগতম' : 'Welcome back'}
-              </h1>
-              <p className="text-sm text-white/60 mt-1">
-                {language === 'bn' ? 'আপনার অ্যাকাউন্টে প্রবেশ করুন' : 'Sign in to your account'}
-              </p>
-            </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="group relative w-full cursor-pointer overflow-hidden rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-600/25 transition-all hover:from-emerald-500 hover:to-teal-500 hover:shadow-emerald-500/40 disabled:opacity-60"
+          >
+            <span
+              aria-hidden="true"
+              className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 group-hover:translate-x-full"
+            />
+            <span className="relative flex items-center justify-center gap-2">
+              {loading ? (
+                <Spinner />
+              ) : (
+                <>
+                  {t("প্রবেশ করুন", "Sign In")}
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                </>
+              )}
+            </span>
+          </button>
+        </motion.form>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-white/70 mb-1.5">
-                  {language === 'bn' ? 'ইমেইল' : 'Email'}
-                </label>
-                <div className="relative">
-                  <Mail className="w-4 h-4 text-white/40 absolute left-3 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="you@example.com"
-                    className="w-full bg-white/10 border border-white/20 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-white/40 focus:outline-none focus:border-emerald-400 transition-colors"
-                  />
+        <motion.div variants={authItem} className="flex items-center justify-between text-xs">
+          <Link
+            href="/forgot-password"
+            className="text-[var(--text-muted)] transition-colors hover:text-emerald-600 dark:hover:text-emerald-400"
+          >
+            {t("পাসওয়ার্ড ভুলে গেছেন?", "Forgot password?")}
+          </Link>
+          <Link
+            href="/register"
+            className="font-semibold text-emerald-600 transition-colors hover:text-emerald-500 dark:text-emerald-400 dark:hover:text-emerald-300"
+          >
+            {t("অ্যাকাউন্ট তৈরি করুন", "Create account")} →
+          </Link>
+        </motion.div>
+
+        {/* Collapsible one-click demo access */}
+        <motion.div variants={authItem}>
+          <button
+            type="button"
+            onClick={() => setDemoOpen((v) => !v)}
+            aria-expanded={demoOpen}
+            className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-[var(--border-default)] bg-[var(--bg-surface-2)] px-4 py-2.5 text-xs font-semibold text-[var(--text-secondary)] transition-colors hover:border-emerald-500 hover:text-emerald-600 dark:hover:text-emerald-400"
+          >
+            <Sparkles className="h-3.5 w-3.5 text-emerald-500" />
+            {t("দ্রুত ডেমো অ্যাকাউন্ট", "Quick demo access")}
+            <ChevronDown
+              className={`h-3.5 w-3.5 transition-transform duration-300 ${demoOpen ? "rotate-180" : ""}`}
+            />
+          </button>
+          <AnimatePresence initial={false}>
+            {demoOpen && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                className="overflow-hidden"
+              >
+                <div className="grid grid-cols-2 gap-1.5 pt-3 sm:grid-cols-4">
+                  {DEMOS.map((demo) => (
+                    <button
+                      key={demo.email}
+                      type="button"
+                      onClick={() => handleDemoLogin(demo.email, "demo123")}
+                      disabled={loading}
+                      className="flex cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface-2)] px-2 py-2 text-[11px] font-medium text-[var(--text-secondary)] transition-all hover:border-emerald-400 hover:text-emerald-600 dark:hover:text-emerald-400 disabled:opacity-50"
+                    >
+                      <demo.Icon className="h-3.5 w-3.5 shrink-0" />
+                      {t(demo.bn, demo.en)}
+                    </button>
+                  ))}
                 </div>
-              </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
 
-              <div>
-                <label className="block text-xs font-medium text-white/70 mb-1.5">
-                  {language === 'bn' ? 'পাসওয়ার্ড' : 'Password'}
-                </label>
-                <div className="relative">
-                  <Lock className="w-4 h-4 text-white/40 absolute left-3 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="w-full bg-white/10 border border-white/20 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-white/40 focus:outline-none focus:border-emerald-400 transition-colors"
-                  />
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-              >
-                {loading ? (
-                  <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                  </svg>
-                ) : (
-                  <>
-                    {language === 'bn' ? 'প্রবেশ করুন' : 'Sign In'}
-                    <ArrowRight className="w-4 h-4" />
-                  </>
-                )}
-              </button>
-            </form>
-
-            <div className="mt-4 space-y-2">
-              <p className="text-xs text-white/50 text-center">
-                {language === 'bn' ? 'ডেমো অ্যাকাউন্ট দিয়ে চেষ্টা করুন:' : 'Try a demo account:'}
-              </p>
-              <div className="grid grid-cols-4 gap-1.5">
-                <button
-                  type="button"
-                  onClick={() => handleDemoLogin('farmer@demo.com', 'demo123')}
-                  disabled={loading}
-                  className="py-2 px-2 border border-white/20 text-white/70 text-[11px] font-medium rounded-xl hover:bg-white/10 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1"
-                >
-                  <Sprout className="w-3 h-3 shrink-0" />
-                  {language === 'bn' ? 'কৃষক' : 'Farmer'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleDemoLogin('multi@demo.com', 'demo123')}
-                  disabled={loading}
-                  className="py-2 px-2 border border-white/20 text-white/70 text-[11px] font-medium rounded-xl hover:bg-white/10 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1"
-                >
-                  <Sprout className="w-3 h-3 shrink-0" />
-                  {language === 'bn' ? 'একাধিক ভূমিকা' : 'Multi'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleDemoLogin('admin@demo.com', 'demo123')}
-                  disabled={loading}
-                  className="py-2 px-2 border border-white/20 text-white/70 text-[11px] font-medium rounded-xl hover:bg-white/10 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1"
-                >
-                  <ShieldCheck className="w-3 h-3 shrink-0" />
-                  {language === 'bn' ? 'এডমিন' : 'Admin'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleDemoLogin('buyer@demo.com', 'demo123')}
-                  disabled={loading}
-                  className="py-2 px-2 border border-white/20 text-white/70 text-[11px] font-medium rounded-xl hover:bg-white/10 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1"
-                >
-                  {language === 'bn' ? '🛒 ক্রেতা' : '🛒 Buyer'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleDemoLogin('supplier@demo.com', 'demo123')}
-                  disabled={loading}
-                  className="py-2 px-2 border border-white/20 text-white/70 text-[11px] font-medium rounded-xl hover:bg-white/10 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1"
-                >
-                  {language === 'bn' ? '📦 সরবরাহকারী' : '📦 Supplier'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleDemoLogin('inspector@demo.com', 'demo123')}
-                  disabled={loading}
-                  className="py-2 px-2 border border-white/20 text-white/70 text-[11px] font-medium rounded-xl hover:bg-white/10 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1"
-                >
-                  {language === 'bn' ? '🔍 পরিদর্শক' : '🔍 Inspector'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleDemoLogin('logistics@demo.com', 'demo123')}
-                  disabled={loading}
-                  className="py-2 px-2 border border-white/20 text-white/70 text-[11px] font-medium rounded-xl hover:bg-white/10 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1"
-                >
-                  {language === 'bn' ? '🚚 লজিস্টিকস' : '🚚 Logistics'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleDemoLogin('support@demo.com', 'demo123')}
-                  disabled={loading}
-                  className="py-2 px-2 border border-white/20 text-white/70 text-[11px] font-medium rounded-xl hover:bg-white/10 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1"
-                >
-                  {language === 'bn' ? '🎧 সাপোর্ট' : '🎧 Support'}
-                </button>
-              </div>
-            </div>
-
-            <div className="mt-6 text-center text-xs text-white/50">
-              <Link href="/forgot-password" className="hover:text-white/80 transition-colors">
-                {language === 'bn' ? 'পাসওয়ার্ড ভুলে গেছেন?' : 'Forgot password?'}
-              </Link>
-              <span className="mx-2">·</span>
-              <Link href="/register" className="hover:text-white/80 transition-colors">
-                {language === 'bn' ? 'অ্যাকাউন্ট তৈরি করুন' : 'Create account'}
-              </Link>
-            </div>
-
-            {/* Social Login Divider */}
-            <div className="flex items-center gap-3 mt-5">
-              <div className="flex-1 h-px bg-white/20" />
-              <span className="text-xs text-white/40">{language === 'bn' ? 'অথবা' : 'or'}</span>
-              <div className="flex-1 h-px bg-white/20" />
-            </div>
-
-            {/* Social Login Buttons */}
-            <div className="mt-4 space-y-3">
-              <button
-                type="button"
-                onClick={handleGoogleLogin}
-                disabled={socialLoading}
-                className="w-full flex items-center justify-center gap-3 py-2.5 bg-white/10 border border-white/20 rounded-xl text-sm font-medium text-white hover:bg-white/20 transition-all cursor-pointer disabled:opacity-50"
-              >
-                <svg className="w-5 h-5" viewBox="0 0 24 24">
-                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4" />
-                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
-                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
-                </svg>
-                {socialLoading ? (
-                  <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                  </svg>
-                ) : (
-                  language === 'bn' ? 'গুগল দিয়ে চালিয়ে যান' : 'Continue with Google'
-                )}
-              </button>
-              <button
-                type="button"
-                onClick={handleGitHubLogin}
-                disabled={socialLoading}
-                className="w-full flex items-center justify-center gap-3 py-2.5 bg-white/10 border border-white/20 rounded-xl text-sm font-medium text-white hover:bg-white/20 transition-all cursor-pointer disabled:opacity-50"
-              >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
-                  <path d="M9 18c-4.51 2-5-2-7-2" />
-                </svg>
-                {socialLoading ? (
-                  <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                  </svg>
-                ) : (
-                  language === 'bn' ? 'গিটহাব দিয়ে চালিয়ে যান' : 'Continue with GitHub'
-                )}
-              </button>
-            </div>
-          </div>
-        </main>
-      </div>
-    </div>
+        <motion.div variants={authItem}>
+          <SocialButtons
+            loading={socialLoading}
+            onGoogle={handleGoogleLogin}
+            onGitHub={handleGitHubLogin}
+          />
+        </motion.div>
+      </motion.div>
+    </AuthShell>
   );
 };

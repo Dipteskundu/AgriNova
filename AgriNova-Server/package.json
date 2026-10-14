@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "AgriNova Smart Agriculture & Farm-to-Market Platform Backend",
   "main": "src/server.js",
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon server.js",

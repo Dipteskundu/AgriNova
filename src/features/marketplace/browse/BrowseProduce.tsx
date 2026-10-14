@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Icon } from "@/components/icons";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { NumberedPagination } from "@/components/ui/NumberedPagination";
+import { usePagination } from "@/hooks/usePagination";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { ProduceCard } from "./ProduceCard";
 import {
@@ -54,6 +56,14 @@ export function BrowseProduce({ basePath = "/products" }: Props) {
   const [showFilters, setShowFilters] = useState(false);
 
   const t = (bn: string, en: string) => language === "bn" ? bn : en;
+
+  // 12 cards per page; any filter or sort change rewinds to page 1.
+  const { page, setPage, pageSize, totalPages, total, pagedItems } = usePagination(
+    listings,
+    12,
+    `${search}|${category}|${grade}|${String(verifiedOnly)}|${sortBy}`
+  );
+  const gridRef = useRef<HTMLDivElement>(null);
 
   const catLabel = (c: string) => {
     const p = CATEGORY_LABEL[c];
@@ -226,8 +236,11 @@ export function BrowseProduce({ basePath = "/products" }: Props) {
           action={<Button variant="outline" onClick={() => { setSearch(""); setCategory(""); setGrade(""); setVerifiedOnly(false); }}>{t("ফিল্টার মুছুন", "Clear Filters")}</Button>}
         />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {listings.map((listing) => (
+        <div
+          ref={gridRef}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 scroll-mt-24"
+        >
+          {pagedItems.map((listing) => (
             <ProduceCard
               key={listing.id}
               listing={listing}
@@ -241,6 +254,14 @@ export function BrowseProduce({ basePath = "/products" }: Props) {
           ))}
         </div>
       )}
+      <NumberedPagination
+        page={page}
+        totalPages={totalPages}
+        total={total}
+        pageSize={pageSize}
+        onPageChange={setPage}
+        targetRef={gridRef}
+      />
     </div>
   );
 }

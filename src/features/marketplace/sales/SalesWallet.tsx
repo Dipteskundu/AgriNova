@@ -6,7 +6,9 @@ import { ArrowUpRight, DollarSign, Plus, Store } from "@/components/icons";
 import { Badge, type BadgeVariant } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { Pager } from "@/components/ui/Pager";
 import { useToast } from "@/components/ui/Toast";
+import { usePagination } from "@/hooks/usePagination";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { tr } from "@/lib/localize";
 import { getSalesOrders, type BuyerOrder } from "@/lib/marketplaceApi";
@@ -144,6 +146,12 @@ export function SalesWallet() {
   const retry = () => setLoadToken((n) => n + 1);
 
   const available = wallet?.available ?? 0;
+
+  // Both halves page through 10 rows at a time. Neither has a filter, so
+  // clamping alone covers data shrinking under the current page (a new
+  // withdrawal landing at the top of the ledger, an order state change).
+  const ledgerPage = usePagination(wallet?.entries ?? [], 10);
+  const ordersPage = usePagination(orders, 10);
 
   const closeForm = () => {
     setFormOpen(false);
@@ -373,7 +381,7 @@ export function SalesWallet() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-[#1c1c1c]">
-                  {wallet.entries.map((row) => (
+                  {ledgerPage.pagedItems.map((row) => (
                     <tr
                       key={row.id}
                       className="hover:bg-slate-50 dark:hover:bg-[#1a1a1a]/60 transition-colors"
@@ -415,6 +423,13 @@ export function SalesWallet() {
               </table>
             </div>
           )}
+          <Pager
+            page={ledgerPage.page}
+            totalPages={ledgerPage.totalPages}
+            total={ledgerPage.total}
+            pageSize={ledgerPage.pageSize}
+            onPageChange={ledgerPage.setPage}
+          />
         </div>
       </section>
 
@@ -482,7 +497,7 @@ export function SalesWallet() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-[#1c1c1c]">
-                  {orders.map((order) => (
+                  {ordersPage.pagedItems.map((order) => (
                     <tr
                       key={order.id}
                       className="hover:bg-slate-50 dark:hover:bg-[#1a1a1a]/60 transition-colors"
@@ -525,6 +540,13 @@ export function SalesWallet() {
                 </tbody>
               </table>
             </div>
+            <Pager
+              page={ordersPage.page}
+              totalPages={ordersPage.totalPages}
+              total={ordersPage.total}
+              pageSize={ordersPage.pageSize}
+              onPageChange={ordersPage.setPage}
+            />
           </div>
         )}
       </section>

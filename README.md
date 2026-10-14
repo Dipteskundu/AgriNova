@@ -25,7 +25,7 @@ Create in the `FarmPath/` directory:
 NEXT_PUBLIC_API_URL=http://localhost:5000/api
 
 # Firebase Configuration (from FarmPath/.env.local)
-NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyAxhAHWU25Zcpt4t0hbzOQMV-xMiqclvnI
+NEXT_PUBLIC_FIREBASE_API_KEY=your_firebase_api_key
 NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=mentro-71aca.firebaseapp.com
 NEXT_PUBLIC_FIREBASE_PROJECT_ID=mentro-71aca
 NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=mentro-71aca.firebasestorage.app
@@ -45,7 +45,7 @@ PORT=5000
 NODE_ENV=production
 
 # MongoDB
-MONGODB_URI=mongodb+srv://mentro:FUcwZ6xdOpf327Cm@simple-crud-server.iqcnjp9.mongodb.net/?appName=Simple-crud-server
+MONGODB_URI=mongodb+srv://USER:PASSWORD@your-cluster.mongodb.net/?appName=Farmpath
 
 # JWT Authentication
 JWT_SECRET=your_jwt_secret_here
@@ -59,9 +59,9 @@ WEATHER_API_KEY=your_weather_api_key
 PAYMENT_GATEWAY_KEY=your_payment_gateway_key
 AI_API_KEY=your_ai_api_key
 CLOUD_STORAGE_BUCKET=your_cloud_storage_bucket
-CLOUDINARY_CLOUD_NAME=mentro
-CLOUDINARY_API_KEY=Nf83tDhDJi-MRbvnB43hkbkKdp4
-CLOUDINARY_API_SECRET=FUcwZ6xdOpf327Cm
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
 ```
 
 ## 🚀 Frontend Deployment on Vercel

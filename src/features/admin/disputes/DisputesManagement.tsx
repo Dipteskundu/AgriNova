@@ -19,8 +19,10 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { FormTextarea } from '@/components/ui/FormInput';
+import { Pager } from '@/components/ui/Pager';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
+import { usePagination } from '@/hooks/usePagination';
 import { getDisputesAdmin, resolveDisputeAdmin } from '@/lib/adminApi';
 import { DisputeCase } from '@/types';
 
@@ -91,6 +93,10 @@ export const DisputesManagement: React.FC = () => {
     const matchesStatus = statusFilter === 'All' || d.caseStatus === statusFilter;
     return matchesSearch && matchesStatus;
   });
+
+  // 8 arbitration case cards at a time; search or status changes rewind.
+  const { page, setPage, pageSize, totalPages, total, pagedItems: pagedDisputes } =
+    usePagination(filtered, 8, `${searchQuery}|${statusFilter}`);
 
   const activeCases = disputes.filter(
     (d) => d.caseStatus.includes('Open') || d.caseStatus.includes('Mediation')
@@ -209,7 +215,7 @@ export const DisputesManagement: React.FC = () => {
 
       {/* Disputes Cards */}
       <div className="space-y-4">
-        {filtered.map((d) => (
+        {pagedDisputes.map((d) => (
           <Card key={d.id} className="hover:border-slate-300 dark:border-[#333333] transition-all">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="space-y-2">
@@ -285,6 +291,13 @@ export const DisputesManagement: React.FC = () => {
           </Card>
         ))}
       </div>
+      <Pager
+        page={page}
+        totalPages={totalPages}
+        total={total}
+        pageSize={pageSize}
+        onPageChange={setPage}
+      />
 
       {/* Arbitration Modal */}
       {selectedCase && (

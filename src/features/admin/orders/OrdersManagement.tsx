@@ -18,8 +18,10 @@ import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
+import { Pager } from '@/components/ui/Pager';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
+import { usePagination } from '@/hooks/usePagination';
 import { getOrderAuditsAdmin } from '@/lib/adminApi';
 import { OrderAuditAdminView } from '@/types';
 
@@ -89,6 +91,13 @@ export const OrdersManagement: React.FC = () => {
     const matchesEscrow = escrowFilter === 'All' || o.escrowStatus === escrowFilter;
     return matchesSearch && matchesEscrow;
   });
+
+  // 10 audited orders per page; search or escrow-filter changes rewind.
+  const { page, setPage, pageSize, totalPages, total, pagedItems } = usePagination(
+    filtered,
+    10,
+    `${searchQuery}|${escrowFilter}`
+  );
 
   const totalValue = orders.reduce((acc, o) => acc + o.totalValueBdt, 0);
   const inEscrowValue = orders
@@ -191,7 +200,7 @@ export const OrdersManagement: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {filtered.map((order) => (
+              {pagedItems.map((order) => (
                 <tr key={order.id} className="hover:bg-slate-50 dark:hover:bg-[#1a1a1a]/60 dark:bg-[#111111]/60/60 transition-colors">
                   <td className="p-4 font-mono font-bold text-slate-900 dark:text-[#f0f0f0]">{order.orderCode}</td>
                   <td className="p-4">
@@ -243,6 +252,13 @@ export const OrdersManagement: React.FC = () => {
             </tbody>
           </table>
         </div>
+        <Pager
+          page={page}
+          totalPages={totalPages}
+          total={total}
+          pageSize={pageSize}
+          onPageChange={setPage}
+        />
       </div>
 
       {/* Modal */}

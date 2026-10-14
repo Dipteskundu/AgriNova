@@ -1,11 +1,13 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/icons";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { NumberedPagination } from "@/components/ui/NumberedPagination";
+import { usePagination } from "@/hooks/usePagination";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { tr } from "@/lib/localize";
 import { getPublicInputs, type SupplierProduct } from "@/lib/supplierApi";
@@ -106,6 +108,14 @@ export function InputsBrowser({ basePath = "/inputs" }: { basePath?: string }) {
     setCategory("");
     setInStockOnly(false);
   };
+
+  // 12 cards per page; any filter or sort change rewinds to page 1.
+  const { page, setPage, pageSize, totalPages, total, pagedItems } = usePagination(
+    visible,
+    12,
+    `${search}|${category}|${String(inStockOnly)}|${sortBy}`
+  );
+  const gridRef = useRef<HTMLDivElement>(null);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -250,8 +260,11 @@ export function InputsBrowser({ basePath = "/inputs" }: { basePath?: string }) {
           }
         />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {visible.map((product) => (
+        <div
+          ref={gridRef}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 scroll-mt-24"
+        >
+          {pagedItems.map((product) => (
             <Link
               key={product.id}
               href={`${basePath}/${product.id}`}
@@ -322,6 +335,14 @@ export function InputsBrowser({ basePath = "/inputs" }: { basePath?: string }) {
           ))}
         </div>
       )}
+      <NumberedPagination
+        page={page}
+        totalPages={totalPages}
+        total={total}
+        pageSize={pageSize}
+        onPageChange={setPage}
+        targetRef={gridRef}
+      />
     </div>
   );
 }

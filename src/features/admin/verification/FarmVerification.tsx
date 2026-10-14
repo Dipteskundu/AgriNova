@@ -18,8 +18,10 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { FormTextarea } from '@/components/ui/FormInput';
+import { Pager } from '@/components/ui/Pager';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
+import { usePagination } from '@/hooks/usePagination';
 import { getFarmVerificationRequests, reviewFarmVerification } from '@/lib/adminApi';
 import { FarmVerificationRequest } from '@/types';
 
@@ -99,6 +101,10 @@ export const FarmVerification: React.FC = () => {
       ? requests
       : requests.filter((r) => r.status === filterStatus);
 
+  // 8 deed audits at a time; the status filter rewinds to the first page.
+  const { page, setPage, pageSize, totalPages, total, pagedItems: pagedRequests } =
+    usePagination(filtered, 8, filterStatus);
+
   if (loading) {
     return (
       <div className="space-y-4">
@@ -135,7 +141,7 @@ export const FarmVerification: React.FC = () => {
 
       {/* Grid of verification items */}
       <div className="space-y-4">
-        {filtered.map((req) => (
+        {pagedRequests.map((req) => (
           <Card key={req.id} className="hover:border-slate-300 dark:border-[#333333] transition-all">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="space-y-1">
@@ -200,6 +206,13 @@ export const FarmVerification: React.FC = () => {
           </Card>
         ))}
       </div>
+      <Pager
+        page={page}
+        totalPages={totalPages}
+        total={total}
+        pageSize={pageSize}
+        onPageChange={setPage}
+      />
 
       {/* Review Modal */}
       {selectedReq && (

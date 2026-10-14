@@ -63,13 +63,17 @@ export function DataTable<T extends Record<string, unknown>>({
   }, [data, searchQuery, searchKey]);
 
   const totalPages = Math.max(1, Math.ceil(filteredData.length / pageSize));
-  const rangeStart = (currentPage - 1) * pageSize + 1;
-  const rangeEnd = Math.min(currentPage * pageSize, filteredData.length);
+  // The stored page can outlive the data that justified it — a search or
+  // external filter may shrink the list to fewer pages. Clamp before slicing
+  // so the user never lands on an empty page.
+  const page = Math.min(currentPage, totalPages);
+  const rangeStart = (page - 1) * pageSize + 1;
+  const rangeEnd = Math.min(page * pageSize, filteredData.length);
   const numberFormat = new Intl.NumberFormat(language === "bn" ? "bn-BD" : "en-US");
   const paginatedData = useMemo(() => {
-    const start = (currentPage - 1) * pageSize;
+    const start = (page - 1) * pageSize;
     return filteredData.slice(start, start + pageSize);
-  }, [filteredData, currentPage, pageSize]);
+  }, [filteredData, page, pageSize]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -152,18 +156,20 @@ export function DataTable<T extends Record<string, unknown>>({
           </span>
           <div className="flex items-center gap-1.5">
             <button
+              type="button"
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
+              disabled={page === 1}
               className="p-1 rounded border border-slate-200 dark:border-slate-600 hover:bg-white dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
             <span className="px-2 font-medium text-slate-700 dark:text-slate-300 dark:text-slate-300">
-              {numberFormat.format(currentPage)} / {numberFormat.format(totalPages)}
+              {numberFormat.format(page)} / {numberFormat.format(totalPages)}
             </span>
             <button
+              type="button"
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages}
+              disabled={page === totalPages}
               className="p-1 rounded border border-slate-200 dark:border-slate-600 hover:bg-white dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               <ChevronRight className="w-4 h-4" />

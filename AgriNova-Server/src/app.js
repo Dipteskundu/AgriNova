@@ -9,6 +9,10 @@ const errorHandler = require("./middleware/error.middleware");
 
 const app = express();
 
+// Behind Render/nginx there is one proxy hop, so trust it for `req.ip`
+// (audit logs) and `req.protocol`/`req.host` correctness.
+app.set("trust proxy", 1);
+
 // Connect to MongoDB (retries in the background, never crashes the server)
 connectDB();
 
@@ -29,7 +33,38 @@ try {
 app.use("/uploads", express.static(uploadDir));
 
 // Middleware
-app.use(cors());
+/*
+ * CORS: development (local dev servers hop between localhost ports) allows
+ * any origin. Production only allows the deployed frontend origin(s) listed
+ * in FRONTEND_URL — comma-separated if there are several (production +
+ * preview deployments). Requests without an Origin header (curl, health
+ * checks, server-to-server) are never subject to CORS and pass through.
+ */
+const isProduction = process.env.NODE_ENV === "production";
+const allowedOrigins = (process.env.FRONTEND_URL || "")
+  .split(",")
+  .map((origin) => origin.trim().replace(/\/+$/, ""))
+  .filter(Boolean);
+
+if (isProduction && allowedOrigins.length === 0) {
+  console.warn("FRONTEND_URL is not set — CORS is wide open in production.");
+}
+
+const corsOptions =
+  isProduction && allowedOrigins.length > 0
+    ? {
+        origin(origin, callback) {
+          if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+          } else {
+            // No CORS headers → the browser blocks it; skip the 500.
+            callback(null, false);
+          }
+        },
+      }
+    : {};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));

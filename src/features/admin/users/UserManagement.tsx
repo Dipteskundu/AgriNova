@@ -18,8 +18,10 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { FormInput, FormSelect } from '@/components/ui/FormInput';
+import { Pager } from '@/components/ui/Pager';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
+import { usePagination } from '@/hooks/usePagination';
 import { createAdminUser, getAdminUsers, updateAdminUserStatus } from '@/lib/adminApi';
 import { AdminUser } from '@/types';
 
@@ -167,6 +169,14 @@ export const UserManagement: React.FC = () => {
     });
   }, [users, searchQuery, roleFilter, statusFilter]);
 
+  // The table shows 10 rows at a time; any search or filter change rewinds
+  // to the first page.
+  const { page, setPage, pageSize, totalPages, total, pagedItems } = usePagination(
+    filteredUsers,
+    10,
+    `${searchQuery}|${roleFilter}|${statusFilter}`
+  );
+
   if (loading) {
     return (
       <div className="space-y-4">
@@ -249,7 +259,7 @@ export const UserManagement: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {filteredUsers.map((user) => (
+              {pagedItems.map((user) => (
                 <tr key={user.id} className="hover:bg-slate-50 dark:hover:bg-[#1a1a1a]/60 dark:bg-[#111111]/60/60 transition-colors">
                   <td className="p-4">
                     <div className="flex items-center gap-2">
@@ -332,6 +342,13 @@ export const UserManagement: React.FC = () => {
             </tbody>
           </table>
         </div>
+        <Pager
+          page={page}
+          totalPages={totalPages}
+          total={total}
+          pageSize={pageSize}
+          onPageChange={setPage}
+        />
       </div>
 
       {/* Provision Account Modal */}

@@ -167,20 +167,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
-    const result = await apiLogin(email, password);
-    setToken(result.token);
-    setUser(result.user);
-    localStorage.setItem(USER_KEY, JSON.stringify(result.user));
+    try {
+      const result = await apiLogin(email, password);
+      setToken(result.token);
+      setUser(result.user);
+      localStorage.setItem(USER_KEY, JSON.stringify(result.user));
 
-    const available = getPortalsForRoles(result.user.roles);
+      const available = getPortalsForRoles(result.user.roles);
 
-    if (available.length === 1) {
-      setSelectedPortal(available[0]);
-      localStorage.setItem(PORTAL_KEY, available[0]);
+      if (available.length === 1) {
+        setSelectedPortal(available[0]);
+        localStorage.setItem(PORTAL_KEY, available[0]);
+      }
+
+      router.push('/');
+      return { needsPortalSelection: available.length > 1 };
+    } catch (error) {
+      console.error('Login failed:', error);
+      throw new Error('Invalid credentials. Please try again.');
     }
-
-    router.push('/');
-    return { needsPortalSelection: available.length > 1 };
   }, [router]);
 
   const register = useCallback(async (data: RegisterInput) => {

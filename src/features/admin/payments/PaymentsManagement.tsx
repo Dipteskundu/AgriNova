@@ -18,8 +18,10 @@ import {
 import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { Pager } from '@/components/ui/Pager';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
+import { usePagination } from '@/hooks/usePagination';
 import { getPaymentRecordsAdmin, approvePaymentPayoutAdmin } from '@/lib/adminApi';
 import { getWithdrawalRequestsAdmin, settleWithdrawalAdmin, WalletEntryView } from '@/lib/walletApi';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -119,6 +121,11 @@ export const PaymentsManagement: React.FC = () => {
     return b.date.localeCompare(a.date);
   });
 
+  // Both tables page through 10 rows at a time. The withdrawal queue has no
+  // filter of its own, so it only relies on clamping (e.g. after a settle
+  // shrinks the queue below the current page).
+  const withdrawalPage = usePagination(queued, 10);
+
   const handleApprove = async (id: string) => {
     try {
       setApprovingId(id);
@@ -170,6 +177,15 @@ export const PaymentsManagement: React.FC = () => {
     const matchesStatus = statusFilter === 'All' || p.payoutStatus === statusFilter;
     return matchesSearch && matchesStatus;
   });
+
+  const {
+    page,
+    setPage,
+    pageSize,
+    totalPages,
+    total,
+    pagedItems: pagedPayments,
+  } = usePagination(filtered, 10, `${searchQuery}|${statusFilter}`);
 
   const totalDisbursed = payments
     .filter((p) => p.payoutStatus === 'Completed')
@@ -276,7 +292,7 @@ export const PaymentsManagement: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {filtered.map((pay) => (
+              {pagedPayments.map((pay) => (
                 <tr key={pay.id} className="hover:bg-slate-50 dark:hover:bg-[#1a1a1a]/60 dark:bg-[#111111]/60/60 transition-colors">
                   <td className="p-4 font-mono font-bold text-slate-900 dark:text-[#f0f0f0]">{pay.transactionRef}</td>
                   <td className="p-4">
@@ -333,6 +349,13 @@ export const PaymentsManagement: React.FC = () => {
             </tbody>
           </table>
         </div>
+        <Pager
+          page={page}
+          totalPages={totalPages}
+          total={total}
+          pageSize={pageSize}
+          onPageChange={setPage}
+        />
       </div>
 
       {/* ── Wallet Withdrawal Requests ─────────────────────────────── */}
@@ -394,7 +417,7 @@ export const PaymentsManagement: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {queued.map((wd) => (
+                  {withdrawalPage.pagedItems.map((wd) => (
                     <tr
                       key={wd.id}
                       className="hover:bg-slate-50 dark:hover:bg-[#1a1a1a]/60 transition-colors"
@@ -479,6 +502,15 @@ export const PaymentsManagement: React.FC = () => {
                 </tbody>
               </table>
             </div>
+          )}
+          {queued.length > 0 && (
+            <Pager
+              page={withdrawalPage.page}
+              totalPages={withdrawalPage.totalPages}
+              total={withdrawalPage.total}
+              pageSize={withdrawalPage.pageSize}
+              onPageChange={withdrawalPage.setPage}
+            />
           )}
         </div>
       </div>

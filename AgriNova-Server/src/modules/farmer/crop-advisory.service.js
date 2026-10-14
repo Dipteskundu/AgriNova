@@ -101,13 +101,29 @@ const getAiFarmRecommendation = async (input, farm) => {
   });
 
 
-  const response = await fetch(`${AI_SERVICE_URL}/recommend/farm`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
+  let response;
+  try {
+    response = await fetch(`${AI_SERVICE_URL}/recommend/farm`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+      // Never let an unreachable or slow AI service hang the request:
+      // a production host has a finite budget per call, and the UI must
+      // get a prompt, readable failure instead of a stalled response.
+      signal: AbortSignal.timeout(10000),
+    });
+  } catch (err) {
+    if (err?.name === "TimeoutError" || err?.name === "AbortError") {
+      throw new Error(
+        "AI recommendation service timed out. Please try again in a moment."
+      );
+    }
+    throw new Error(
+      "AI recommendation service is unavailable right now. Please try again later."
+    );
+  }
 
   const result = await response.json().catch(() => ({}));
 

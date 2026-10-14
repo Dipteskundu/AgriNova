@@ -25,8 +25,8 @@ export default function LoginPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-black/40 backdrop-blur-md flex items-center justify-center">
-        <div className="animate-spin h-8 w-8 border-4 border-emerald-400 border-t-transparent rounded-full" />
+      <div className="flex min-h-dvh items-center justify-center bg-[var(--bg-base)]">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-500 border-t-transparent" />
       </div>
     );
   }

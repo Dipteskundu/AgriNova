@@ -16,8 +16,10 @@ import {
 import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { Pager } from '@/components/ui/Pager';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
+import { usePagination } from '@/hooks/usePagination';
 import { getSystemAuditLogs } from '@/lib/adminApi';
 import { SystemAuditLog } from '@/types';
 
@@ -79,6 +81,14 @@ export const SystemAuditLogs: React.FC = () => {
     const matchesStatus = statusFilter === 'All' || log.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
+
+  // The audit ledger is the fastest-growing table on the platform; show 10
+  // sealed entries at a time and rewind on search/status change.
+  const { page, setPage, pageSize, totalPages, total, pagedItems } = usePagination(
+    filteredLogs,
+    10,
+    `${searchQuery}|${statusFilter}`
+  );
 
   if (loading) {
     return (
@@ -149,7 +159,7 @@ export const SystemAuditLogs: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-mono text-[11px]">
-              {filteredLogs.map((log) => (
+              {pagedItems.map((log) => (
                 <tr key={log.id} className="hover:bg-slate-50 dark:hover:bg-[#1a1a1a]/60 dark:bg-[#111111]/60/60 transition-colors">
                   <td className="p-4 text-slate-500 dark:text-[#a0a0a0] whitespace-nowrap">{trPhrase(log.timestamp)}</td>
                   <td className="p-4 font-sans">
@@ -183,6 +193,13 @@ export const SystemAuditLogs: React.FC = () => {
             </tbody>
           </table>
         </div>
+        <Pager
+          page={page}
+          totalPages={totalPages}
+          total={total}
+          pageSize={pageSize}
+          onPageChange={setPage}
+        />
       </div>
     </div>
   );

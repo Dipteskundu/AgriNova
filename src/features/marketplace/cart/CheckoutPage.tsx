@@ -24,7 +24,11 @@ const PAYMENT_METHODS = [
   { id: "Nagad", label: "Nagad", icon: "💳", color: "bg-orange-50 border-orange-200 dark:bg-orange-500/10 dark:border-orange-500/30" },
   { id: "Rocket", label: "Rocket", icon: "💳", color: "bg-purple-50 border-purple-200 dark:bg-purple-500/10 dark:border-purple-500/30" },
   { id: "Bank Transfer", label: "Bank Transfer", icon: "🏦", color: "bg-slate-50 border-slate-200 dark:bg-[#1a1a1a] dark:border-[#333]" },
-  { id: "Card", label: "Card (Stripe)", icon: "💳", color: "bg-blue-50 border-blue-200 dark:bg-blue-500/10 dark:border-blue-500/30" },
+  // Card (Stripe) is hidden until the backend ships POST /orders/stripe-checkout —
+  // the endpoint doesn't exist yet, so offering it would 404 in production.
+  // The rest of the Stripe return/receipt handling below stays wired for when
+  // the integration lands; just re-enable this entry then.
+  // { id: "Card", label: "Card (Stripe)", icon: "💳", color: "bg-blue-50 border-blue-200 dark:bg-blue-500/10 dark:border-blue-500/30" },
 ] as const;
 
 export function CheckoutPage() {

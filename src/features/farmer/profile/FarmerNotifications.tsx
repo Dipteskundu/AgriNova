@@ -16,8 +16,10 @@ import {
 import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { Pager } from '@/components/ui/Pager';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
+import { usePagination } from '@/hooks/usePagination';
 import {
   getFarmerNotifications,
   markNotificationAsRead,
@@ -80,6 +82,10 @@ export const FarmerNotifications: React.FC = () => {
     filterType === 'All'
       ? notifications
       : notifications.filter((n) => n.type === filterType);
+
+  // 10 alerts at a time; the type filter rewinds to the first page.
+  const { page, setPage, pageSize, totalPages, total, pagedItems: pagedNotifications } =
+    usePagination(filtered, 10, filterType);
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
@@ -148,7 +154,7 @@ export const FarmerNotifications: React.FC = () => {
 
       {/* Notifications List */}
       <div className="space-y-3">
-        {filtered.map((item) => {
+        {pagedNotifications.map((item) => {
           return (
             <div
               key={item.id}
@@ -231,6 +237,13 @@ export const FarmerNotifications: React.FC = () => {
           );
         })}
       </div>
+      <Pager
+        page={page}
+        totalPages={totalPages}
+        total={total}
+        pageSize={pageSize}
+        onPageChange={setPage}
+      />
     </div>
   );
 };

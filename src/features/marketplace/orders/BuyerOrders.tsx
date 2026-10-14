@@ -6,6 +6,8 @@ import { Icon, ShieldCheck } from "@/components/icons";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { Pager } from "@/components/ui/Pager";
+import { usePagination } from "@/hooks/usePagination";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useRouter } from "next/navigation";
@@ -81,6 +83,10 @@ export function BuyerOrders({ view = "all" }: BuyerOrdersProps) {
 
   const filtered = filter === "all" ? visible : visible.filter(o => o.status === filter);
 
+  // 10 order cards at a time; switching tab (or view) rewinds to the first page.
+  const { page, setPage, pageSize, totalPages, total, pagedItems: pagedOrders } =
+    usePagination(filtered, 10, `${view}|${filter}`);
+
   const title = view === "history" ? t("অর্ডারের ইতিহাস", "Order History") : t("আমার অর্ডার", "My Orders");
   const emptyCopy = view === "history"
     ? t("এখনো কোনো সম্পন্ন অর্ডার নেই — শেষ হওয়া অর্ডার এখানে জমা হবে।", "No completed orders yet — finished orders will be collected here.")
@@ -133,7 +139,7 @@ export function BuyerOrders({ view = "all" }: BuyerOrdersProps) {
         />
       ) : (
         <div className="space-y-3">
-          {filtered.map(order => {
+          {pagedOrders.map(order => {
             const cfg = STATUS_CONFIG[order.status];
             const escrow = ESCROW_CONFIG[order.escrowStatus] || ESCROW_CONFIG["Held in Escrow"];
             const canAct = canActOnOrder(order);
@@ -221,6 +227,13 @@ export function BuyerOrders({ view = "all" }: BuyerOrdersProps) {
           })}
         </div>
       )}
+      <Pager
+        page={page}
+        totalPages={totalPages}
+        total={total}
+        pageSize={pageSize}
+        onPageChange={setPage}
+      />
     </div>
   );
 }

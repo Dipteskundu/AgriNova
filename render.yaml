@@ -1,0 +1,42 @@
+# Render blueprint for the AgriNova Express API.
+# https://render.com/docs/blueprint-spec
+#
+# Usage: Render → New → Blueprint → connect the GitHub repo → Render reads
+# this file. Values marked `sync: false` are prompted for at creation time.
+#
+# NOTE: this file lives at the repo root because the monorepo root is the
+# Next.js frontend; the service itself runs from AgriNova-Server/.
+
+services:
+  - type: web
+    name: agrinova-api
+    runtime: node
+    plan: free
+    # Repo-root-relative commands (the service dir is a subfolder of the monorepo)
+    buildCommand: cd AgriNova-Server && npm ci
+    startCommand: cd AgriNova-Server && npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Paste the (rotated) MongoDB Atlas connection string
+      - key: MONGODB_URI
+        sync: false
+      # Auto-generated strong secret — no placeholder JWT in production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRE
+        value: 30d
+      # Frontend origin for the CORS allowlist — fill in after the Vercel
+      # URL exists (comma-separated if there are several), then redeploy
+      - key: FRONTEND_URL
+        sync: false
+      - key: PUBLIC_API_URL
+        value: https://agrinova-api.onrender.com
+      # Rotated Cloudinary credentials (photo uploads)
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
