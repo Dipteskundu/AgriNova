@@ -246,6 +246,12 @@ export interface ProfitabilityMetrics {
 }
 
 export interface WeatherData {
+  retrievedAt?: string | null;
+  location?: {
+    district: string;
+    latitude: number | null;
+    longitude: number | null;
+  };
   current: {
     tempCelsius: number;
     feelsLike: number;

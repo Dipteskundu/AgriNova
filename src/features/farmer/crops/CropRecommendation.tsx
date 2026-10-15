@@ -263,19 +263,18 @@ export const CropRecommendation: React.FC<CropRecommendationProps> = ({ onNaviga
                       {item.suitabilityScore}% {language === 'bn' ? 'উপযুক্ত' : 'Match'}
                     </div>
                     <span
-                      className={`text-[10px] block mt-1 font-semibold ${
-                        item.riskFactor === 'Low'
-                          ? 'text-emerald-600'
-                          : item.riskFactor === 'Medium'
+                      className={`text-[10px] block mt-1 font-semibold ${item.riskFactor === 'Low'
+                        ? 'text-emerald-600'
+                        : item.riskFactor === 'Medium'
                           ? 'text-amber-600'
                           : 'text-rose-600'
-                      }`}
+                        }`}
                     >
                       {item.riskFactor === 'Low'
                         ? (language === 'bn' ? 'কম ঝুঁকি' : 'Low Risk')
                         : item.riskFactor === 'Medium'
-                        ? (language === 'bn' ? 'মাঝারি ঝুঁকি' : 'Medium Risk')
-                        : (language === 'bn' ? 'বেশি ঝুঁকি' : 'High Risk')}
+                          ? (language === 'bn' ? 'মাঝারি ঝুঁকি' : 'Medium Risk')
+                          : (language === 'bn' ? 'বেশি ঝুঁকি' : 'High Risk')}
                     </span>
                   </div>
                 </div>
@@ -286,19 +285,26 @@ export const CropRecommendation: React.FC<CropRecommendationProps> = ({ onNaviga
                     <span className="text-[10px] text-slate-400 block uppercase">
                       {language === 'bn' ? 'সম্ভাব্য ফলন / একর' : 'Est. Yield / Acre'}
                     </span>
-                    <span className="font-bold text-slate-800 dark:text-[#e0e0e0]">{item.estimatedYieldKgPerAcre.toLocaleString()}{tr('kg')}</span>
+
+                    <span className="font-bold text-slate-800 dark:text-[#e0e0e0]">
+                      {(item.estimatedYieldKgPerAcre ?? 0).toLocaleString()}{tr('kg')}
+                    </span>
                   </div>
                   <div>
                     <span className="text-[10px] text-slate-400 block uppercase">
                       {language === 'bn' ? 'নিট লাভ / একর' : 'Net Profit / Acre'}
                     </span>
-                    <span className="font-bold text-emerald-700">৳{item.estimatedProfitPerAcre.toLocaleString()}</span>
+                    <span className="font-bold text-emerald-700">
+                      ৳{(item.estimatedProfitPerAcre ?? 0).toLocaleString()}
+                    </span>
                   </div>
                   <div>
                     <span className="text-[10px] text-slate-400 block uppercase">
                       {language === 'bn' ? 'মুনাফা হার' : 'Projected ROI'}
                     </span>
-                    <span className="font-bold text-indigo-700">+{item.roiPercentage}%</span>
+                    <span className="font-bold text-indigo-700">
+                      {item.roiPercentage == null ? 'Unavailable' : `+${item.roiPercentage}%`}
+                    </span>
                   </div>
                 </div>
 
@@ -324,9 +330,27 @@ export const CropRecommendation: React.FC<CropRecommendationProps> = ({ onNaviga
               </div>
 
               <div className="mt-4 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-xs text-slate-500 dark:text-[#a0a0a0]">
-                <span>{language === 'bn' ? `পাকতে সময়: ${item.maturityPeriodDays} দিন` : `Maturity: ${item.maturityPeriodDays} Days`}</span>
-                <span>{language === 'bn' ? `পানি: ${item.waterRequirementMm} মিমি` : `Water: ${item.waterRequirementMm} mm`}</span>
-                <span className="font-semibold text-slate-800 dark:text-[#e0e0e0]">{language === 'bn' ? `বাজারদর: ৳${item.expectedMarketPricePerKg}/কেজি` : `Mkt: ৳${item.expectedMarketPricePerKg}/kg`}</span>
+                <span>
+                  {language === 'bn'
+                    ? `পাকতে সময়: ${item.maturityPeriodDays == null ? 'অনুপলব্ধ' : item.maturityPeriodDays} দিন`
+                    : item.maturityPeriodDays == null
+                      ? 'Maturity: Unavailable'
+                      : `Maturity: ${item.maturityPeriodDays} Days`}
+                </span>
+                <span>
+                  {language === 'bn'
+                    ? `পানি: ${item.waterRequirementMm == null ? 'অনুপলব্ধ' : item.waterRequirementMm} মিমি`
+                    : item.waterRequirementMm == null
+                      ? 'Water: Unavailable'
+                      : `Water: ${item.waterRequirementMm} mm`}
+                </span>
+                <span className="font-semibold text-slate-800 dark:text-[#e0e0e0]">
+                  {language === 'bn'
+                    ? `বাজারদর: ${item.expectedMarketPricePerKg == null ? 'অনুপলব্ধ' : `৳${item.expectedMarketPricePerKg}/কেজি`}`
+                    : item.expectedMarketPricePerKg == null
+                      ? 'Mkt: Unavailable'
+                      : `Mkt: ৳${item.expectedMarketPricePerKg}/kg`}
+                </span>
               </div>
             </Card>
           ))}

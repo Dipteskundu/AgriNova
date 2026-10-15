@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { tr, trPhrase } from "@/lib/localize";
+import { tr } from "@/lib/localize";
 import {
   CloudSun,
   AlertTriangle,
@@ -24,6 +24,12 @@ export const WeatherAlerts: React.FC = () => {
   const { language } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [weather, setWeather] = useState<WeatherData | null>(null);
+  const [timestampNow, setTimestampNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setTimestampNow(Date.now()), 60_000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     async function load() {
@@ -65,16 +71,28 @@ export const WeatherAlerts: React.FC = () => {
           </h2>
           <p className="text-xs text-slate-500 dark:text-[#a0a0a0] mt-0.5">
             {language === 'bn'
-              ? 'আবহাওয়া কেন্দ্র: শেরপুর, বগুড়া কৃষি পর্যবেক্ষণ কেন্দ্র • অক্ষাংশ: ২৪.৮৪° উত্তর, দ্রাঘিমাংশ: ৮৯.৩৭° পূর্ব'
-              : 'Station: Bogura Agro-Meteorological Substation • Latitude: 24.8465° N, Longitude: 89.3772° E'}
-          </p>
+              ? `আবহাওয়ার অবস্থান: ${weather.location?.district || 'অজানা স্থান'}${weather.location?.latitude != null && weather.location?.longitude != null ? ` • অক্ষাংশ: ${weather.location.latitude.toFixed(4)}°, দ্রাঘিমাংশ: ${weather.location.longitude.toFixed(4)}°` : ''}`
+              : `Weather location: ${weather.location?.district || 'Location unavailable'}${weather.location?.latitude != null && weather.location?.longitude != null ? ` • Latitude: ${weather.location.latitude.toFixed(4)}°, Longitude: ${weather.location.longitude.toFixed(4)}°` : ''}`}
+</p>
         </div>
         <div className="flex items-center gap-2">
           <Badge variant="success">
             {language === 'bn' ? 'সরাসরি আপডেট' : 'Station Live Sync'}
           </Badge>
           <span className="text-xs text-slate-400">
-            {language === 'bn' ? '১০ মিনিট আগে হালনাগাদ' : 'Updated 10m ago'}
+            {(() => {
+              const retrievedAt = weather.retrievedAt ? new Date(weather.retrievedAt).getTime() : NaN;
+              if (!Number.isFinite(retrievedAt)) {
+                return language === 'bn' ? 'আপডেটের সময় অজানা' : 'Update time unavailable';
+              }
+              const minutes = Math.max(0, Math.floor((timestampNow - retrievedAt) / 60000));
+              if (minutes < 1) return language === 'bn' ? 'এইমাত্র আপডেট' : 'Updated just now';
+              if (minutes < 60) return language === 'bn' ? `${minutes} মিনিট আগে হালনাগাদ` : `Updated ${minutes}m ago`;
+              const hours = Math.floor(minutes / 60);
+              if (hours < 24) return language === 'bn' ? `${hours} ঘণ্টা আগে হালনাগাদ` : `Updated ${hours}h ago`;
+              const days = Math.floor(hours / 24);
+              return language === 'bn' ? `${days} দিন আগে হালনাগাদ` : `Updated ${days}d ago`;
+            })()}
           </span>
         </div>
       </div>
@@ -117,7 +135,7 @@ export const WeatherAlerts: React.FC = () => {
                     {tr(alert.severity.toUpperCase())}
                   </Badge>
                   <span className="text-[11px] opacity-75">
-                    {language === 'bn' ? 'মেয়াদ: ' : 'Valid until: '}{trPhrase(alert.validUntil)}
+                    {language === 'bn' ? 'মেয়াদ: ' : 'Valid until: '}{alert.validUntil}
                   </span>
                 </div>
                 <p className="text-slate-700 dark:text-[#999999]">{tr(alert.message)}</p>

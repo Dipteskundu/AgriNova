@@ -16,7 +16,8 @@ import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
-import { FormInput } from '@/components/ui/FormInput';
+import { FormInput, FormSelect } from '@/components/ui/FormInput';
+import { BANGLADESH_DIVISIONS, DISTRICTS_BY_DIVISION } from '@/lib/bangladeshLocations';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
 import { getFarmerProfile, updateFarmerProfile } from '@/lib/farmerApi';
@@ -38,6 +39,10 @@ export const FarmerProfile: React.FC = () => {
     accountNumber: '',
     branchName: '',
     routingNumber: '',
+    division: '',
+    district: '',
+    upazila: '',
+    village: '',
   });
 
   useEffect(() => {
@@ -56,6 +61,10 @@ export const FarmerProfile: React.FC = () => {
             accountNumber: res.data.bankDetails.accountNumber,
             branchName: res.data.bankDetails.branchName,
             routingNumber: res.data.bankDetails.routingNumber,
+            division: res.data.primaryLocation?.division || '',
+            district: res.data.primaryLocation?.district || '',
+            upazila: res.data.primaryLocation?.upazila || '',
+            village: res.data.primaryLocation?.village || '',
           });
         }
       } catch {
@@ -76,6 +85,13 @@ export const FarmerProfile: React.FC = () => {
         phoneNumber: editForm.phoneNumber,
         email: editForm.email,
         farmingExperienceYears: Number(editForm.farmingExperienceYears),
+        primaryLocation: {
+          division: editForm.division,
+          district: editForm.district,
+          upazila: editForm.upazila,
+          village: editForm.village,
+          coordinates: { lat: 0, lng: 0 },
+        },
         bankDetails: {
           ...profile.bankDetails,
           bankName: editForm.bankName,
@@ -111,7 +127,9 @@ export const FarmerProfile: React.FC = () => {
       {/* Header Banner */}
       <div className="bg-white dark:bg-[#0a0a0a] rounded-2xl border border-slate-200 dark:border-[#222222]/80 p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-emerald-700 text-white flex items-center justify-center font-bold text-2xl border-2 border-emerald-500/20 shadow-xs">{tr('MK')}</div>
+          <div className="w-16 h-16 rounded-2xl bg-emerald-700 text-white flex items-center justify-center font-bold text-2xl border-2 border-emerald-500/20 shadow-xs">
+            {profile.fullName?.trim().split(/\s+/).slice(0, 2).map(part => part[0]?.toUpperCase()).join("") || "F"}
+          </div>
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-xl font-bold text-slate-900 dark:text-[#f0f0f0]">{profile.fullName}</h2>
@@ -329,6 +347,70 @@ export const FarmerProfile: React.FC = () => {
             required
           />
 
+          <div className="pt-3 border-t border-slate-200 dark:border-[#222222] space-y-3">
+            <h4 className="text-xs font-bold text-slate-800 dark:text-[#e0e0e0] uppercase tracking-wider">
+              {language === 'bn' ? 'খামারের অবস্থান' : 'Farm Location'}
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <FormSelect
+                id="division"
+                label="Division"
+                value={editForm.division}
+                onChange={(e) => setEditForm({
+                  ...editForm,
+                  division: e.target.value,
+                  district: '',
+                  upazila: '',
+                })}
+                options={[
+                  { value: '', label: 'Select division' },
+                  ...BANGLADESH_DIVISIONS.map((division) => ({
+                    value: division,
+                    label: division,
+                  })),
+                ]}
+                required
+              />
+              <FormSelect
+                id="district"
+                label="District"
+                value={editForm.district}
+                onChange={(e) => setEditForm({
+                  ...editForm,
+                  district: e.target.value,
+                  upazila: '',
+                })}
+                options={[
+                  { value: '', label: 'Select district' },
+                  ...(DISTRICTS_BY_DIVISION[editForm.division] || []).map((district) => ({
+                    value: district,
+                    label: district,
+                  })),
+                ]}
+                disabled={!editForm.division}
+                required
+              />
+              <FormInput
+                id="upazila"
+                label="Upazila / Thana"
+                value={editForm.upazila}
+                onChange={(e) => setEditForm({ ...editForm, upazila: e.target.value })}
+                placeholder="Enter upazila or thana"
+              />
+              <FormInput
+                id="village"
+                label="Village / Area"
+                value={editForm.village}
+                onChange={(e) => setEditForm({ ...editForm, village: e.target.value })}
+                placeholder="Enter village or local area"
+              />
+            </div>
+            <p className="text-xs text-slate-500 dark:text-[#888888]">
+              {language === 'bn'
+                ? 'জেলার অবস্থান ব্যবহার করে আবহাওয়ার পূর্বাভাস দেখানো হবে।'
+                : 'Weather forecasts use the selected district location.'}
+            </p>
+          </div>
           <div className="pt-3 border-t border-slate-200 dark:border-[#222222]">
             <h4 className="text-xs font-bold text-slate-800 dark:text-[#e0e0e0] uppercase tracking-wider mb-2">
               {language === 'bn' ? 'ব্যাংক লেনদেন তথ্য' : 'Bank Settlement Details'}
