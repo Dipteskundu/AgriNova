@@ -109,9 +109,23 @@ class WeatherService:
         cached_entry = self.cache.get(cache_key)
         if cached_entry:
             retrieved_at = cached_entry.get("retrieved_at_timestamp", 0)
-            if (now_ts - retrieved_at) < max_cache_age_seconds:
-                logger.info(f"Returning cached weather for key {cache_key} ({district})")
-                return cached_entry["data"]
+            age_seconds = now_ts - retrieved_at
+            cached_data = cached_entry.get("data", {})
+            source = cached_data.get("source", "")
+
+            # Keep normal live forecasts cached for the configured TTL.
+            if age_seconds < max_cache_age_seconds:
+                logger.info(f"Returning cached weather for {district}")
+                return cached_data
+
+            # Retry failed-provider fallback data after 10 minutes,
+            # rather than hitting Open-Meteo on every request.
+            if (
+                source == "Open-Meteo Fallback (Offline Estimation)"
+                and age_seconds < 600
+            ):
+                logger.info(f"Returning temporary fallback weather for {district}")
+                return cached_data
 
         # Build Open-Meteo Query
         url = (
@@ -174,27 +188,55 @@ class WeatherService:
                 logger.info(f"Fetched live weather from Open-Meteo for {district}")
                 return weather_snapshot
 
+
         except Exception as e:
             logger.error(f"Open-Meteo API query failed for {district}: {e}")
+
             # If cache exists (even if expired), return it gracefully
             if cached_entry:
                 logger.warning(f"Falling back to stale weather cache for {district}")
                 return cached_entry["data"]
 
-            # Degrade gracefully with regional seasonal baseline
-            return {
+            # Degrade gracefully and cache fallback to reduce repeated API calls
+            fallback_snapshot = {
                 "source": "Open-Meteo Fallback (Offline Estimation)",
-                "location": {"district": district, "latitude": lat, "longitude": lon},
+                "location": {
+                    "district": district,
+                    "latitude": lat,
+                    "longitude": lon
+                },
                 "current": {
                     "temperature_c": 28.0,
                     "relative_humidity_pct": 70.0,
                     "precipitation_mm": 0.0,
                     "wind_speed_kmh": 8.0
                 },
-                "forecast_7_day": {"dates": [], "precipitation_sum_mm": []},
-                "summary": {"total_forecast_rain_mm": 0.0, "max_rain_single_day_mm": 0.0},
-                "note": "Live weather service currently unreachable; standard regional climatology applied."
+                "forecast_7_day": {
+                    "dates": [],
+                    "precipitation_sum_mm": []
+                },
+                "summary": {
+                    "total_forecast_rain_mm": 0.0,
+                    "max_rain_single_day_mm": 0.0
+                },
+                "note": (
+                    "Live weather is temporarily unavailable. "
+                    "Values are fallback estimates, not a live forecast."
+                )
             }
+
+            self.cache[cache_key] = {
+                "retrieved_at_timestamp": now_ts,
+                "data": fallback_snapshot
+            }
+            self._save_cache()
+
+            logger.warning(
+                f"Cached fallback weather for {district}; "
+                "will retry live data after the cooldown."
+            )
+
+            return fallback_snapshot
 
 
 # Singleton
