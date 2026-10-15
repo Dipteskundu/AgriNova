@@ -1,27 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { tr, trPhrase } from "@/lib/localize";
-import { useLanguage } from "@/contexts/LanguageContext";
 import {
-  ShieldAlert,
-  Search,
-  Filter,
-  Download,
-  Clock,
-  User,
-  Activity,
-  CheckCircle2,
-  AlertTriangle,
-  XCircle,
+Download,
+Search
 } from '@/components/icons';
-import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Pager } from '@/components/ui/Pager';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
+import { useLanguage } from "@/contexts/LanguageContext";
 import { usePagination } from '@/hooks/usePagination';
 import { getSystemAuditLogs } from '@/lib/adminApi';
+import { tr,trPhrase } from "@/lib/localize";
 import { SystemAuditLog } from '@/types';
+import React,{ useEffect,useState } from 'react';
 
 export const SystemAuditLogs: React.FC = () => {
   useLanguage();

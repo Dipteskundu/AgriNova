@@ -3,6 +3,16 @@ const express = require("express");
 const router = express.Router();
 const authController = require("./auth.controller");
 const auth = require("../../middleware/auth.middleware");
+const { validationResult } = require("express-validator");
+const { registerValidation } = require("./auth.validation");
+
+const rejectInvalidRequest = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ message: errors.array()[0].msg, errors: errors.array() });
+  }
+  next();
+};
 
 /**
  * @swagger
@@ -47,7 +57,7 @@ const auth = require("../../middleware/auth.middleware");
  *       409:
  *         description: User already exists
  */
-router.post("/register", authController.register);
+router.post("/register", registerValidation, rejectInvalidRequest, authController.register);
 
 /**
  * @swagger

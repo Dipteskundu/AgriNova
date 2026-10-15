@@ -1,25 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import { tr } from "@/lib/localize";
 import {
-  Sparkles,
-  TrendingUp,
-  Droplets,
-  CheckCircle2,
-  Calendar,
-  Layers,
-  ArrowRight,
-  Filter,
+CheckCircle2,
+Sparkles
 } from '@/components/icons';
-import { Card, CardHeader } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { FormInput, FormSelect } from '@/components/ui/FormInput';
-import { Skeleton } from '@/components/ui/Skeleton';
+import { Card,CardHeader } from '@/components/ui/Card';
+import { FormInput,FormSelect } from '@/components/ui/FormInput';
 import { useToast } from '@/components/ui/Toast';
-import { getCropRecommendations } from '@/lib/farmerApi';
-import { CropRecommendationItem, CropRecommendationInput } from '@/types';
-import { FarmerModuleKey } from '@/features/layout';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { FarmerModuleKey } from '@/features/layout';
+import { getCropRecommendations } from '@/lib/farmerApi';
+import { tr } from "@/lib/localize";
+import { CropRecommendationInput,CropRecommendationItem } from '@/types';
+import React,{ useCallback,useEffect,useState } from 'react';
+
+const DEFAULT_RECOMMENDATION_INPUT: CropRecommendationInput = {
+  soilType: 'Alluvial Clay Loam',
+  nitrogen: 135,
+  phosphorus: 24,
+  potassium: 110,
+  ph: 6.6,
+  rainfallMm: 350,
+  temperatureCelsius: 28,
+  season: 'Rabi (Winter)',
+  targetLandSizeAcres: 4.2,
+};
 
 interface CropRecommendationProps {
   onNavigate?: (module: FarmerModuleKey) => void;
@@ -58,24 +62,13 @@ export const CropRecommendation: React.FC<CropRecommendationProps> = ({ onNaviga
     }
     return tr(s);
   };
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [recommendations, setRecommendations] = useState<CropRecommendationItem[]>([]);
-  const [inputForm, setInputForm] = useState<CropRecommendationInput>({
-    soilType: 'Alluvial Clay Loam',
-    nitrogen: 135,
-    phosphorus: 24,
-    potassium: 110,
-    ph: 6.6,
-    rainfallMm: 350,
-    temperatureCelsius: 28,
-    season: 'Rabi (Winter)',
-    targetLandSizeAcres: 4.2,
-  });
+  const [inputForm, setInputForm] = useState<CropRecommendationInput>(DEFAULT_RECOMMENDATION_INPUT);
 
-  const loadRecommendations = async () => {
+  const loadRecommendations = useCallback(async (input: CropRecommendationInput) => {
     try {
-      setLoading(true);
-      const res = await getCropRecommendations(inputForm);
+      const res = await getCropRecommendations(input);
       if (res.success) {
         setRecommendations(res.data);
       }
@@ -84,15 +77,17 @@ export const CropRecommendation: React.FC<CropRecommendationProps> = ({ onNaviga
     } finally {
       setLoading(false);
     }
-  };
+  }, [showToast]);
 
   useEffect(() => {
-    loadRecommendations();
-  }, []);
+    const frame = requestAnimationFrame(() => void loadRecommendations(DEFAULT_RECOMMENDATION_INPUT));
+    return () => cancelAnimationFrame(frame);
+  }, [loadRecommendations]);
 
   const handleCalculate = (e: React.FormEvent) => {
     e.preventDefault();
-    loadRecommendations();
+    setLoading(true);
+    loadRecommendations(inputForm);
     showToast('success', tr('Recommendation generated based on soil chemistry'));
   };
 

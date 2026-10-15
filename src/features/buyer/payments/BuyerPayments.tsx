@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import { Icon, AlertTriangle, CreditCard, type IconName } from "@/components/icons";
 import { Badge, type BadgeVariant } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -92,7 +93,7 @@ export function BuyerPayments() {
       else setError(res.message || (language === "bn" ? "পেমেন্ট লোড করা যায়নি।" : "Could not load payments."));
       setLoading(false);
     });
-  }, [user, router]);
+  }, [user, router, language]);
 
   const completed = payments
     .filter((p) => p.status === "completed")
@@ -156,9 +157,9 @@ export function BuyerPayments() {
             ? "অর্ডার করলেই এখানে পেমেন্ট দেখা যাবে।"
             : "Payments appear here as soon as you place an order."}
           action={
-            <a href="/products" className="text-sm font-semibold text-blue-600 hover:underline">
+            <Link href="/products" className="text-sm font-semibold text-blue-600 hover:underline">
               {language === "bn" ? "পণ্য দেখুন →" : "Browse Produce →"}
-            </a>
+            </Link>
           }
         />
       ) : (

@@ -1,27 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { tr } from "@/lib/localize";
 import {
-  User,
-  MapPin,
-  Landmark,
-  Award,
-  Phone,
-  Mail,
-  Calendar,
-  ShieldCheck,
-  Edit,
-  Save,
+Award,
+Calendar,
+Edit,
+Landmark,
+Mail,
+MapPin,
+Phone,
+Save,
+ShieldCheck
 } from '@/components/icons';
-import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { Modal } from '@/components/ui/Modal';
+import { Card,CardHeader } from '@/components/ui/Card';
 import { FormInput } from '@/components/ui/FormInput';
+import { Modal } from '@/components/ui/Modal';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
-import { getFarmerProfile, updateFarmerProfile } from '@/lib/farmerApi';
-import { FarmerProfile as FarmerProfileType } from '@/types';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { getFarmerProfile,updateFarmerProfile } from '@/lib/farmerApi';
+import { tr } from "@/lib/localize";
+import { FarmerProfile as FarmerProfileType } from '@/types';
+import React,{ useEffect,useState } from 'react';
 
 export const FarmerProfile: React.FC = () => {
   const { showToast } = useToast();

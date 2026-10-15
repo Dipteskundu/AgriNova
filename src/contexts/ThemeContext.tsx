@@ -1,8 +1,20 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useCallback, useSyncExternalStore } from 'react';
+import { createBrowserPreference } from '@/lib/browserPreference';
 
 type Theme = 'light' | 'dark';
+
+const themePreference = createBrowserPreference(
+  'agri_theme',
+  'light',
+  (value): value is Theme => value === 'light' || value === 'dark',
+  () =>
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-color-scheme: dark)').matches
+      ? 'dark'
+      : 'light'
+);
 
 interface ThemeContextType {
   theme: Theme;
@@ -17,35 +29,21 @@ const ThemeContext = createContext<ThemeContextType>({
 });
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [theme, setThemeState] = useState<Theme>('light');
-  const [mounted, setMounted] = useState(false);
+  const theme = useSyncExternalStore(
+    themePreference.subscribe,
+    themePreference.getSnapshot,
+    themePreference.getServerSnapshot
+  );
 
   useEffect(() => {
-    setMounted(true);
-    try {
-      const saved = localStorage.getItem('agri_theme') as Theme | null;
-      if (saved === 'dark' || saved === 'light') {
-        setThemeState(saved);
-        document.documentElement.classList.toggle('dark', saved === 'dark');
-      } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        setThemeState('dark');
-        document.documentElement.classList.add('dark');
-      }
-    } catch {
-      // ignore
-    }
-  }, []);
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+  }, [theme]);
 
   const setTheme = useCallback((newTheme: Theme) => {
     // Add transition class for smooth animation
     document.documentElement.classList.add('theme-transitioning');
-    setThemeState(newTheme);
+    themePreference.set(newTheme);
     document.documentElement.classList.toggle('dark', newTheme === 'dark');
-    try {
-      localStorage.setItem('agri_theme', newTheme);
-    } catch {
-      // ignore
-    }
     // Remove transition class after animation completes
     setTimeout(() => {
       document.documentElement.classList.remove('theme-transitioning');
@@ -55,11 +53,6 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const toggleTheme = useCallback(() => {
     setTheme(theme === 'light' ? 'dark' : 'light');
   }, [theme, setTheme]);
-
-  // Prevent flash of incorrect theme
-  if (!mounted) {
-    return <>{children}</>;
-  }
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>

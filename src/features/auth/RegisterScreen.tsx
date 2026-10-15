@@ -82,7 +82,7 @@ export const RegisterScreen: React.FC = () => {
   const handleGoogleSignup = async () => {
     setSocialLoading(true);
     try {
-      await loginWithGoogle();
+      await loginWithGoogle(selectedRoles);
       showToast("success", t("সফলভাবে নিবন্ধন হয়েছে।", "Signed up successfully."));
     } catch (err) {
       const { message, code } = (err ?? {}) as { message?: string; code?: string };
@@ -97,7 +97,7 @@ export const RegisterScreen: React.FC = () => {
   const handleGitHubSignup = async () => {
     setSocialLoading(true);
     try {
-      await loginWithGitHub();
+      await loginWithGitHub(selectedRoles);
       showToast("success", t("সফলভাবে নিবন্ধন হয়েছে।", "Signed up successfully."));
     } catch (err) {
       const { message, code } = (err ?? {}) as { message?: string; code?: string };

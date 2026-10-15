@@ -1,29 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { tr, trPhrase } from "@/lib/localize";
-import { useLanguage } from "@/contexts/LanguageContext";
 import {
-  FileCheck,
-  CheckCircle2,
-  XCircle,
-  Clock,
-  MapPin,
-  FileText,
-  Search,
-  Filter,
-  ExternalLink,
-  ShieldCheck,
+FileText
 } from '@/components/icons';
-import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { Modal } from '@/components/ui/Modal';
+import { Card } from '@/components/ui/Card';
 import { FormTextarea } from '@/components/ui/FormInput';
+import { Modal } from '@/components/ui/Modal';
 import { Pager } from '@/components/ui/Pager';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
+import { useLanguage } from "@/contexts/LanguageContext";
 import { usePagination } from '@/hooks/usePagination';
-import { getFarmVerificationRequests, reviewFarmVerification } from '@/lib/adminApi';
+import { getFarmVerificationRequests,reviewFarmVerification } from '@/lib/adminApi';
+import { tr,trPhrase } from "@/lib/localize";
 import { FarmVerificationRequest } from '@/types';
+import React,{ useEffect,useState } from 'react';
 
 export const FarmVerification: React.FC = () => {
   const { language } = useLanguage();

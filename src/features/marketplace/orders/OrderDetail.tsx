@@ -1,24 +1,26 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import Link from "next/link";
-import { AlertTriangle, Icon, ShieldCheck } from "@/components/icons";
+
+import Image from "next/image";
+import { AlertTriangle,Icon,ShieldCheck } from "@/components/icons";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { tr, trPhrase } from "@/lib/localize";
+import { trPhrase } from "@/lib/localize";
 import {
-  getOrderById,
-  type BuyerOrder,
-  type PaymentStatus,
+getOrderById,
+type BuyerOrder,
+type PaymentStatus,
 } from "@/lib/marketplaceApi";
+import Link from "next/link";
+import { useEffect,useState } from "react";
 import { DisputeForm } from "./DisputeForm";
 import {
-  ESCROW_CONFIG,
-  STATUS_CONFIG,
-  canActOnOrder,
-  useConfirmReceipt,
+ESCROW_CONFIG,
+STATUS_CONFIG,
+canActOnOrder,
+useConfirmReceipt,
 } from "./escrow";
 
 /** Stored lowercase; said properly in both scripts rather than capitalised. */
@@ -72,15 +74,17 @@ export function OrderDetail({ id }: { id: string }) {
     };
   }, [id]);
 
+  const orderStatus = order?.status;
+
   useEffect(() => {
-    if (!order || order.status === "delivered" || order.status === "cancelled") return;
+    if (!orderStatus || orderStatus === "delivered" || orderStatus === "cancelled") return;
     const interval = window.setInterval(() => {
       getOrderById(id).then((res) => {
         if (res.success) setOrder(res.data);
       });
     }, 20_000);
     return () => window.clearInterval(interval);
-  }, [id, order?.status]);
+  }, [id, orderStatus]);
 
   const receipt = useConfirmReceipt(setOrder);
 
@@ -123,7 +127,7 @@ export function OrderDetail({ id }: { id: string }) {
       {/* Header card */}
       <Card className="mb-4">
         <div className="flex gap-4">
-          <img src={order.listing.imageUrl} alt={trPhrase(order.listing.cropName)} className="w-20 h-20 rounded-xl object-cover shrink-0" />
+          <Image src={order.listing.imageUrl} alt={trPhrase(order.listing.cropName)} className="w-20 h-20 rounded-xl object-cover shrink-0" width={640} height={480} unoptimized />
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">
               <div>

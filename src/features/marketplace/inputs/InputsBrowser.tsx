@@ -1,5 +1,7 @@
 "use client";
 
+
+import Image from "next/image";
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/icons";
@@ -64,23 +66,25 @@ export function InputsBrowser({ basePath = "/inputs" }: { basePath?: string }) {
   const [sortBy, setSortBy] = useState<SortKey>("newest");
   const [showFilters, setShowFilters] = useState(false);
 
-  const t = (bn: string, en: string) => (language === "bn" ? bn : en);
+  const t = useCallback((bn: string, en: string) => (language === "bn" ? bn : en), [language]);
   const categoryLabel = (cat: string) => {
     const pair = CATEGORY_LABEL[cat];
     return pair ? (language === "bn" ? pair[0] : pair[1]) : cat;
   };
 
   const fetchInputs = useCallback(async () => {
-    setLoading(true);
-    setError("");
     const res = await getPublicInputs();
-    if (res.success) setProducts(res.data);
+    if (res.success) {
+      setProducts(res.data);
+      setError("");
+    }
     else setError(res.message || t("ইনপুট লোড করা যায়নি।", "Could not load inputs."));
     setLoading(false);
-  }, []);
+  }, [t]);
 
   useEffect(() => {
-    fetchInputs();
+    const frame = requestAnimationFrame(() => void fetchInputs());
+    return () => cancelAnimationFrame(frame);
   }, [fetchInputs]);
 
   const visible = (() => {
@@ -244,7 +248,7 @@ export function InputsBrowser({ basePath = "/inputs" }: { basePath?: string }) {
           title={t("ইনপুট লোড করা যায়নি", "Could not load inputs")}
           description={error}
           action={
-            <Button variant="outline" onClick={fetchInputs}>
+            <Button variant="outline" onClick={() => { setLoading(true); fetchInputs(); }}>
               {t("আবার চেষ্টা করুন", "Try again")}
             </Button>
           }
@@ -271,11 +275,10 @@ export function InputsBrowser({ basePath = "/inputs" }: { basePath?: string }) {
               className="group block bg-white dark:bg-[#0a0a0a] rounded-2xl border border-slate-200 dark:border-[#222] overflow-hidden hover:border-blue-300 dark:hover:border-blue-500/40 hover:shadow-lg transition-all duration-200"
             >
               <div className="relative h-48 overflow-hidden">
-                <img
+                <Image
                   src={product.imageUrl}
                   alt={tr(product.productName)}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" width={640} height={480} unoptimized />
                 <div className="absolute top-2 left-2 flex gap-1.5 flex-wrap">
                   <Badge variant="neutral" size="sm">
                     {categoryLabel(product.category)}

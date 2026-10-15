@@ -1,16 +1,16 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import Link from "next/link";
-import { Icon, Plus } from "@/components/icons";
+import { Icon,Plus } from "@/components/icons";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useAuth } from "@/contexts/AuthContext";
-import { getBuyerDemands, type BuyerDemand, type DemandStatus } from "@/lib/marketplaceApi";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { tr, trPhrase } from "@/lib/localize";
-import { fmtDateBn, bnNum } from "@/lib/format";
+import { bnNum,fmtDateBn } from "@/lib/format";
+import { trPhrase } from "@/lib/localize";
+import { getBuyerDemands,type BuyerDemand,type DemandStatus } from "@/lib/marketplaceApi";
+import Link from "next/link";
+import { useCallback,useEffect,useState } from "react";
 
 const STATUS_CONFIG: Record<DemandStatus, { variant: "info" | "warning" | "success" | "neutral" }> = {
   open:      { variant: "info" },
@@ -29,7 +29,7 @@ export function DemandBoard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const t = (bn: string, en: string) => (language === "bn" ? bn : en);
+  const t = useCallback((bn: string, en: string) => (language === "bn" ? bn : en), [language]);
 
   const statusText = (s: DemandStatus) =>
     ({
@@ -84,7 +84,7 @@ export function DemandBoard() {
       setLoading(false);
     })();
     return () => { cancelled = true; };
-  }, [user]);
+  }, [user, t]);
 
   const displayList = tab === "mine" ? myDemands : board;
 

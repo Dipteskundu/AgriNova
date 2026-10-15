@@ -1,34 +1,27 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { tr } from "@/lib/localize";
-import { useLanguage } from "@/contexts/LanguageContext";
 import {
-  Users,
-  Search,
-  Filter,
-  ShieldCheck,
-  UserCheck,
-  UserX,
-  Mail,
-  Phone,
-  Plus,
-  BadgeCheck,
+Mail,
+Phone,
+Plus,
+Search
 } from '@/components/icons';
-import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { FormInput,FormSelect } from '@/components/ui/FormInput';
 import { Modal } from '@/components/ui/Modal';
-import { FormInput, FormSelect } from '@/components/ui/FormInput';
 import { Pager } from '@/components/ui/Pager';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
+import { useLanguage } from "@/contexts/LanguageContext";
 import { usePagination } from '@/hooks/usePagination';
-import { createAdminUser, getAdminUsers, updateAdminUserStatus } from '@/lib/adminApi';
+import { createAdminUser,getAdminUsers,updateAdminUserStatus } from '@/lib/adminApi';
+import { tr } from "@/lib/localize";
 import { AdminUser } from '@/types';
+import React,{ useCallback,useEffect,useMemo,useState } from 'react';
 
 export const UserManagement: React.FC = () => {
   const { language } = useLanguage();
   const { showToast } = useToast();
-  const t = (bn: string, en: string) => (language === 'bn' ? bn : en);
+  const t = useCallback((bn: string, en: string) => (language === 'bn' ? bn : en), [language]);
 
   const roleLabel = (r: AdminUser['role']) => {
     switch (r) {
@@ -87,7 +80,7 @@ export const UserManagement: React.FC = () => {
       }
     }
     load();
-  }, [showToast]);
+  }, [showToast, t]);
 
   const handleToggleStatus = async (user: AdminUser) => {
     const nextStatus: AdminUser['status'] =

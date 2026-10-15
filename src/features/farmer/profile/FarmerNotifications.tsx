@@ -1,32 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { tr } from "@/lib/localize";
 import {
-  Bell,
-  CheckCheck,
-  Filter,
-  Calendar,
-  CloudRain,
-  DollarSign,
-  ShieldCheck,
-  AlertCircle,
-  Clock,
-  Sparkles,
-  ExternalLink,
+Bell,
+Calendar,
+CheckCheck,
+CloudRain,
+DollarSign,
+Sparkles
 } from '@/components/icons';
-import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Pager } from '@/components/ui/Pager';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { usePagination } from '@/hooks/usePagination';
 import {
-  getFarmerNotifications,
-  markNotificationAsRead,
-  markAllNotificationsRead,
+getFarmerNotifications,
+markAllNotificationsRead,
+markNotificationAsRead,
 } from '@/lib/farmerApi';
+import { tr } from "@/lib/localize";
 import { FarmerNotification } from '@/types';
-import { useLanguage } from '@/contexts/LanguageContext';
+import React,{ useEffect,useState } from 'react';
 
 export const FarmerNotifications: React.FC = () => {
   const { showToast } = useToast();

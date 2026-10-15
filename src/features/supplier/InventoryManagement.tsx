@@ -1,5 +1,7 @@
 "use client";
 
+
+import Image from "next/image";
 import React, { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { Icon, Plus, Warehouse } from "@/components/icons";
@@ -87,14 +89,15 @@ export function InventoryManagement() {
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState("");
 
-  const t = (bn: string, en: string) => (language === "bn" ? bn : en);
+  const t = useCallback((bn: string, en: string) => (language === "bn" ? bn : en), [language]);
   const num = (v: string | number) => (language === "bn" ? bnNum(v) : String(v));
 
   const load = useCallback(async () => {
-    setLoading(true);
-    setError("");
     const res = await getSupplierProducts();
-    if (res.success) setRows(res.data);
+    if (res.success) {
+      setRows(res.data);
+      setError("");
+    }
     else
       setError(
         res.message
@@ -102,10 +105,11 @@ export function InventoryManagement() {
           : t("ইনপুট আনা যায়নি", "Could not load your inputs.")
       );
     setLoading(false);
-  }, []);
+  }, [t]);
 
   useEffect(() => {
-    load();
+    const frame = requestAnimationFrame(() => void load());
+    return () => cancelAnimationFrame(frame);
   }, [load]);
 
   const visible = (() => {
@@ -236,7 +240,7 @@ export function InventoryManagement() {
           title={t("ইনপুট আনা যায়নি", "Could not load your inventory")}
           description={error}
           action={
-            <Button variant="outline" onClick={load}>
+            <Button variant="outline" onClick={() => { setLoading(true); load(); }}>
               {t("আবার চেষ্টা করুন", "Try again")}
             </Button>
           }
@@ -310,11 +314,10 @@ export function InventoryManagement() {
                 >
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
-                      <img
+                      <Image
                         src={row.imageUrl}
                         alt=""
-                        className="h-9 w-9 rounded-lg object-cover"
-                      />
+                        className="h-9 w-9 rounded-lg object-cover" width={640} height={480} unoptimized />
                       <div className="min-w-0">
                         <p className="font-semibold text-slate-900 dark:text-[#f0f0f0]">
                           {trPhrase(row.productName)}

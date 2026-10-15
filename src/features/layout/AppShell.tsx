@@ -1,42 +1,28 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
-import { tr, trPhrase } from "@/lib/localize";
-import { usePathname, useRouter } from "next/navigation";
+
+import Image from "next/image";
 import {
-  Menu,
-  X,
-  ArrowLeft,
-  Bell,
-  LogOut,
-  LayoutDashboard,
-  Trees,
-  Sparkles,
-  PackageCheck,
-  Store,
-  ShoppingCart,
-  CreditCard,
-  Search,
-  Truck,
-  CheckCircle,
-  FileBarChart,
-  Scale,
-  Phone,
-  Mail,
-  ClipboardList,
-  Calendar,
+ArrowLeft,
+Bell,
+LogOut,
+Menu,
+X
 } from "@/components/icons";
-import { FarmerNotification } from "@/types";
-import { getFarmerNotifications, markNotificationAsRead } from "@/lib/farmerApi";
-import {
-  getNavGroups,
-  getRoute,
-  getActiveKey,
-} from "@/features/layout/navConfig";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
-import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
+import {
+getActiveKey,
+getNavGroups,
+getRoute,
+} from "@/features/layout/navConfig";
+import { getFarmerNotifications,markNotificationAsRead } from "@/lib/farmerApi";
+import { tr,trPhrase } from "@/lib/localize";
+import { FarmerNotification } from "@/types";
+import { usePathname,useRouter } from "next/navigation";
+import React,{ useCallback,useEffect,useState } from "react";
 
 interface AgriPortalShellProps {
   children: React.ReactNode;
@@ -246,7 +232,7 @@ export const AgriPortalShell: React.FC<AgriPortalShellProps> = ({ children }) =>
               className="flex items-center gap-2 cursor-pointer focus:outline-none shrink-0"
               title={language === "bn" ? "ড্যাশবোর্ড" : "Dashboard"}
             >
-              <img src="/logo.png" alt="FarmPath" className="w-8 h-8 rounded-xl object-cover shrink-0" />
+              <Image src="/logo.png" alt="FarmPath" className="w-8 h-8 rounded-xl object-cover shrink-0" width={48} height={48} />
               <span className="hidden sm:inline font-black text-slate-900 dark:text-[#f0f0f0] tracking-tight text-sm sm:text-base">
                 {tr('FarmPath')}
               </span>
@@ -365,7 +351,7 @@ export const AgriPortalShell: React.FC<AgriPortalShellProps> = ({ children }) =>
               {/* Drawer Top Header */}
               <div className="flex items-center justify-between pb-2.5 border-b border-slate-200 dark:border-[#222222] mb-2.5">
                 <div className="flex items-center gap-2">
-                  <img src="/logo.png" alt="FarmPath" className="w-8 h-8 rounded-lg object-cover" />
+                  <Image src="/logo.png" alt="FarmPath" className="w-8 h-8 rounded-lg object-cover" width={48} height={48} />
                   <div>
                     <h3 className="font-bold text-slate-900 dark:text-[#f0f0f0] text-sm leading-tight">
                       {tr('FarmPath')}

@@ -1,23 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { tr, trPhrase } from "@/lib/localize";
 import {
-  TrendingUp,
-  DollarSign,
-  PieChart,
-  BarChart3,
-  Calendar,
-  Layers,
-  ArrowUpRight,
-  Receipt,
+DollarSign,
+PieChart,
+Receipt,
+TrendingUp
 } from '@/components/icons';
-import { Card, CardHeader } from '@/components/ui/Card';
-import { MetricCard } from '@/components/ui/MetricCard';
 import { Badge } from '@/components/ui/Badge';
+import { Card,CardHeader } from '@/components/ui/Card';
+import { MetricCard } from '@/components/ui/MetricCard';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
-import { getProfitabilityMetrics } from '@/lib/farmerApi';
-import { ProfitabilityMetrics } from '@/types';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { getProfitabilityMetrics } from '@/lib/farmerApi';
+import { tr,trPhrase } from "@/lib/localize";
+import { ProfitabilityMetrics } from '@/types';
+import React,{ useEffect,useState } from 'react';
 
 export const Profitability: React.FC = () => {
   const { showToast } = useToast();

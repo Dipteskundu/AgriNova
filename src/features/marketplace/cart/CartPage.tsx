@@ -1,5 +1,7 @@
 "use client";
 
+
+import Image from "next/image";
 import React, { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -119,11 +121,10 @@ export function CartPage() {
           <div className="lg:col-span-2 space-y-3">
             {items.map((item) => (
               <div key={item.lineId} className="bg-white dark:bg-[#0a0a0a] rounded-2xl border border-slate-200 dark:border-[#222] p-4 flex gap-4">
-                <img
+                <Image
                   src={item.imageUrl}
                   alt={tr(item.cropName)}
-                  className="w-20 h-20 rounded-xl object-cover shrink-0"
-                />
+                  className="w-20 h-20 rounded-xl object-cover shrink-0" width={640} height={480} unoptimized />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
                     <div>

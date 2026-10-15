@@ -1,24 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { tr, trPhrase } from "@/lib/localize";
-import { useLanguage } from "@/contexts/LanguageContext";
 import {
-  Send,
-  AlertTriangle,
-  Radio,
-  MapPin,
-  Clock,
-  ShieldAlert,
-  CheckCircle2,
-  Trash2,
+AlertTriangle,
+Clock,
+Send,
+Trash2
 } from '@/components/icons';
-import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { FormInput, FormSelect, FormTextarea } from '@/components/ui/FormInput';
+import { Card,CardHeader } from '@/components/ui/Card';
+import { FormInput,FormSelect,FormTextarea } from '@/components/ui/FormInput';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
-import { broadcastWeatherAlert, deleteWeatherAlert, getWeatherAlerts } from '@/lib/adminApi';
+import { useLanguage } from "@/contexts/LanguageContext";
+import { broadcastWeatherAlert,deleteWeatherAlert,getWeatherAlerts } from '@/lib/adminApi';
+import { tr,trPhrase } from "@/lib/localize";
 import { WeatherData } from '@/types';
+import React,{ useEffect,useState } from 'react';
 
 type MicroclimateAlert = WeatherData['microclimateAlerts'][number];
 

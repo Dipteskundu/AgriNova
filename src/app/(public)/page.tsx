@@ -1,5 +1,7 @@
 "use client";
 
+
+import Image from "next/image";
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { Icon, type IconName } from "@/components/icons";
@@ -104,7 +106,7 @@ export default function HomePage() {
             </div>
             <div className="flex flex-col gap-4">
               <div className="relative rounded-2xl overflow-hidden shadow-lg dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
-                <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&h=500&fit=crop&crop=center" alt={t("সবুজ ধান ক্ষেত", "Green paddy field")} className="w-full h-52 sm:h-60 object-cover" />
+                <Image src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&h=500&fit=crop&crop=center" alt={t("সবুজ ধান ক্ষেত", "Green paddy field")} className="w-full h-52 sm:h-60 object-cover" width={800} height={500} />
                 <div className="absolute bottom-3 left-3 inline-flex items-center gap-2 rounded-lg bg-white/90 backdrop-blur-sm px-3 py-2 shadow-sm dark:bg-[#111111]/90">
                   <Icon name="CheckCircle" size={14} className="text-emerald-600 dark:text-emerald-400" />
                   <span className="text-xs font-semibold text-slate-800 dark:text-[#e0e0e0]">{t("গ্রেড A — যাচাইকৃত ফসল লট", "Grade A — Verified Harvest Lot")}</span>
@@ -139,7 +141,7 @@ export default function HomePage() {
         <div ref={scrollRef} onMouseEnter={pauseAutoScroll} onMouseLeave={resumeAutoScroll} className="flex gap-4 overflow-x-auto scroll-smooth pb-4 px-4 sm:px-6 lg:px-[max(1rem,calc((100vw-80rem)/2+1rem))] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {GALLERY_IMAGES.map((img, i) => (
             <div key={i} className="relative flex-none w-64 h-44 rounded-2xl overflow-hidden group cursor-pointer">
-              <img src={img.src} alt={language === 'bn' ? img.alt : img.altEn} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+              <Image src={img.src} alt={language === 'bn' ? img.alt : img.altEn} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" width={400} height={300} />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <span className="absolute bottom-3 left-3 text-xs font-semibold text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">{language === 'bn' ? img.alt : img.altEn}</span>
             </div>
@@ -204,7 +206,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div className="rounded-2xl overflow-hidden bg-white shadow-sm dark:bg-[#111111] dark:border dark:border-[#222222] group">
               <div className="relative h-44 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=600&h=300&fit=crop" alt={t("তাজা সবজি", "Fresh vegetables")} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                <Image src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=600&h=300&fit=crop" alt={t("তাজা সবজি", "Fresh vegetables")} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" width={600} height={300} />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4">
                   <h3 className="text-lg font-bold text-white">{t("ইনপুট বাজার", "Input Marketplace")}</h3>
@@ -223,7 +225,7 @@ export default function HomePage() {
             </div>
             <div className="rounded-2xl overflow-hidden bg-white shadow-sm dark:bg-[#111111] dark:border dark:border-[#222222] group">
               <div className="relative h-44 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&h=300&fit=crop" alt={t("পণ্য বাজার", "Produce market")} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                <Image src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&h=300&fit=crop" alt={t("পণ্য বাজার", "Produce market")} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" width={600} height={300} />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4">
                   <h3 className="text-lg font-bold text-white">{t("পণ্য বাজার", "Produce Marketplace")}</h3>
@@ -320,7 +322,7 @@ export default function HomePage() {
 
       {/* ─── CTA with Image Background ────────────────────────── */}
       <section className="relative overflow-hidden">
-        <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=1400&h=500&fit=crop&crop=center" alt={t("কৃষি ভূদৃশ্য", "Farm landscape")} className="absolute inset-0 w-full h-full object-cover" />
+        <Image src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=1400&h=500&fit=crop&crop=center" alt={t("কৃষি ভূদৃশ্য", "Farm landscape")} className="absolute inset-0 w-full h-full object-cover" width={1400} height={500} />
         <div className="absolute inset-0 bg-emerald-900/80 dark:bg-emerald-950/90" />
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 sm:py-28 text-center">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">{t("আপনার ডিজিটাল কৃষি যাত্রা শুরু করুন", "Start your digital agriculture journey")}</h2>

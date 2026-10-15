@@ -1,33 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { tr, trPhrase } from "@/lib/localize";
-import { useLanguage } from "@/contexts/LanguageContext";
 import {
-  Store,
-  CheckCircle2,
-  AlertTriangle,
-  Search,
-  Filter,
-  Eye,
-  Check,
-  X,
-  TrendingUp,
-  Tag,
-  Scale,
-  MapPin,
-  RefreshCw,
-  Microscope,
+AlertTriangle,
+Check,
+Eye,
+MapPin,
+Microscope,
+RefreshCw,
+Search
 } from '@/components/icons';
-import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
 import { Modal } from '@/components/ui/Modal';
 import { Pager } from '@/components/ui/Pager';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
+import { useLanguage } from "@/contexts/LanguageContext";
 import { usePagination } from '@/hooks/usePagination';
-import { getMarketplaceListingsAdmin, updateListingStatusAdmin } from '@/lib/adminApi';
+import { getMarketplaceListingsAdmin,updateListingStatusAdmin } from '@/lib/adminApi';
+import { tr,trPhrase } from "@/lib/localize";
 import { requestListingInspection } from '@/lib/marketplaceApi';
 import { MarketplaceListingAdminView } from '@/types';
+import React,{ useCallback,useEffect,useState } from 'react';
 
 export const MarketplaceManagement: React.FC = () => {
   const { language } = useLanguage();
@@ -41,13 +34,8 @@ export const MarketplaceManagement: React.FC = () => {
   /** Listing whose inspection request is in flight. */
   const [requestingId, setRequestingId] = useState('');
 
-  useEffect(() => {
-    loadListings();
-  }, []);
-
-  const loadListings = async () => {
+  const loadListings = useCallback(async () => {
     try {
-      setLoading(true);
       const res = await getMarketplaceListingsAdmin();
       if (res.success) {
         setListings(res.data);
@@ -57,7 +45,12 @@ export const MarketplaceManagement: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [showToast]);
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => void loadListings());
+    return () => cancelAnimationFrame(frame);
+  }, [loadListings]);
 
   const handleStatusChange = async (id: string, status: MarketplaceListingAdminView['status']) => {
     try {
@@ -232,7 +225,7 @@ export const MarketplaceManagement: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" icon={RefreshCw} onClick={loadListings}>{tr('Sync Market Feeds')}</Button>
+          <Button variant="outline" size="sm" icon={RefreshCw} onClick={() => { setLoading(true); loadListings(); }}>{tr('Sync Market Feeds')}</Button>
         </div>
       </div>
 

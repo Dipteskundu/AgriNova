@@ -1,27 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { tr } from "@/lib/localize";
-import { useLanguage } from "@/contexts/LanguageContext";
 import {
-  Truck,
-  Thermometer,
-  MapPin,
-  Clock,
-  Phone,
-  AlertTriangle,
-  CheckCircle2,
-  Search,
-  Filter,
-  ArrowRight,
-  ShieldCheck,
-  RefreshCw,
+Clock,
+MapPin,
+RefreshCw,
+Search,
+Thermometer
 } from '@/components/icons';
-import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
+import { useLanguage } from "@/contexts/LanguageContext";
 import { getLogisticsFleetAdmin } from '@/lib/adminApi';
+import { tr } from "@/lib/localize";
 import { LogisticsFleetAdminView } from '@/types';
+import React,{ useCallback,useEffect,useState } from 'react';
 
 export const LogisticsManagement: React.FC = () => {
   const { language } = useLanguage();
@@ -32,13 +25,8 @@ export const LogisticsManagement: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
 
-  useEffect(() => {
-    loadFleet();
-  }, []);
-
-  const loadFleet = async () => {
+  const loadFleet = useCallback(async () => {
     try {
-      setLoading(true);
       const res = await getLogisticsFleetAdmin();
       if (res.success) {
         setFleet(res.data);
@@ -48,7 +36,12 @@ export const LogisticsManagement: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [showToast]);
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => void loadFleet());
+    return () => cancelAnimationFrame(frame);
+  }, [loadFleet]);
 
   const transitStatusLabel = (s: LogisticsFleetAdminView['transitStatus']) =>
     s === 'On Route'
@@ -106,7 +99,7 @@ export const LogisticsManagement: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" icon={RefreshCw} onClick={loadFleet}>{tr('Ping GPS Sensors')}</Button>
+          <Button variant="outline" size="sm" icon={RefreshCw} onClick={() => { setLoading(true); loadFleet(); }}>{tr('Ping GPS Sensors')}</Button>
         </div>
       </div>
 

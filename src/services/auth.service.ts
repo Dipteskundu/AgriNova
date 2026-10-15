@@ -43,12 +43,9 @@ export async function apiGetMe(): Promise<AuthUser> {
 }
 
 export async function apiSocialAuth(data: {
-  firebaseUid: string;
-  name: string;
-  email: string;
+  idToken: string;
   phone?: string;
-  role?: string;
-  avatarUrl?: string;
+  roles?: string[];
 }): Promise<LoginResponse> {
   return api.post<LoginResponse>("/auth/social", data);
 }

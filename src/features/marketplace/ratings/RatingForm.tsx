@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Icon } from "@/components/icons";
+import { Icon, Star } from "@/components/icons";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -160,7 +160,7 @@ export function RatingForm({ onSubmit }: Props) {
         onClick={handleSubmit}
         loading={submitting}
         disabled={!canSubmit}
-        icon={Icon.bind(null, { name: "Star" }) as any}
+        icon={Star}
       >
         {t("রেটিং জমা দিন", "Submit Rating")}
       </Button>

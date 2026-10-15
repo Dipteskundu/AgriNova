@@ -1,24 +1,17 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { tr } from "@/lib/localize";
 import {
-  Calendar as CalendarIcon,
-  Plus,
-  CheckCircle2,
-  Clock,
-  AlertCircle,
-  Tag,
-  Filter,
+CheckCircle2,
+Plus
 } from '@/components/icons';
-import { Card, CardHeader } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { FormInput,FormSelect,FormTextarea } from '@/components/ui/FormInput';
 import { Modal } from '@/components/ui/Modal';
-import { FormInput, FormSelect, FormTextarea } from '@/components/ui/FormInput';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
-import { getCalendarTasks, getCropBatches, toggleCalendarTask, addCalendarTask } from '@/lib/farmerApi';
-import { CalendarTask, CropBatch } from '@/types';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { addCalendarTask,getCalendarTasks,getCropBatches,toggleCalendarTask } from '@/lib/farmerApi';
+import { tr } from "@/lib/localize";
+import { CalendarTask,CropBatch } from '@/types';
+import React,{ useEffect,useMemo,useState } from 'react';
 
 export const CropCalendar: React.FC = () => {
   const { showToast } = useToast();

@@ -1,5 +1,7 @@
 "use client";
 
+
+import Image from "next/image";
 import React from "react";
 import Link from "next/link";
 import { Icon } from "@/components/icons";
@@ -72,11 +74,10 @@ export function ProduceCard({ listing, basePath = "/products", onSaveChange }: P
         className="group block bg-white dark:bg-[#0a0a0a] rounded-2xl border border-slate-200 dark:border-[#222] overflow-hidden hover:border-blue-300 dark:hover:border-blue-500/40 hover:shadow-lg transition-all duration-200"
       >
         <div className="relative h-48 overflow-hidden">
-          <img
+          <Image
             src={listing.imageUrl}
             alt={tr(listing.cropName)}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-          />
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" width={640} height={480} unoptimized />
           <div className="absolute top-2 left-2 flex gap-1.5 flex-wrap">
             <Badge variant={GRADE_VARIANT[listing.qualityGrade]} size="sm">
               {gradeText(listing.qualityGrade)}

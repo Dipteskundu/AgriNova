@@ -1,24 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { tr } from "@/lib/localize";
 import {
-  PackageCheck,
-  Plus,
-  Scale,
-  Warehouse,
-  Coins,
-  CheckCircle2,
-  TrendingUp,
+PackageCheck,
+Plus,
+Warehouse
 } from '@/components/icons';
-import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { FormInput,FormSelect } from '@/components/ui/FormInput';
 import { Modal } from '@/components/ui/Modal';
-import { FormInput, FormSelect } from '@/components/ui/FormInput';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
-import { getHarvestRecords, getCropBatches, createHarvestRecord } from '@/lib/farmerApi';
-import { HarvestRecord, CropBatch } from '@/types';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { createHarvestRecord,getCropBatches,getHarvestRecords } from '@/lib/farmerApi';
+import { tr } from "@/lib/localize";
+import { CropBatch,HarvestRecord } from '@/types';
+import React,{ useEffect,useState } from 'react';
 
 export const HarvestManagement: React.FC = () => {
   const { showToast } = useToast();

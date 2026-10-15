@@ -1,25 +1,27 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import Link from "next/link";
-import { Icon, ShieldCheck } from "@/components/icons";
+
+import Image from "next/image";
+import { Icon,ShieldCheck } from "@/components/icons";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Pager } from "@/components/ui/Pager";
-import { usePagination } from "@/hooks/usePagination";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useRouter } from "next/navigation";
+import { usePagination } from "@/hooks/usePagination";
 import { getLoginUrl } from "@/lib/api";
-import { getBuyerOrders, type BuyerOrder, type OrderStatus } from "@/lib/marketplaceApi";
-import { tr, trPhrase } from "@/lib/localize";
+import { trPhrase } from "@/lib/localize";
+import { getBuyerOrders,type BuyerOrder,type OrderStatus } from "@/lib/marketplaceApi";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect,useState } from "react";
 import { DisputeForm } from "./DisputeForm";
 import {
-  ESCROW_CONFIG,
-  STATUS_CONFIG,
-  canActOnOrder,
-  useConfirmReceipt,
+ESCROW_CONFIG,
+STATUS_CONFIG,
+canActOnOrder,
+useConfirmReceipt,
 } from "./escrow";
 
 /** Still moving through the pipeline. */
@@ -152,7 +154,7 @@ export function BuyerOrders({ view = "all" }: BuyerOrdersProps) {
                 {/* The card itself stays one big link; the actions below sit
                     outside it so a button never has to nest inside an <a>. */}
                 <Link href={`/dashboard/orders/${order.id}`} className="flex gap-4">
-                  <img src={order.listing.imageUrl} alt={trPhrase(order.listing.cropName)} className="w-16 h-16 rounded-xl object-cover shrink-0" />
+                  <Image src={order.listing.imageUrl} alt={trPhrase(order.listing.cropName)} className="w-16 h-16 rounded-xl object-cover shrink-0" width={640} height={480} unoptimized />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2">
                       <div>

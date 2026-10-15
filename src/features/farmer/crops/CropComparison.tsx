@@ -1,23 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { tr } from "@/lib/localize";
 import {
-  GitCompare,
-  Droplets,
-  Coins,
-  Clock,
-  TrendingUp,
-  ShieldAlert,
-  Users,
-  Check,
+Check,
+Clock,
+Coins,
+Droplets,
+ShieldAlert,
+TrendingUp,
+Users
 } from '@/components/icons';
-import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
-import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
-import { getCropComparisonProfiles } from '@/lib/farmerApi';
-import { CropComparisonProfile } from '@/types';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { getCropComparisonProfiles } from '@/lib/farmerApi';
+import { tr } from "@/lib/localize";
+import { CropComparisonProfile } from '@/types';
+import React,{ useEffect,useState } from 'react';
 
 export const CropComparison: React.FC = () => {
   const { showToast } = useToast();

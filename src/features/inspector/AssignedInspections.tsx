@@ -78,20 +78,22 @@ export function AssignedInspections() {
   const [formError, setFormError] = useState("");
   const [saving, setSaving] = useState(false);
 
-  const t = (bn: string, en: string) => (language === "bn" ? bn : en);
+  const t = useCallback((bn: string, en: string) => (language === "bn" ? bn : en), [language]);
   const num = (v: string | number) => (language === "bn" ? bnNum(v) : String(v));
 
   const load = useCallback(async () => {
-    setLoading(true);
-    setError("");
     const res = await getAssignedInspections();
-    if (res.success) setItems(res.data);
+    if (res.success) {
+      setItems(res.data);
+      setError("");
+    }
     else setError(res.message ? trPhrase(res.message) : t("তালিকা আনা যায়নি।", "Could not load inspections."));
     setLoading(false);
-  }, []);
+  }, [t]);
 
   useEffect(() => {
-    load();
+    const frame = requestAnimationFrame(() => void load());
+    return () => cancelAnimationFrame(frame);
   }, [load]);
 
   const visible = (() => {
@@ -191,7 +193,7 @@ export function AssignedInspections() {
           title={t("তালিকা আনা যায়নি", "Could not load inspections")}
           description={error}
           action={
-            <Button variant="outline" onClick={load}>
+            <Button variant="outline" onClick={() => { setLoading(true); load(); }}>
               {t("আবার চেষ্টা করুন", "Try again")}
             </Button>
           }

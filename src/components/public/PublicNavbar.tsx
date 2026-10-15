@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef } from "react";
+
+import Image from "next/image";
+import React, { useState, useEffect, useCallback, useRef, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Icon, type IconName } from "@/components/icons";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
@@ -23,13 +25,16 @@ const NAV_LINKS: { key: string; href: string; icon: IconName }[] = [
   { key: "about", href: "/about", icon: "BookOpen" },
 ];
 
+const subscribeToCartCount = (onChange: () => void) =>
+  onCartCountChange(() => onChange());
+const getCartCount = () => getCart().length;
+
 interface PublicNavbarProps {
   transparent?: boolean;
 }
 
 export const PublicNavbar: React.FC<PublicNavbarProps> = ({ transparent = false }) => {
   const pathname = usePathname();
-  const router = useRouter();
   const { user, logout } = useAuth();
   const t = useT();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -38,18 +43,9 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({ transparent = false 
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
 
-  /**
-   * Shared-basket badge. `onCartCountChange` covers mutations made anywhere
-   * in this tab (adding from a detail page, emptying at checkout); the
-   * `pathname` dep re-reads localStorage when the visitor navigates, in case
-   * the cart changed while this navbar was not mounted.
-   */
-  const [cartCount, setCartCount] = useState(0);
-
-  useEffect(() => {
-    setCartCount(getCart().length);
-    return onCartCountChange(setCartCount);
-  }, [pathname]);
+  // useSyncExternalStore also rereads the count when route navigation rerenders
+  // this navbar, covering cart changes made while it was unmounted.
+  const cartCount = useSyncExternalStore(subscribeToCartCount, getCartCount, () => 0);
 
   const openMenu = useCallback(() => {
     setMobileOpen(true);
@@ -131,7 +127,7 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({ transparent = false 
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group">
-          <img src="/logo.png" alt="FarmPath" className="h-8 w-8 rounded-lg object-cover" />
+          <Image src="/logo.png" alt="FarmPath" className="h-8 w-8 rounded-lg object-cover" width={48} height={48} />
           <span className={`text-lg font-bold tracking-tight ${
             transparent ? "text-white" : "text-slate-900 dark:text-[#f0f0f0]"
           }`}>
@@ -285,7 +281,7 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({ transparent = false 
             {/* Panel header */}
             <div className="flex items-center justify-between px-5 h-16 border-b border-slate-100 dark:border-[#222222]">
               <Link href="/" onClick={closeMenu} className="flex items-center gap-2">
-                <img src="/logo.png" alt="FarmPath" className="h-7 w-7 rounded-lg object-cover" />
+                <Image src="/logo.png" alt="FarmPath" className="h-7 w-7 rounded-lg object-cover" width={48} height={48} />
                 <span className="text-base font-bold text-slate-900 dark:text-[#f0f0f0]">FarmPath</span>
               </Link>
               <button

@@ -1,5 +1,7 @@
 "use client";
 
+
+import Image from "next/image";
 import React from "react";
 import { motion, MotionConfig, type Variants } from "framer-motion";
 import { PublicNavbar } from "@/components/public/PublicNavbar";
@@ -104,11 +106,10 @@ function BrandPanel({ variant }: { variant: "strip" | "panel" }) {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="relative flex items-center gap-3 px-6"
         >
-          <img
+          <Image
             src="/logo.png"
             alt="FarmPath"
-            className="h-11 w-11 rounded-xl object-cover shadow-lg shadow-black/30 ring-1 ring-white/20"
-          />
+            className="h-11 w-11 rounded-xl object-cover shadow-lg shadow-black/30 ring-1 ring-white/20" width={48} height={48} />
           <div>
             <p className="text-base font-bold text-white">FarmPath</p>
             <p className="text-xs text-emerald-200/80">{tagline}</p>
@@ -129,11 +130,10 @@ function BrandPanel({ variant }: { variant: "strip" | "panel" }) {
         className="relative flex h-full flex-col justify-center px-10 py-12 xl:px-14"
       >
         <motion.div variants={authItem} className="flex items-center gap-3">
-          <img
+          <Image
             src="/logo.png"
             alt="FarmPath"
-            className="h-12 w-12 rounded-xl object-cover shadow-lg shadow-black/30 ring-1 ring-white/20"
-          />
+            className="h-12 w-12 rounded-xl object-cover shadow-lg shadow-black/30 ring-1 ring-white/20" width={48} height={48} />
           <span className="text-xl font-bold text-white">FarmPath</span>
         </motion.div>
 

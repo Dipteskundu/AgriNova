@@ -1,25 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { tr, trPhrase } from "@/lib/localize";
-import { useLanguage } from "@/contexts/LanguageContext";
 import {
-  Sparkles,
-  CheckCircle2,
-  AlertCircle,
-  TrendingUp,
-  FlaskConical,
-  Sprout,
-  ShieldCheck,
-  ChevronRight,
-  ArrowRight,
+ArrowRight,
+FlaskConical,
+Sparkles
 } from '@/components/icons';
-import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { Card,CardHeader } from '@/components/ui/Card';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
-import { getAiRecommendationDiagnostic } from '@/lib/farmerApi';
-import { AiRecommendationDiagnostic } from '@/types';
+import { useLanguage } from "@/contexts/LanguageContext";
 import { FarmerModuleKey } from '@/features/layout';
+import { getAiRecommendationDiagnostic } from '@/lib/farmerApi';
+import { tr,trPhrase } from "@/lib/localize";
+import { AiRecommendationDiagnostic } from '@/types';
+import React,{ useEffect,useState } from 'react';
 
 interface AiRecommendationResultProps {
   onNavigate?: (module: FarmerModuleKey) => void;

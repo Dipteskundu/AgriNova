@@ -1,23 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { tr, trPhrase } from "@/lib/localize";
 import {
-  CloudSun,
-  AlertTriangle,
-  Droplets,
-  Wind,
-  Sun,
-  Thermometer,
-  ShieldAlert,
-  Calendar,
-  Info,
+AlertTriangle,
+CloudSun,
+Droplets,
+Info,
+Sun,
+Thermometer,
+Wind
 } from '@/components/icons';
-import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import { Card,CardHeader } from '@/components/ui/Card';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
-import { getWeatherData } from '@/lib/farmerApi';
-import { WeatherData } from '@/types';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { getWeatherData } from '@/lib/farmerApi';
+import { tr,trPhrase } from "@/lib/localize";
+import { WeatherData } from '@/types';
+import React,{ useEffect,useState } from 'react';
 
 export const WeatherAlerts: React.FC = () => {
   const { showToast } = useToast();

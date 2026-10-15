@@ -1,25 +1,21 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { tr } from "@/lib/localize";
 import {
-  Grid3X3,
-  Plus,
-  Droplets,
-  Activity,
-  Calendar,
-  Sparkles,
-  Gauge,
-  CheckCircle2,
+Droplets,
+Grid3X3,
+Plus,
+Sparkles
 } from '@/components/icons';
-import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { FormInput,FormSelect } from '@/components/ui/FormInput';
 import { Modal } from '@/components/ui/Modal';
-import { FormInput, FormSelect } from '@/components/ui/FormInput';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
-import { getFields, getFarms, createField } from '@/lib/farmerApi';
-import { Field, Farm } from '@/types';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { createField,getFarms,getFields } from '@/lib/farmerApi';
+import { tr } from "@/lib/localize";
+import { Farm,Field } from '@/types';
+import React,{ useEffect,useMemo,useState } from 'react';
 
 export const FieldManagement: React.FC = () => {
   const { showToast } = useToast();

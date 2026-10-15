@@ -1,9 +1,16 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useSyncExternalStore } from 'react';
 import { setAppLanguage } from '@/lib/localize';
+import { createBrowserPreference } from '@/lib/browserPreference';
 
 export type Language = 'bn' | 'en';
+
+const languagePreference = createBrowserPreference(
+  'agri_language',
+  'bn',
+  (value): value is Language => value === 'bn' || value === 'en'
+);
 
 interface LanguageContextType {
   language: Language;
@@ -329,32 +336,20 @@ const LanguageContext = createContext<LanguageContextType>({
 });
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [language, setLanguageState] = useState<Language>('bn');
-
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem('agri_language');
-      if (saved === 'bn' || saved === 'en') {
-        setLanguageState(saved);
-        setAppLanguage(saved);
-      }
-    } catch {
-      // ignore
-    }
-  }, []);
+  const language = useSyncExternalStore(
+    languagePreference.subscribe,
+    languagePreference.getSnapshot,
+    languagePreference.getServerSnapshot
+  );
 
   useEffect(() => {
     document.documentElement.lang = language;
+    setAppLanguage(language);
   }, [language]);
 
   const setLanguage = (lang: Language) => {
-    setLanguageState(lang);
     setAppLanguage(lang);
-    try {
-      localStorage.setItem('agri_language', lang);
-    } catch {
-      // ignore
-    }
+    languagePreference.set(lang);
   };
 
   const t = (key: string, defaultText?: string): string => {

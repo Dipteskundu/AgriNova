@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useEffect } from "react";
+import { ArrowRight } from "@/components/icons";
+import { PublicNavbar } from "@/components/public/PublicNavbar";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useRouter } from "next/navigation";
 import { PortalType } from "@/types";
-import { PublicNavbar } from "@/components/public/PublicNavbar";
-import { ArrowRight } from "@/components/icons";
+import { useRouter } from "next/navigation";
+import React,{ useEffect } from "react";
 
 const PORTAL_CONFIG: Record<
   PortalType,
@@ -51,7 +51,7 @@ const PORTAL_CONFIG: Record<
 };
 
 export const PortalSelector: React.FC = () => {
-  const { user, availablePortals, selectPortal, getPortalLabel, logout, isLoading } = useAuth();
+  const { user, availablePortals, selectPortal, logout, isLoading } = useAuth();
   const { language } = useLanguage();
   const router = useRouter();
 

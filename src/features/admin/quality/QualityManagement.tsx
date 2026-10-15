@@ -1,27 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { tr, trPhrase } from "@/lib/localize";
-import { bnNum, fmtDateBn } from "@/lib/format";
-import { useLanguage } from "@/contexts/LanguageContext";
 import {
-  CheckCircle2,
-  AlertTriangle,
-  XCircle,
-  FileCheck,
-  Search,
-  Filter,
-  Eye,
-  Microscope,
-  Award,
-  Download,
+Download,
+Eye,
+Search
 } from '@/components/icons';
-import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
 import { Modal } from '@/components/ui/Modal';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
+import { useLanguage } from "@/contexts/LanguageContext";
 import { getQualityReportsAdmin } from '@/lib/adminApi';
+import { bnNum,fmtDateBn } from "@/lib/format";
+import { tr,trPhrase } from "@/lib/localize";
 import { QualityReportAdminView } from '@/types';
+import React,{ useEffect,useState } from 'react';
 
 export const QualityManagement: React.FC = () => {
   const { language } = useLanguage();

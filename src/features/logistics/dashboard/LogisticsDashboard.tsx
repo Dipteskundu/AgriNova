@@ -161,7 +161,7 @@ export const LogisticsDashboard: React.FC<LogisticsDashboardProps> = ({
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [t]);
 
   const transit = active.filter(
     (d) => d.status === "in_transit" || d.status === "picked_up" || d.status === "out_for_delivery"

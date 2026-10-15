@@ -30,7 +30,10 @@ exports.getMe = async (req, res, next) => {
 
 exports.socialAuth = async (req, res, next) => {
   try {
-    const result = await authService.socialAuth(req.body);
+    const result = await authService.socialAuth({
+      idToken: req.body.idToken,
+      roles: req.body.roles,
+    });
     res.status(201).json(result);
   } catch (error) {
     next(error);

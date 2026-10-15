@@ -1,17 +1,16 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import { PortalType, UserRole } from '@/types';
-import { apiLogin, apiRegister, apiGetMe, apiSocialAuth, AuthUser, RegisterInput } from '@/services/auth.service';
-import { setToken, getToken, removeToken } from '@/lib/api';
-import { auth, googleProvider, githubProvider } from '@/lib/firebase';
+import { getToken,removeToken,setToken } from '@/lib/api';
+import { auth,githubProvider,googleProvider } from '@/lib/firebase';
+import { apiGetMe,apiLogin,apiRegister,apiSocialAuth,AuthUser,RegisterInput } from '@/services/auth.service';
+import { PortalType,UserRole } from '@/types';
 import {
-  signInWithPopup,
-  onAuthStateChanged,
-  signOut as firebaseSignOut,
-  type User as FirebaseUser,
+signOut as firebaseSignOut,
+signInWithPopup,
+type User as FirebaseUser
 } from 'firebase/auth';
+import { useRouter } from 'next/navigation';
+import React,{ createContext,useCallback,useContext,useEffect,useState } from 'react';
 
 /**
  * Which portal a role lands in.
@@ -61,8 +60,8 @@ interface AuthContextType {
   register: (data: RegisterInput) => Promise<void>;
   selectPortal: (portal: PortalType) => void;
   logout: () => void;
-  loginWithGoogle: () => Promise<void>;
-  loginWithGitHub: () => Promise<void>;
+  loginWithGoogle: (roles?: string[]) => Promise<void>;
+  loginWithGitHub: (roles?: string[]) => Promise<void>;
   getPortalLabel: (portal: PortalType) => string;
   getPortalDescription: (portal: PortalType) => string;
   getPortalIcon: (portal: PortalType) => string;
@@ -107,23 +106,11 @@ function getPortalsForRoles(roles?: string[] | string): PortalType[] {
   return portals.size > 0 ? Array.from(portals) : ['main'];
 }
 
-function makeInitials(name: string): string {
-  return name
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
-}
-
-async function syncSocialUser(firebaseUser: FirebaseUser): Promise<{ token: string; user: AuthUser }> {
+async function syncSocialUser(firebaseUser: FirebaseUser, roles?: string[]): Promise<{ token: string; user: AuthUser }> {
   return apiSocialAuth({
-    firebaseUid: firebaseUser.uid,
-    name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
-    email: firebaseUser.email || '',
+    idToken: await firebaseUser.getIdToken(),
     phone: firebaseUser.phoneNumber || '',
-    role: 'farmer',
-    avatarUrl: firebaseUser.photoURL || '',
+    roles,
   });
 }
 
@@ -180,13 +167,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         localStorage.setItem(PORTAL_KEY, available[0]);
       }
 
-      router.push('/');
       return { needsPortalSelection: available.length > 1 };
     } catch (error) {
       console.error('Login failed:', error);
-      throw new Error('Invalid credentials. Please try again.');
+      throw error instanceof Error ? error : new Error('Login failed. Please try again.');
     }
-  }, [router]);
+  }, []);
 
   const register = useCallback(async (data: RegisterInput) => {
     await apiRegister(data);
@@ -211,9 +197,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [router]);
 
   const syncAndRedirect = useCallback(
-    async (firebaseUser: FirebaseUser) => {
+    async (firebaseUser: FirebaseUser, roles?: string[]) => {
       try {
-        const result = await syncSocialUser(firebaseUser);
+        const result = await syncSocialUser(firebaseUser, roles);
         setToken(result.token);
         setUser(result.user);
         localStorage.setItem(USER_KEY, JSON.stringify(result.user));
@@ -224,23 +210,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           localStorage.setItem(PORTAL_KEY, available[0]);
         }
 
-        router.push('/');
       } catch (err) {
         console.error('Backend sync failed:', err);
         throw err;
       }
     },
-    [router]
+    []
   );
 
-  const loginWithGoogle = useCallback(async () => {
+  const loginWithGoogle = useCallback(async (roles?: string[]) => {
     const result = await signInWithPopup(auth, googleProvider);
-    await syncAndRedirect(result.user);
+    await syncAndRedirect(result.user, roles);
   }, [syncAndRedirect]);
 
-  const loginWithGitHub = useCallback(async () => {
+  const loginWithGitHub = useCallback(async (roles?: string[]) => {
     const result = await signInWithPopup(auth, githubProvider);
-    await syncAndRedirect(result.user);
+    await syncAndRedirect(result.user, roles);
   }, [syncAndRedirect]);
 
   const availablePortals = user ? getPortalsForRoles(user.roles) : [];

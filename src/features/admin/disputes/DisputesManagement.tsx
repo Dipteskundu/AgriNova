@@ -1,30 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { tr, trPhrase } from "@/lib/localize";
-import { useLanguage } from "@/contexts/LanguageContext";
 import {
-  Scale,
-  Search,
-  Filter,
-  AlertTriangle,
-  CheckCircle2,
-  XCircle,
-  FileText,
-  Clock,
-  ArrowRight,
-  Gavel,
-  ShieldAlert,
+Gavel,
+Search
 } from '@/components/icons';
-import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { Modal } from '@/components/ui/Modal';
+import { Card } from '@/components/ui/Card';
 import { FormTextarea } from '@/components/ui/FormInput';
+import { Modal } from '@/components/ui/Modal';
 import { Pager } from '@/components/ui/Pager';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
+import { useLanguage } from "@/contexts/LanguageContext";
 import { usePagination } from '@/hooks/usePagination';
-import { getDisputesAdmin, resolveDisputeAdmin } from '@/lib/adminApi';
+import { getDisputesAdmin,resolveDisputeAdmin } from '@/lib/adminApi';
+import { tr,trPhrase } from "@/lib/localize";
 import { DisputeCase } from '@/types';
+import React,{ useCallback,useEffect,useState } from 'react';
 
 export const DisputesManagement: React.FC = () => {
   const { language } = useLanguage();
@@ -38,13 +29,8 @@ export const DisputesManagement: React.FC = () => {
   const [resolutionNotes, setResolutionNotes] = useState('');
   const [resolving, setResolving] = useState(false);
 
-  useEffect(() => {
-    loadDisputes();
-  }, []);
-
-  const loadDisputes = async () => {
+  const loadDisputes = useCallback(async () => {
     try {
-      setLoading(true);
       const res = await getDisputesAdmin();
       if (res.success) {
         setDisputes(res.data);
@@ -54,7 +40,12 @@ export const DisputesManagement: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [showToast]);
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => void loadDisputes());
+    return () => cancelAnimationFrame(frame);
+  }, [loadDisputes]);
 
   const handleResolve = async (newStatus: DisputeCase['caseStatus']) => {
     if (!selectedCase) return;

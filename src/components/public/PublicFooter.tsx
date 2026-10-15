@@ -1,5 +1,7 @@
 "use client";
 
+
+import Image from "next/image";
 import React from "react";
 import Link from "next/link";
 import { Icon } from "@/components/icons";
@@ -49,7 +51,7 @@ export const PublicFooter: React.FC = () => {
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
             <Link href="/" className="flex items-center gap-2 mb-4">
-              <img src="/logo.png" alt="FarmPath" className="h-8 w-8 rounded-lg object-cover" />
+              <Image src="/logo.png" alt="FarmPath" className="h-8 w-8 rounded-lg object-cover" width={48} height={48} />
               <span className="text-lg font-bold tracking-tight text-slate-900 dark:text-[#f0f0f0]">
                 FarmPath
               </span>

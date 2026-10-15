@@ -1,23 +1,24 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+
+import Image from "next/image";
+import { useT } from "@/components/dashboard/useT";
 import { Icon } from "@/components/icons";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
-import { useAuth } from "@/contexts/AuthContext";
-import { useT } from "@/components/dashboard/useT";
 import { tr } from "@/lib/localize";
 import {
-  getCart,
-  clearCart,
-  checkoutCart,
-  createStripeCheckout,
-  getStripeCheckoutStatus,
-  type CartItem,
-  type StripeCheckoutStatus,
+checkoutCart,
+clearCart,
+createStripeCheckout,
+getCart,
+getStripeCheckoutStatus,
+type CartItem,
+type StripeCheckoutStatus,
 } from "@/lib/marketplaceApi";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React,{ useEffect,useState } from "react";
 
 const PAYMENT_METHODS = [
   { id: "bKash", label: "bKash", icon: "💳", color: "bg-pink-50 border-pink-200 dark:bg-pink-500/10 dark:border-pink-500/30" },
@@ -34,7 +35,6 @@ const PAYMENT_METHODS = [
 export function CheckoutPage() {
   const router = useRouter();
   const { showToast } = useToast();
-  const { user } = useAuth();
   const t = useT();
 
   const pmLabel = (id: string) =>
@@ -73,7 +73,7 @@ export function CheckoutPage() {
     // URL is signed by Stripe but still just a string — so the real payment
     // state is read back from the backend before the cart is cleared.
     if (success === "1" && sessionId) {
-      setVerifying(true);
+      const verifyingRafId = requestAnimationFrame(() => setVerifying(true));
       getStripeCheckoutStatus(sessionId)
         .then((res) => {
           if (res.success && res.data?.confirmed) {
@@ -87,14 +87,17 @@ export function CheckoutPage() {
           }
         })
         .catch(() => setStripeReturn("verification-error"))
-        .finally(() => setVerifying(false));
+        .finally(() => {
+          cancelAnimationFrame(verifyingRafId);
+          setVerifying(false);
+        });
       return;
     }
 
     if (params.get("cancel") === "1") {
       // Abandoned before paying: nothing was charged and the cart is untouched.
-      setStripeReturn("cancelled");
-      return;
+      const rafId = requestAnimationFrame(() => setStripeReturn("cancelled"));
+      return () => cancelAnimationFrame(rafId);
     }
 
     const cart = getCart();
@@ -570,7 +573,7 @@ export function CheckoutPage() {
               <div className="space-y-2">
                 {items.map(item => (
                   <div key={item.lineId} className="flex gap-3 items-center py-2 border-b border-slate-100 dark:border-[#1a1a1a] last:border-0">
-                    <img src={item.imageUrl} alt={tr(item.cropName)} className="w-12 h-12 rounded-lg object-cover shrink-0" />
+                    <Image src={item.imageUrl} alt={tr(item.cropName)} className="w-12 h-12 rounded-lg object-cover shrink-0" width={640} height={480} unoptimized />
                     <div className="flex-1">
                       <p className="text-sm font-semibold text-slate-900 dark:text-[#f0f0f0]">{tr(item.cropName)}</p>
                       <p className="text-xs text-slate-400">{item.quantityKg} {item.unitLabel} × ৳{item.pricePerKgBdt}</p>

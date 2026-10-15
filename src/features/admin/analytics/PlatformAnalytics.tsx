@@ -1,24 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { tr } from "@/lib/localize";
-import { useLanguage } from "@/contexts/LanguageContext";
 import {
-  TrendingUp,
-  PieChart,
-  BarChart2,
-  Users,
-  Sprout,
-  Activity,
-  Layers,
-  ArrowUpRight,
-  ShieldCheck,
+Activity,
+Sprout,
+TrendingUp,
+Users
 } from '@/components/icons';
-import { Card, CardHeader } from '@/components/ui/Card';
-import { MetricCard } from '@/components/ui/MetricCard';
 import { Badge } from '@/components/ui/Badge';
+import { Card,CardHeader } from '@/components/ui/Card';
+import { MetricCard } from '@/components/ui/MetricCard';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
+import { useLanguage } from "@/contexts/LanguageContext";
 import { getAdminDashboardSummary } from '@/lib/adminApi';
+import { tr } from "@/lib/localize";
 import { AdminDashboardSummary } from '@/types';
+import React,{ useEffect,useState } from 'react';
 
 export const PlatformAnalytics: React.FC = () => {
   const { language } = useLanguage();

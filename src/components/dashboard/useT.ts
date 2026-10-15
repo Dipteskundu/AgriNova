@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 /**
@@ -13,5 +14,5 @@ import { useLanguage } from "@/contexts/LanguageContext";
  */
 export function useT() {
   const { language } = useLanguage();
-  return (bn: string, en: string) => (language === "bn" ? bn : en);
+  return useCallback((bn: string, en: string) => (language === "bn" ? bn : en), [language]);
 }

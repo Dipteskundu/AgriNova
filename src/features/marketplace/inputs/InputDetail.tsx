@@ -1,5 +1,7 @@
 "use client";
 
+
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/icons";
@@ -80,7 +82,6 @@ export function InputDetail({ id, basePath = "/inputs" }: Props) {
   }, [id]);
 
   useEffect(() => {
-    setRatingsLoading(true);
     getInputRatings(id).then((res) => {
       setRatings(res.success && Array.isArray(res.data) ? res.data : []);
       setRatingsLoading(false);
@@ -191,11 +192,10 @@ export function InputDetail({ id, basePath = "/inputs" }: Props) {
         {/* Image */}
         <div>
           <div className="relative rounded-2xl overflow-hidden h-72 sm:h-80">
-            <img
+            <Image
               src={product.imageUrl}
               alt={tr(product.productName)}
-              className="w-full h-full object-cover"
-            />
+              className="w-full h-full object-cover" width={640} height={480} unoptimized />
             <div className="absolute top-3 left-3 flex gap-2">
               <Badge variant="neutral">{categoryLabel(product.category)}</Badge>
               {outOfStock && (

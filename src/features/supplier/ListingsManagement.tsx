@@ -1,5 +1,7 @@
 "use client";
 
+
+import Image from "next/image";
 import React, { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { Icon, Plus, Store } from "@/components/icons";
@@ -124,20 +126,22 @@ export function ListingsManagement() {
   /** Listing id whose inspection request is in flight, for the busy state. */
   const [requestingId, setRequestingId] = useState("");
 
-  const t = (bn: string, en: string) => (language === "bn" ? bn : en);
+  const t = useCallback((bn: string, en: string) => (language === "bn" ? bn : en), [language]);
   const num = (v: string | number) => (language === "bn" ? bnNum(v) : String(v));
 
   const load = useCallback(async () => {
-    setLoading(true);
-    setError("");
     const res = await getMyProduceListings();
-    if (res.success) setRows(res.data);
+    if (res.success) {
+      setRows(res.data);
+      setError("");
+    }
     else setError(res.message ? trPhrase(res.message) : t("তালিকা আনা যায়নি", "Could not load your listings."));
     setLoading(false);
-  }, []);
+  }, [t]);
 
   useEffect(() => {
-    load();
+    const frame = requestAnimationFrame(() => void load());
+    return () => cancelAnimationFrame(frame);
   }, [load]);
 
   const visible = (() => {
@@ -311,7 +315,7 @@ export function ListingsManagement() {
           title={t("তালিকা আনা যায়নি", "Could not load your listings")}
           description={error}
           action={
-            <Button variant="outline" onClick={load}>
+            <Button variant="outline" onClick={() => { setLoading(true); load(); }}>
               {t("আবার চেষ্টা করুন", "Try again")}
             </Button>
           }
@@ -385,11 +389,10 @@ export function ListingsManagement() {
                 >
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
-                      <img
+                      <Image
                         src={row.imageUrl}
                         alt=""
-                        className="h-9 w-9 rounded-lg object-cover"
-                      />
+                        className="h-9 w-9 rounded-lg object-cover" width={640} height={480} unoptimized />
                       <div className="min-w-0">
                         <p className="font-semibold text-slate-900 dark:text-[#f0f0f0]">
                           {trPhrase(row.cropName)}
@@ -772,11 +775,10 @@ function ListingFormModal({
               <p className="mt-1 text-[11px] text-rose-600">{uploadError}</p>
             ) : payload.imageUrl ? (
               <div className="mt-2 flex items-center gap-3 rounded-xl border border-slate-200 dark:border-[#333] p-2">
-                <img
+                <Image
                   src={payload.imageUrl}
                   alt=""
-                  className="h-12 w-12 shrink-0 rounded-lg object-cover"
-                />
+                  className="h-12 w-12 shrink-0 rounded-lg object-cover" width={640} height={480} unoptimized />
                 <p className="min-w-0 flex-1 truncate text-[11px] text-slate-500">
                   {payload.imageUrl}
                 </p>

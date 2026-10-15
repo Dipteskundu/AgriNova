@@ -1,26 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { tr } from "@/lib/localize";
-import { useLanguage } from "@/contexts/LanguageContext";
 import {
-  GraduationCap,
-  Plus,
-  Users,
-  Award,
-  Clock,
-  BookOpen,
-  CheckCircle2,
-  Star,
-  Layers,
+Plus,
+Star
 } from '@/components/icons';
-import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { FormInput,FormSelect } from '@/components/ui/FormInput';
 import { Modal } from '@/components/ui/Modal';
-import { FormInput, FormSelect } from '@/components/ui/FormInput';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
-import { getAdminTrainingCourses, createAdminTrainingCourse } from '@/lib/adminApi';
+import { useLanguage } from "@/contexts/LanguageContext";
+import { createAdminTrainingCourse,getAdminTrainingCourses } from '@/lib/adminApi';
+import { tr } from "@/lib/localize";
 import { TrainingManagementAdminView } from '@/types';
+import React,{ useEffect,useState } from 'react';
 
 export const TrainingManagement: React.FC = () => {
   const { language } = useLanguage();

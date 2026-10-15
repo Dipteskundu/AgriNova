@@ -1,9 +1,11 @@
 "use client";
 
+
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Icon } from "@/components/icons";
+import { ArrowRight, Icon, ShoppingCart, type IconName } from "@/components/icons";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -90,7 +92,6 @@ export function ProduceDetail({ id, basePath = "/products" }: Props) {
   }, [id]);
 
   useEffect(() => {
-    setRatingsLoading(true);
     getProduceRatings(id).then((res) => {
       setRatings(res.success && Array.isArray(res.data) ? res.data : []);
       setRatingsLoading(false);
@@ -195,6 +196,12 @@ export function ProduceDetail({ id, basePath = "/products" }: Props) {
   }
 
   const totalCost = quantity * listing.pricePerKgBdt;
+  const details: { icon: IconName; label: string; value: string }[] = [
+    { icon: "PackageCheck", label: t("পাওয়া যায়", "Available"), value: `${listing.quantityKg.toLocaleString()} ${t("কেজি", "kg")}` },
+    { icon: "ShoppingCart", label: t("নূন্যতম অর্ডার", "Min. Order"), value: `${listing.minimumOrderKg} ${t("কেজি", "kg")}` },
+    { icon: "Calendar", label: t("ফসল তোলা হয়েছে", "Harvested"), value: listing.harvestDate },
+    { icon: "Clock", label: t("পাওয়া যাবে পর্যন্ত", "Available Until"), value: listing.availableUntil },
+  ];
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -211,7 +218,7 @@ export function ProduceDetail({ id, basePath = "/products" }: Props) {
         {/* Image */}
         <div>
           <div className="relative rounded-2xl overflow-hidden h-72 sm:h-80">
-            <img src={listing.imageUrl} alt={tr(listing.cropName)} className="w-full h-full object-cover" />
+            <Image src={listing.imageUrl} alt={tr(listing.cropName)} className="w-full h-full object-cover" width={640} height={480} unoptimized />
             <div className="absolute top-3 left-3 flex gap-2">
               <Badge variant={gradeColor[listing.qualityGrade]}>{gradeText(listing.qualityGrade)}</Badge>
               {listing.isVerified && (
@@ -273,14 +280,9 @@ export function ProduceDetail({ id, basePath = "/products" }: Props) {
 
           {/* Details grid */}
           <div className="grid grid-cols-2 gap-3">
-            {[
-              { icon: "PackageCheck", label: t("পাওয়া যায়", "Available"), value: `${listing.quantityKg.toLocaleString()} ${t("কেজি", "kg")}` },
-              { icon: "ShoppingCart", label: t("নূন্যতম অর্ডার", "Min. Order"), value: `${listing.minimumOrderKg} ${t("কেজি", "kg")}` },
-              { icon: "Calendar", label: t("ফসল তোলা হয়েছে", "Harvested"), value: listing.harvestDate },
-              { icon: "Clock", label: t("পাওয়া যাবে পর্যন্ত", "Available Until"), value: listing.availableUntil },
-            ].map(item => (
+            {details.map(item => (
               <div key={item.label} className="flex items-start gap-2 bg-slate-50 dark:bg-[#0f0f0f] rounded-xl p-3">
-                <Icon name={item.icon as any} size={15} className="text-slate-400 mt-0.5 shrink-0" />
+                <Icon name={item.icon} size={15} className="text-slate-400 mt-0.5 shrink-0" />
                 <div>
                   <p className="text-[10px] font-medium text-slate-400 uppercase tracking-wide">{item.label}</p>
                   <p className="text-xs font-semibold text-slate-800 dark:text-[#e0e0e0] mt-0.5">{item.value}</p>
@@ -345,7 +347,7 @@ export function ProduceDetail({ id, basePath = "/products" }: Props) {
               size="lg"
               onClick={handleAddToCart}
               loading={addingToCart}
-              icon={Icon.bind(null, { name: "ShoppingCart" }) as any}
+              icon={ShoppingCart}
             >
               {user ? t("কার্টে যোগ করুন", "Add to Cart") : t("অর্ডার করতে লগইন করুন", "Login to Order")}
             </Button>
@@ -379,7 +381,7 @@ export function ProduceDetail({ id, basePath = "/products" }: Props) {
                 <Button
                   className="mt-3"
                   onClick={requireLogin}
-                  icon={Icon.bind(null, { name: "ArrowRight" }) as any}
+                  icon={ArrowRight}
                 >
                   {t("সাইন ইন", "Sign in")}
                 </Button>

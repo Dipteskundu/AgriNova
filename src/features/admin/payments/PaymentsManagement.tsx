@@ -1,31 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { tr, trPhrase } from "@/lib/localize";
-import { bnNum, fmtDateTimeBn } from "@/lib/format";
-import { useLanguage } from "@/contexts/LanguageContext";
 import {
-  CreditCard,
-  Search,
-  Filter,
-  CheckCircle2,
-  Clock,
-  AlertCircle,
-  Check,
-  DollarSign,
-  ArrowUpRight,
-  ShieldCheck,
-  Download,
+AlertCircle,
+ArrowUpRight,
+Check,
+Download,
+Search
 } from '@/components/icons';
-import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { Pager } from '@/components/ui/Pager';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
+import { useLanguage } from "@/contexts/LanguageContext";
 import { usePagination } from '@/hooks/usePagination';
-import { getPaymentRecordsAdmin, approvePaymentPayoutAdmin } from '@/lib/adminApi';
-import { getWithdrawalRequestsAdmin, settleWithdrawalAdmin, WalletEntryView } from '@/lib/walletApi';
-import { EmptyState } from '@/components/ui/EmptyState';
+import { approvePaymentPayoutAdmin,getPaymentRecordsAdmin } from '@/lib/adminApi';
+import { bnNum,fmtDateTimeBn } from "@/lib/format";
+import { tr,trPhrase } from "@/lib/localize";
+import { getWithdrawalRequestsAdmin,settleWithdrawalAdmin,WalletEntryView } from '@/lib/walletApi';
 import { PaymentRecordAdminView } from '@/types';
+import React,{ useEffect,useState } from 'react';
 
 export const PaymentsManagement: React.FC = () => {
   const { language } = useLanguage();

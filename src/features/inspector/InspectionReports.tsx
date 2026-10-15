@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { trPhrase } from "@/lib/localize";
 import { Icon, FileCheck } from "@/components/icons";
 import { Badge, type BadgeVariant } from "@/components/ui/Badge";
@@ -34,7 +34,7 @@ export function InspectionReports() {
   const [search, setSearch] = useState("");
   const [openId, setOpenId] = useState("");
 
-  const t = (bn: string, en: string) => (language === "bn" ? bn : en);
+  const t = useCallback((bn: string, en: string) => (language === "bn" ? bn : en), [language]);
 
   const gradeLabel = (g: string) =>
     g === "Grade A"
@@ -63,7 +63,7 @@ export function InspectionReports() {
         else setError(res.message || t("রিপোর্ট আনা যায়নি।", "Could not load reports."));
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [t]);
 
   const visible = (() => {
     const needle = search.trim().toLowerCase();

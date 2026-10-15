@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { trPhrase } from "@/lib/localize";
 import { Icon, Calendar } from "@/components/icons";
 import { Badge, type BadgeVariant } from "@/components/ui/Badge";
@@ -54,7 +54,7 @@ export function InspectorSchedule() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const t = (bn: string, en: string) => (language === "bn" ? bn : en);
+  const t = useCallback((bn: string, en: string) => (language === "bn" ? bn : en), [language]);
 
   useEffect(() => {
     getInspectorSchedule()
@@ -63,7 +63,7 @@ export function InspectorSchedule() {
         else setError(res.message || t("সময়সূচি আনা যায়নি।", "Could not load your schedule."));
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [t]);
 
   if (loading) {
     return (
