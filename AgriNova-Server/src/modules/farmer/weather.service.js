@@ -244,14 +244,22 @@ async function buildWeatherData(location = {}) {
       throw new Error("AI weather service returned an invalid forecast.");
     }
 
-    // Do not cache the Python service's offline fallback as a live forecast.
+
     const isOfflineFallback =
       String(weather.source || "").toLowerCase().includes("fallback") ||
       String(weather.source || "").toLowerCase().includes("unavailable");
 
     if (isOfflineFallback) {
-      throw new Error("AI weather service returned fallback data.");
+      // Return fallback estimates, but do not cache them as live weather.
+      return {
+        ...mapWeatherResponse(weather, microclimateAlerts),
+        notice:
+          weather.note ||
+          "Live weather is unavailable. Displayed values are estimates, not a live forecast.",
+        stale: true,
+      };
     }
+
 
     weatherCache.set(key, { weather, cachedAt: now });
     failureCooldowns.delete(key);
