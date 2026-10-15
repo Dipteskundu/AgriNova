@@ -366,37 +366,48 @@ export const CropRecommendation: React.FC<CropRecommendationProps> = ({ onNaviga
                       {item.suitabilityScore}% {language === 'bn' ? 'উপযুক্ত' : 'Match'}
                     </div>
                     <span
-                      className={`text-[10px] block mt-1 font-semibold ${
-                        item.riskFactor === 'Low'
+                      className={`text-[10px] block mt-1 font-semibold ${item.riskFactor === 'Low'
                           ? 'text-emerald-600'
                           : item.riskFactor === 'Medium'
-                          ? 'text-amber-600'
-                          : 'text-rose-600'
-                      }`}
+                            ? 'text-amber-600'
+                            : 'text-rose-600'
+                        }`}
                     >
                       {item.riskFactor === 'Low'
                         ? (language === 'bn' ? 'কম ঝুঁকি' : 'Low Risk')
                         : item.riskFactor === 'Medium'
-                        ? (language === 'bn' ? 'মাঝারি ঝুঁকি' : 'Medium Risk')
-                        : (language === 'bn' ? 'বেশি ঝুঁকি' : 'High Risk')}
+                          ? (language === 'bn' ? 'মাঝারি ঝুঁকি' : 'Medium Risk')
+                          : (language === 'bn' ? 'বেশি ঝুঁকি' : 'High Risk')}
                     </span>
                   </div>
                 </div>
 
                 {/* Economics Matrix */}
                 <div className="grid grid-cols-3 gap-2 p-3 bg-slate-50 dark:bg-[#111111]/60 rounded-xl border border-slate-100 text-center text-xs mt-3">
+
                   <div>
                     <span className="text-[10px] text-slate-400 block uppercase">
                       {language === 'bn' ? 'সম্ভাব্য ফলন / একর' : 'Est. Yield / Acre'}
                     </span>
-                    <span className="font-bold text-slate-800 dark:text-[#e0e0e0]">{item.estimatedYieldKgPerAcre.toLocaleString()}{tr('kg')}</span>
+                    <span className="font-bold text-slate-800 dark:text-[#e0e0e0]">
+                      {item.estimatedYieldKgPerAcre != null
+                        ? item.estimatedYieldKgPerAcre.toLocaleString()
+                        : 'N/A'}
+                      {item.estimatedYieldKgPerAcre != null ? tr('kg') : ''}
+                    </span>
                   </div>
+
                   <div>
                     <span className="text-[10px] text-slate-400 block uppercase">
                       {language === 'bn' ? 'নিট লাভ / একর' : 'Net Profit / Acre'}
                     </span>
-                    <span className="font-bold text-emerald-700">৳{item.estimatedProfitPerAcre.toLocaleString()}</span>
+                    <span className="font-bold text-emerald-700">
+                      {item.estimatedProfitPerAcre != null
+                        ? `৳${item.estimatedProfitPerAcre.toLocaleString()}`
+                        : 'N/A'}
+                    </span>
                   </div>
+
                   <div>
                     <span className="text-[10px] text-slate-400 block uppercase">
                       {language === 'bn' ? 'মুনাফা হার' : 'Projected ROI'}

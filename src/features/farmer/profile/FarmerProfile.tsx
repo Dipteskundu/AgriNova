@@ -16,12 +16,18 @@ import { Card, CardHeader } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
-import { FormInput } from '@/components/ui/FormInput';
+import { FormInput, FormSelect } from '@/components/ui/FormInput';
+import {
+  BANGLADESH_DIVISIONS,
+  DISTRICTS_BY_DIVISION,
+} from '@/lib/bangladeshLocations';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
 import { getFarmerProfile, updateFarmerProfile } from '@/lib/farmerApi';
 import { FarmerProfile as FarmerProfileType } from '@/types';
 import { useLanguage } from '@/contexts/LanguageContext';
+
+
 
 export const FarmerProfile: React.FC = () => {
   const { showToast } = useToast();
@@ -29,6 +35,7 @@ export const FarmerProfile: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<FarmerProfileType | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
   const [editForm, setEditForm] = useState({
     fullName: '',
     phoneNumber: '',
@@ -38,6 +45,10 @@ export const FarmerProfile: React.FC = () => {
     accountNumber: '',
     branchName: '',
     routingNumber: '',
+    division: '',
+    district: '',
+    upazila: '',
+    village: '',
   });
 
   useEffect(() => {
@@ -56,6 +67,10 @@ export const FarmerProfile: React.FC = () => {
             accountNumber: res.data.bankDetails.accountNumber,
             branchName: res.data.bankDetails.branchName,
             routingNumber: res.data.bankDetails.routingNumber,
+            division: res.data.primaryLocation?.division || '',
+            district: res.data.primaryLocation?.district || '',
+            upazila: res.data.primaryLocation?.upazila || '',
+            village: res.data.primaryLocation?.village || '',
           });
         }
       } catch {
@@ -76,6 +91,13 @@ export const FarmerProfile: React.FC = () => {
         phoneNumber: editForm.phoneNumber,
         email: editForm.email,
         farmingExperienceYears: Number(editForm.farmingExperienceYears),
+        primaryLocation: {
+          division: editForm.division,
+          district: editForm.district,
+          upazila: editForm.upazila,
+          village: editForm.village,
+          coordinates: profile.primaryLocation.coordinates,
+        },
         bankDetails: {
           ...profile.bankDetails,
           bankName: editForm.bankName,
@@ -288,84 +310,223 @@ export const FarmerProfile: React.FC = () => {
       </Card>
 
       {/* Edit Profile Modal */}
+
       <Modal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
-        title={language === 'bn' ? 'কৃষক প্রোফাইল তথ্য সংশোধন' : 'Edit Farmer Profile Information'}
-        subtitle={language === 'bn' ? 'ব্যক্তিগত তথ্য, অভিজ্ঞতা ও ব্যাংক হিসাব হালনাগাদ করুন' : 'Update personal, agronomic, and settlement details'}
+        title={
+          language === 'bn'
+            ? 'কৃষক প্রোফাইল তথ্য সংশোধন'
+            : 'Edit Farmer Profile Information'
+        }
+        subtitle={
+          language === 'bn'
+            ? 'ব্যক্তিগত তথ্য, অভিজ্ঞতা, অবস্থান ও ব্যাংক হিসাব হালনাগাদ করুন'
+            : 'Update personal, location, farming experience, and settlement details'
+        }
         maxWidth="lg"
       >
         <form onSubmit={handleSave} className="space-y-4">
+          {/* Personal Information */}
           <FormInput
             id="fullName"
             label={language === 'bn' ? 'সম্পূর্ণ নাম' : 'Full Name'}
             value={editForm.fullName}
-            onChange={(e) => setEditForm({ ...editForm, fullName: e.target.value })}
+            onChange={(e) =>
+              setEditForm({ ...editForm, fullName: e.target.value })
+            }
             required
           />
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <FormInput
               id="phoneNumber"
               label={language === 'bn' ? 'মোবাইল নম্বর' : 'Phone Number'}
               value={editForm.phoneNumber}
-              onChange={(e) => setEditForm({ ...editForm, phoneNumber: e.target.value })}
+              onChange={(e) =>
+                setEditForm({ ...editForm, phoneNumber: e.target.value })
+              }
               required
             />
+
             <FormInput
               id="email"
               label={language === 'bn' ? 'ইমেইল ঠিকানা' : 'Email Address'}
               type="email"
               value={editForm.email}
-              onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+              onChange={(e) =>
+                setEditForm({ ...editForm, email: e.target.value })
+              }
               required
             />
           </div>
+
           <FormInput
             id="experience"
-            label={language === 'bn' ? 'কৃষি কাজের অভিজ্ঞতা (বছর)' : 'Farming Experience (Years)'}
+            label={
+              language === 'bn'
+                ? 'কৃষি কাজের অভিজ্ঞতা (বছর)'
+                : 'Farming Experience (Years)'
+            }
             type="number"
             value={editForm.farmingExperienceYears}
-            onChange={(e) => setEditForm({ ...editForm, farmingExperienceYears: Number(e.target.value) })}
+            onChange={(e) =>
+              setEditForm({
+                ...editForm,
+                farmingExperienceYears: Number(e.target.value),
+              })
+            }
             required
           />
 
+          {/* Farm Location */}
+          <div className="pt-3 border-t border-slate-200 dark:border-[#222222] space-y-3">
+            <h4 className="text-xs font-bold text-slate-800 dark:text-[#e0e0e0] uppercase tracking-wider">
+              {language === 'bn' ? 'খামারের অবস্থান' : 'Farm Location'}
+            </h4>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <FormSelect
+                id="division"
+                label={language === 'bn' ? 'বিভাগ' : 'Division'}
+                value={editForm.division}
+                onChange={(e) =>
+                  setEditForm({
+                    ...editForm,
+                    division: e.target.value,
+                    district: '',
+                    upazila: '',
+                  })
+                }
+                options={[
+                  {
+                    value: '',
+                    label:
+                      language === 'bn'
+                        ? 'বিভাগ নির্বাচন করুন'
+                        : 'Select Division',
+                  },
+                  ...BANGLADESH_DIVISIONS.map((division) => ({
+                    value: division,
+                    label: division,
+                  })),
+                ]}
+                required
+              />
+
+              <FormSelect
+                id="district"
+                label={language === 'bn' ? 'জেলা' : 'District'}
+                value={editForm.district}
+                onChange={(e) =>
+                  setEditForm({
+                    ...editForm,
+                    district: e.target.value,
+                    upazila: '',
+                  })
+                }
+                options={[
+                  {
+                    value: '',
+                    label:
+                      language === 'bn'
+                        ? 'জেলা নির্বাচন করুন'
+                        : 'Select District',
+                  },
+                  ...(DISTRICTS_BY_DIVISION[editForm.division] || []).map(
+                    (district) => ({
+                      value: district,
+                      label: district,
+                    })
+                  ),
+                ]}
+                disabled={!editForm.division}
+                required
+              />
+
+              <FormInput
+                id="upazila"
+                label={language === 'bn' ? 'উপজেলা / থানা' : 'Upazila / Thana'}
+                value={editForm.upazila}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, upazila: e.target.value })
+                }
+                placeholder={
+                  language === 'bn'
+                    ? 'উপজেলা বা থানার নাম লিখুন'
+                    : 'Enter upazila or thana'
+                }
+              />
+
+              <FormInput
+                id="village"
+                label={language === 'bn' ? 'গ্রাম / এলাকা' : 'Village / Area'}
+                value={editForm.village}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, village: e.target.value })
+                }
+                placeholder={
+                  language === 'bn'
+                    ? 'গ্রাম বা এলাকার নাম লিখুন'
+                    : 'Enter village or local area'
+                }
+              />
+            </div>
+          </div>
+
+          {/* Bank Settlement Details */}
           <div className="pt-3 border-t border-slate-200 dark:border-[#222222]">
             <h4 className="text-xs font-bold text-slate-800 dark:text-[#e0e0e0] uppercase tracking-wider mb-2">
-              {language === 'bn' ? 'ব্যাংক লেনদেন তথ্য' : 'Bank Settlement Details'}
+              {language === 'bn'
+                ? 'ব্যাংক লেনদেন তথ্য'
+                : 'Bank Settlement Details'}
             </h4>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <FormInput
                 id="bankName"
                 label={language === 'bn' ? 'ব্যাংকের নাম' : 'Bank Name'}
                 value={editForm.bankName}
-                onChange={(e) => setEditForm({ ...editForm, bankName: e.target.value })}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, bankName: e.target.value })
+                }
                 required
               />
+
               <FormInput
                 id="accountNumber"
                 label={language === 'bn' ? 'অ্যাকাউন্ট নম্বর' : 'Account Number'}
                 value={editForm.accountNumber}
-                onChange={(e) => setEditForm({ ...editForm, accountNumber: e.target.value })}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, accountNumber: e.target.value })
+                }
                 required
               />
+
               <FormInput
                 id="branchName"
                 label={language === 'bn' ? 'শাখা' : 'Branch'}
                 value={editForm.branchName}
-                onChange={(e) => setEditForm({ ...editForm, branchName: e.target.value })}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, branchName: e.target.value })
+                }
                 required
               />
+
               <FormInput
                 id="routingNumber"
                 label={language === 'bn' ? 'রাউটিং নম্বর' : 'Routing Number'}
                 value={editForm.routingNumber}
-                onChange={(e) => setEditForm({ ...editForm, routingNumber: e.target.value })}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, routingNumber: e.target.value })
+                }
                 required
               />
             </div>
           </div>
 
-          <div className="flex justify-end gap-2 pt-4 border-t border-slate-100">
+          {/* Actions */}
+          <div className="flex justify-end gap-2 pt-4 border-t border-slate-100 dark:border-[#222222]">
             <Button
               type="button"
               variant="outline"
@@ -374,12 +535,19 @@ export const FarmerProfile: React.FC = () => {
             >
               {language === 'bn' ? 'বাতিল' : 'Cancel'}
             </Button>
-            <Button type="submit" variant="primary" size="sm" icon={Save}>
+
+            <Button
+              type="submit"
+              variant="primary"
+              size="sm"
+              icon={Save}
+            >
               {language === 'bn' ? 'সংরক্ষণ করুন' : 'Save Profile Changes'}
             </Button>
           </div>
         </form>
       </Modal>
+
     </div>
   );
 };

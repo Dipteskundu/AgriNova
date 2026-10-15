@@ -1,9 +1,19 @@
+
 const WeatherAlert = require("../../database/models/WeatherAlert");
 
-const AI_SERVICE_URL =
-  process.env.AI_SERVICE_URL || "http://localhost:8000";
+const AI_SERVICE_URL = (
+  process.env.AI_SERVICE_URL || "http://localhost:8000"
+).replace(/\/+$/, "");
 
 const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+// In-memory cache: survives requests while this Node process is running.
+const weatherCache = new Map();
+const failureCooldowns = new Map();
+
+const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
+const FAILURE_COOLDOWN_MS = 60 * 1000; // 1 minute
+const REQUEST_TIMEOUT_MS = 10000;
 
 function getCondition(weatherCode) {
   const code = Number(weatherCode);
@@ -47,114 +57,17 @@ function getAdvisory(rainProbability, rainMm, windKmh) {
   return "Monitor local soil moisture and weather conditions before field operations.";
 }
 
-async function buildWeatherData(location = {}) {
-  const district =
-    typeof location.district === "string" ? location.district.trim() : "";
-
-  const latitude = Number(location.lat);
-  const longitude = Number(location.lng);
-
-  const hasCoordinates =
-    location.lat !== undefined &&
-    location.lng !== undefined &&
-    location.lat !== null &&
-    location.lng !== null &&
-    location.lat !== "" &&
-    location.lng !== "" &&
-    Number.isFinite(latitude) &&
-    Number.isFinite(longitude) &&
-    latitude >= -90 &&
-    latitude <= 90 &&
-    longitude >= -180 &&
-    longitude <= 180 &&
-    (latitude !== 0 || longitude !== 0);
-
-  const hasDistrict = district.length > 0;
-
-  let weather = null;
-  let weatherError = null;
-
-  if (hasCoordinates || hasDistrict) {
-    const place = encodeURIComponent(district || "Registered location");
-    const query = new URLSearchParams();
-
-    if (hasCoordinates) {
-      query.set("latitude", String(latitude));
-      query.set("longitude", String(longitude));
-    }
-
-    const url =
-      `${AI_SERVICE_URL.replace(/\/+$/, "")}/weather/${place}` +
-      (query.size ? `?${query.toString()}` : "");
-
-    try {
-      const response = await fetch(url, {
-        signal: AbortSignal.timeout(10000),
-        headers: { Accept: "application/json" },
-      });
-
-      if (!response.ok) {
-        throw new Error(`AI weather service returned HTTP ${response.status}`);
-      }
-
-      weather = await response.json();
-
-      if (!weather.current || !weather.forecast_7_day) {
-        throw new Error("AI weather service returned an invalid forecast.");
-      }
-    } catch (error) {
-      weatherError = error;
-      console.error("Live weather retrieval failed:", error.message);
-    }
+function getLocationKey(district, latitude, longitude) {
+  if (latitude !== null && longitude !== null) {
+    return `${district.toLowerCase()}:${latitude.toFixed(3)},${longitude.toFixed(3)}`;
   }
 
-  const alertsPromise = WeatherAlert.find()
-    .sort({ createdAt: -1, _id: -1 })
-    .limit(10)
-    .lean();
+  return district.toLowerCase();
+}
 
-  const alerts = await alertsPromise;
-
-  const microclimateAlerts = alerts.map((alert) => ({
-    id: String(alert._id),
-    severity: alert.severity || "warning",
-    title: alert.title || "",
-    message: alert.message || "",
-    validUntil: alert.validUntil || "",
-    actionRequired: alert.actionRequired || "",
-  }));
-
-  if (!weather) {
-    return {
-      current: {
-        tempCelsius: 0,
-        feelsLike: 0,
-        condition: "Weather unavailable",
-        icon: "cloud-off",
-        humidityPercent: 0,
-        windSpeedKmh: 0,
-        precipitationProbability: 0,
-        uvIndex: 0,
-        solarRadiationWsqm: 0,
-        soilTempCelsius: 0,
-      },
-      dailyForecast: [],
-      microclimateAlerts,
-      location: {
-        district,
-        latitude: hasCoordinates ? latitude : null,
-        longitude: hasCoordinates ? longitude : null,
-      },
-      source: "unavailable",
-      retrievedAt: weather?.retrieved_at || null,
-      error: weatherError
-        ? "Live weather is temporarily unavailable. Please try again later."
-        : "Register a district or valid GPS coordinates to see local weather.",
-    };
-  }
-
-  const currentWeather = weather.current;
-  const forecast = weather.forecast_7_day;
+function mapWeatherResponse(weather, microclimateAlerts, stale = false) {
+  const currentWeather = weather.current || {};
+  const forecast = weather.forecast_7_day || {};
   const currentCondition = getCondition(currentWeather.weather_code);
 
   const current = {
@@ -181,8 +94,6 @@ async function buildWeatherData(location = {}) {
     const rainMm = Number(forecast.precipitation_sum_mm?.[index] ?? 0);
     const windKmh = Number(forecast.wind_speed_max_kmh?.[index] ?? 0);
 
-    // Open-Meteo's current weather code is not a daily weather code.
-    // Use precipitation and temperature data for a conservative display.
     const conditionData =
       rainProbability >= 60 || rainMm >= 5
         ? { condition: "Rain likely", icon: "cloud-rain" }
@@ -192,10 +103,7 @@ async function buildWeatherData(location = {}) {
 
     return {
       date,
-      dayName:
-        index === 0
-          ? "Today"
-          : DAY_NAMES[parsedDate.getDay()],
+      dayName: index === 0 ? "Today" : DAY_NAMES[parsedDate.getDay()],
       tempMin,
       tempMax,
       condition: conditionData.condition,
@@ -212,7 +120,166 @@ async function buildWeatherData(location = {}) {
     location: weather.location,
     source: weather.source || "Open-Meteo",
     retrievedAt: weather.retrieved_at || null,
+    ...(stale ? { stale: true, notice: "Showing the last successfully retrieved forecast because live weather is temporarily unavailable." } : {}),
   };
+}
+
+async function buildWeatherData(location = {}) {
+  const district =
+    typeof location.district === "string" ? location.district.trim() : "";
+
+  const rawLat = location.lat;
+  const rawLng = location.lng;
+
+  const latitude = Number(rawLat);
+  const longitude = Number(rawLng);
+
+  const hasCoordinates =
+    rawLat !== undefined &&
+    rawLng !== undefined &&
+    rawLat !== null &&
+    rawLng !== null &&
+    rawLat !== "" &&
+    rawLng !== "" &&
+    Number.isFinite(latitude) &&
+    Number.isFinite(longitude) &&
+    latitude >= -90 &&
+    latitude <= 90 &&
+    longitude >= -180 &&
+    longitude <= 180 &&
+    (latitude !== 0 || longitude !== 0);
+
+  const hasDistrict = district.length > 0;
+  const alerts = await WeatherAlert.find()
+    .sort({ createdAt: -1, _id: -1 })
+    .limit(10)
+    .lean();
+
+  const microclimateAlerts = alerts.map((alert) => ({
+    id: String(alert._id),
+    severity: alert.severity || "warning",
+    title: alert.title || "",
+    message: alert.message || "",
+    validUntil: alert.validUntil || "",
+    actionRequired: alert.actionRequired || "",
+  }));
+
+  if (!hasCoordinates && !hasDistrict) {
+    return {
+      current: null,
+      dailyForecast: [],
+      microclimateAlerts,
+      location: { district: "", latitude: null, longitude: null },
+      source: "unavailable",
+      retrievedAt: null,
+      error: "Register a district or valid GPS coordinates to see local weather.",
+    };
+  }
+
+  const key = getLocationKey(
+    district,
+    hasCoordinates ? latitude : null,
+    hasCoordinates ? longitude : null
+  );
+
+  const cached = weatherCache.get(key);
+  const now = Date.now();
+
+  if (cached && now - cached.cachedAt < CACHE_TTL_MS) {
+    return mapWeatherResponse(cached.weather, microclimateAlerts);
+  }
+
+  // Don't repeatedly call the AI service during an upstream outage.
+  const cooldownUntil = failureCooldowns.get(key) || 0;
+
+  if (cooldownUntil > now) {
+    if (cached) {
+      return mapWeatherResponse(cached.weather, microclimateAlerts, true);
+    }
+
+    return {
+      current: null,
+      dailyForecast: [],
+      microclimateAlerts,
+      location: {
+        district,
+        latitude: hasCoordinates ? latitude : null,
+        longitude: hasCoordinates ? longitude : null,
+      },
+      source: "unavailable",
+      retrievedAt: null,
+      error: "Live weather is temporarily unavailable. Please try again later.",
+    };
+  }
+
+  const place = encodeURIComponent(district || "Registered location");
+  const query = new URLSearchParams();
+
+  if (hasCoordinates) {
+    query.set("latitude", String(latitude));
+    query.set("longitude", String(longitude));
+  }
+
+  const url =
+    `${AI_SERVICE_URL}/weather/${place}` +
+    (query.size ? `?${query.toString()}` : "");
+
+  try {
+    const response = await fetch(url, {
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+      headers: { Accept: "application/json" },
+    });
+
+    if (!response.ok) {
+      throw new Error(`AI weather service returned HTTP ${response.status}`);
+    }
+
+    const weather = await response.json();
+
+    if (
+      !weather.current ||
+      !weather.forecast_7_day ||
+      !Array.isArray(weather.forecast_7_day.dates)
+    ) {
+      throw new Error("AI weather service returned an invalid forecast.");
+    }
+
+    // Do not cache the Python service's offline fallback as a live forecast.
+    const isOfflineFallback =
+      String(weather.source || "").toLowerCase().includes("fallback") ||
+      String(weather.source || "").toLowerCase().includes("unavailable");
+
+    if (isOfflineFallback) {
+      throw new Error("AI weather service returned fallback data.");
+    }
+
+    weatherCache.set(key, { weather, cachedAt: now });
+    failureCooldowns.delete(key);
+
+    return mapWeatherResponse(weather, microclimateAlerts);
+  } catch (error) {
+    failureCooldowns.set(key, Date.now() + FAILURE_COOLDOWN_MS);
+    console.error("Live weather retrieval failed:", error.message);
+
+    // Serve the last successful forecast even when it has expired.
+    if (cached) {
+      return mapWeatherResponse(cached.weather, microclimateAlerts, true);
+    }
+
+    return {
+      current: null,
+      dailyForecast: [],
+      microclimateAlerts,
+      location: {
+        district,
+        latitude: hasCoordinates ? latitude : null,
+        longitude: hasCoordinates ? longitude : null,
+      },
+      source: "unavailable",
+      retrievedAt: null,
+      error: "Live weather is temporarily unavailable. Please try again later.",
+    };
+  }
 }
 
 module.exports = { buildWeatherData };
