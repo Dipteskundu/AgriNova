@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { tr } from "@/lib/localize";
 import {
   Sparkles,
@@ -16,8 +16,8 @@ import { Button } from '@/components/ui/Button';
 import { FormInput, FormSelect } from '@/components/ui/FormInput';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
-import { getCropRecommendations } from '@/lib/farmerApi';
-import { CropRecommendationItem, CropRecommendationInput } from '@/types';
+import { getCropRecommendations, getFarms } from '@/lib/farmerApi';
+import { CropRecommendationItem, CropRecommendationInput, Farm } from '@/types';
 import { FarmerModuleKey } from '@/features/layout';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -60,6 +60,8 @@ export const CropRecommendation: React.FC<CropRecommendationProps> = ({ onNaviga
   };
   const [loading, setLoading] = useState(false);
   const [recommendations, setRecommendations] = useState<CropRecommendationItem[]>([]);
+  const [farms, setFarms] = useState<Farm[]>([]);
+  const [farmsLoading, setFarmsLoading] = useState(true);
   const [inputForm, setInputForm] = useState<CropRecommendationInput>({
     soilType: 'Alluvial Clay Loam',
     nitrogen: 135,
@@ -72,7 +74,8 @@ export const CropRecommendation: React.FC<CropRecommendationProps> = ({ onNaviga
     targetLandSizeAcres: 4.2,
   });
 
-  const loadRecommendations = async () => {
+
+  const loadRecommendations = useCallback(async () => {
     try {
       setLoading(true);
       const res = await getCropRecommendations(inputForm);
@@ -84,17 +87,79 @@ export const CropRecommendation: React.FC<CropRecommendationProps> = ({ onNaviga
     } finally {
       setLoading(false);
     }
-  };
+  }, [inputForm, showToast]);
+
+
 
   useEffect(() => {
-    loadRecommendations();
-  }, []);
+    let cancelled = false;
 
-  const handleCalculate = (e: React.FormEvent) => {
+    async function loadFarmList() {
+      try {
+        setFarmsLoading(true);
+        const res = await getFarms();
+
+        if (cancelled) return;
+
+        if (res.success) {
+          const activeFarms = res.data.filter(
+            (farm) => farm.status === 'active'
+          );
+
+          setFarms(activeFarms);
+
+          if (activeFarms.length > 0) {
+            setInputForm((previous) => ({
+              ...previous,
+              farmId:
+                previous.farmId &&
+                  activeFarms.some((farm) => farm.id === previous.farmId)
+                  ? previous.farmId
+                  : activeFarms[0].id,
+            }));
+          }
+        }
+      } catch {
+        if (!cancelled) {
+          showToast('error', tr('Failed to load farms'));
+        }
+      } finally {
+        if (!cancelled) {
+          setFarmsLoading(false);
+        }
+      }
+    }
+
+    void loadFarmList();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [showToast]);
+
+  useEffect(() => {
+    if (farmsLoading || !inputForm.farmId) return;
+
+    const timeoutId = setTimeout(() => {
+      void loadRecommendations();
+    }, 0);
+
+    return () => clearTimeout(timeoutId);
+  }, [farmsLoading, inputForm.farmId, loadRecommendations]);
+
+
+
+  const handleCalculate = async (e: React.FormEvent) => {
     e.preventDefault();
-    loadRecommendations();
-    showToast('success', tr('Recommendation generated based on soil chemistry'));
+
+    if (farmsLoading || !inputForm.farmId) {
+      showToast('error', tr('Please select an active farm first'));
+      return;
+    }
+
+    await loadRecommendations();
   };
+
 
   return (
     <div className="space-y-6">
@@ -144,6 +209,44 @@ export const CropRecommendation: React.FC<CropRecommendationProps> = ({ onNaviga
         />
 
         <form onSubmit={handleCalculate} className="space-y-4">
+
+          <div className="max-w-md">
+            <FormSelect
+              id="recommendationFarm"
+              label={language === 'bn' ? 'জমি নির্বাচন করুন' : 'Select Farm'}
+              value={inputForm.farmId || ''}
+              onChange={(e) => {
+                const selectedFarm = farms.find(
+                  (farm) => farm.id === e.target.value
+                );
+
+                setInputForm((previous) => ({
+                  ...previous,
+                  farmId: e.target.value,
+                  ...(selectedFarm
+                    ? {
+                      soilType: selectedFarm.soilClassification,
+                      targetLandSizeAcres: selectedFarm.totalAreaAcres,
+                    }
+                    : {}),
+                }));
+              }}
+              options={farms.map((farm) => ({
+                value: farm.id,
+                label: `${farm.name} - ${farm.location}`,
+              }))}
+              disabled={farmsLoading || farms.length === 0}
+            />
+
+            {!farmsLoading && farms.length === 0 && (
+              <p className="mt-1 text-xs text-amber-600">
+                {language === 'bn'
+                  ? 'প্রথমে একটি সক্রিয় জমি নিবন্ধন করুন।'
+                  : 'Register an active farm before generating recommendations.'}
+              </p>
+            )}
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <FormSelect
               id="season"

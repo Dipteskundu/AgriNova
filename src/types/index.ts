@@ -158,6 +158,7 @@ export interface CalendarTask {
 }
 
 export interface CropRecommendationInput {
+  farmId?: string;
   soilType: string;
   nitrogen: number;
   phosphorus: number;
@@ -246,6 +247,13 @@ export interface ProfitabilityMetrics {
 }
 
 export interface WeatherData {
+  location: {
+    district: string;
+    latitude: number | null;
+    longitude: number | null;
+  };
+  source: string;
+  retrievedAt: string | null;
   current: {
     tempCelsius: number;
     feelsLike: number;

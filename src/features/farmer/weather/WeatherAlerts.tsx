@@ -25,6 +25,13 @@ export const WeatherAlerts: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [weather, setWeather] = useState<WeatherData | null>(null);
 
+    const [timestampNow, setTimestampNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setTimestampNow(Date.now()), 60_000);
+    return () => window.clearInterval(timer);
+  }, []);
+
   useEffect(() => {
     async function load() {
       try {
@@ -59,23 +66,69 @@ export const WeatherAlerts: React.FC = () => {
     <div className="space-y-6">
       {/* Top Banner */}
       <div className="bg-white dark:bg-[#0a0a0a] p-5 rounded-2xl border border-slate-200 dark:border-[#222222]/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+
         <div>
           <h2 className="text-lg font-bold text-slate-900 dark:text-[#f0f0f0]">
-            {language === 'bn' ? 'আবহাওয়া পূর্বাভাস ও কৃষি পরামর্শ' : 'Hyper-Local Weather & Microclimate Alerts'}
+            {language === 'bn'
+              ? 'আবহাওয়া পূর্বাভাস ও কৃষি পরামর্শ'
+              : 'Hyper-Local Weather & Microclimate Alerts'}
           </h2>
+
           <p className="text-xs text-slate-500 dark:text-[#a0a0a0] mt-0.5">
             {language === 'bn'
-              ? 'আবহাওয়া কেন্দ্র: শেরপুর, বগুড়া কৃষি পর্যবেক্ষণ কেন্দ্র • অক্ষাংশ: ২৪.৮৪° উত্তর, দ্রাঘিমাংশ: ৮৯.৩৭° পূর্ব'
-              : 'Station: Bogura Agro-Meteorological Substation • Latitude: 24.8465° N, Longitude: 89.3772° E'}
+              ? `আবহাওয়ার অবস্থান: ${weather.location?.district || 'অজানা স্থান'}${weather.location?.latitude != null && weather.location?.longitude != null ? ` • অক্ষাংশ: ${weather.location.latitude.toFixed(4)}°, দ্রাঘিমাংশ: ${weather.location.longitude.toFixed(4)}°` : ''}`
+              : `Weather location: ${weather.location?.district || 'Location unavailable'}${weather.location?.latitude != null && weather.location?.longitude != null ? ` • Latitude: ${weather.location.latitude.toFixed(4)}°, Longitude: ${weather.location.longitude.toFixed(4)}°` : ''}`}
           </p>
         </div>
+
         <div className="flex items-center gap-2">
           <Badge variant="success">
-            {language === 'bn' ? 'সরাসরি আপডেট' : 'Station Live Sync'}
+            {language === 'bn' ? 'উৎস: Open-Meteo' : 'Source: Open-Meteo'}
           </Badge>
+
           <span className="text-xs text-slate-400">
-            {language === 'bn' ? '১০ মিনিট আগে হালনাগাদ' : 'Updated 10m ago'}
+            {(() => {
+              const retrievedAt = weather.retrievedAt
+                ? new Date(weather.retrievedAt).getTime()
+                : NaN;
+
+              if (!Number.isFinite(retrievedAt)) {
+                return language === 'bn'
+                  ? 'আপডেটের সময় অজানা'
+                  : 'Update time unavailable';
+              }
+
+              const minutes = Math.max(
+                0,
+                Math.floor((timestampNow - retrievedAt) / 60000)
+              );
+
+              if (minutes < 1) {
+                return language === 'bn' ? 'এইমাত্র আপডেট' : 'Updated just now';
+              }
+
+              if (minutes < 60) {
+                return language === 'bn'
+                  ? `${minutes} মিনিট আগে হালনাগাদ`
+                  : `Updated ${minutes}m ago`;
+              }
+
+              const hours = Math.floor(minutes / 60);
+
+              if (hours < 24) {
+                return language === 'bn'
+                  ? `${hours} ঘণ্টা আগে হালনাগাদ`
+                  : `Updated ${hours}h ago`;
+              }
+
+              const days = Math.floor(hours / 24);
+
+              return language === 'bn'
+                ? `${days} দিন আগে হালনাগাদ`
+                : `Updated ${days}d ago`;
+            })()}
           </span>
+
         </div>
       </div>
 
@@ -85,22 +138,20 @@ export const WeatherAlerts: React.FC = () => {
           {microclimateAlerts.map((alert) => (
             <div
               key={alert.id}
-              className={`p-4 rounded-xl border flex items-start gap-3 ${
-                alert.severity === 'critical'
-                  ? 'bg-rose-50 border-rose-200 text-rose-900'
-                  : alert.severity === 'warning'
+              className={`p-4 rounded-xl border flex items-start gap-3 ${alert.severity === 'critical'
+                ? 'bg-rose-50 border-rose-200 text-rose-900'
+                : alert.severity === 'warning'
                   ? 'bg-amber-50 border-amber-200 text-amber-900'
                   : 'bg-blue-50 border-blue-200 text-blue-900'
-              }`}
+                }`}
             >
               <AlertTriangle
-                className={`w-5 h-5 shrink-0 mt-0.5 ${
-                  alert.severity === 'critical'
-                    ? 'text-rose-600'
-                    : alert.severity === 'warning'
+                className={`w-5 h-5 shrink-0 mt-0.5 ${alert.severity === 'critical'
+                  ? 'text-rose-600'
+                  : alert.severity === 'warning'
                     ? 'text-amber-600'
                     : 'text-blue-600'
-                }`}
+                  }`}
               />
               <div className="space-y-1 text-xs">
                 <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
@@ -110,8 +161,8 @@ export const WeatherAlerts: React.FC = () => {
                       alert.severity === 'critical'
                         ? 'danger'
                         : alert.severity === 'warning'
-                        ? 'warning'
-                        : 'info'
+                          ? 'warning'
+                          : 'info'
                     }
                   >
                     {tr(alert.severity.toUpperCase())}
@@ -222,17 +273,33 @@ export const WeatherAlerts: React.FC = () => {
             </span>
           </div>
 
+
           <div className="p-4 bg-white dark:bg-[#0a0a0a] rounded-xl border border-slate-200 dark:border-[#222222]/80 col-span-2">
             <Info className="w-5 h-5 text-emerald-600 mb-2" />
             <span className="text-xs text-slate-400 block font-medium">
-              {language === 'bn' ? 'স্প্রে ও কীটনাশক প্রয়োগের পরামর্শ' : 'Agronomic Spraying Recommendation'}
+              {language === 'bn'
+                ? 'স্প্রে ও কীটনাশক প্রয়োগের পরামর্শ'
+                : 'Agronomic Spraying Recommendation'}
             </span>
             <p className="text-xs text-slate-700 dark:text-[#999999] mt-1">
-              {language === 'bn'
-                ? 'বর্তমানে জমিতে সার ও কীটনাশক স্প্রে করার অনুকূল পরিবেশ রয়েছে। বাতাসের গতিবেগ ১৫ কিমি/ঘন্টার কম এবং আগামী ৬ ঘণ্টায় ভারী বৃষ্টির সম্ভাবনা নেই।'
-                : 'Favorable conditions for foliar nutrient sprays. Wind speed is under 15 km/h and rain probability remains low for the next 6 hours.'}
+              {current.precipitationProbability >= 60
+                ? language === 'bn'
+                  ? 'বৃষ্টির উচ্চ সম্ভাবনা রয়েছে। আপাতত স্প্রে স্থগিত রাখুন এবং স্থানীয় পূর্বাভাস ও ব্যবহৃত পণ্যের নির্দেশনা যাচাই করুন।'
+                  : 'High chance of rain. Consider postponing spraying and check the local forecast and product instructions.'
+                : current.precipitationProbability >= 30
+                  ? language === 'bn'
+                    ? 'বৃষ্টির মাঝারি সম্ভাবনা রয়েছে। স্প্রে করার আগে পরবর্তী কয়েক ঘণ্টার পূর্বাভাস যাচাই করুন।'
+                    : 'Moderate chance of rain. Check the forecast for the next few hours before spraying.'
+                  : current.windSpeedKmh >= 15
+                    ? language === 'bn'
+                      ? 'বাতাসের গতি বেশি। স্প্রে করার আগে বাতাসের অবস্থা ও পণ্যের নির্দেশনা যাচাই করুন।'
+                      : 'Wind speed is elevated. Check wind conditions and product instructions before spraying.'
+                    : language === 'bn'
+                      ? 'বর্তমান তথ্য অনুযায়ী বৃষ্টির সম্ভাবনা কম এবং বাতাসের গতি তুলনামূলক কম। স্প্রে করার আগে স্থানীয় পরিস্থিতি ও পণ্যের নির্দেশনা যাচাই করুন।'
+                      : 'Current data indicates a lower chance of rain and relatively light winds. Check local conditions and product instructions before spraying.'}
             </p>
           </div>
+
         </div>
       </div>
 
