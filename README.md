@@ -1,6 +1,6 @@
-# AgriNova Platform - Vercel Deployment Guide
+# FarmPath Platform - Vercel Deployment Guide
 
-This README provides step-by-step instructions for deploying the AgriNova Smart Agriculture & Farm-to-Market Platform to Vercel, covering both the frontend (Next.js) and backend (Node.js/Express) components.
+This README provides step-by-step instructions for deploying the FarmPath Smart Agriculture & Farm-to-Market Platform to Vercel, covering both the frontend (Next.js) and backend (Node.js/Express) components.
 
 ## 📋 Prerequisites
 
@@ -598,7 +598,7 @@ src/
 ---
 
 *Last Updated: 2026-10-04*
-*AgriNova Smart Agriculture & Farm-to-Market Platform*
+*FarmPath Smart Agriculture & Farm-to-Market Platform*
 *Frontend: FarmPath (Next.js 15, React 19, Tailwind CSS 4)*
 *Backend: FarmPath-Server (Express.js, MongoDB, Mongoose)*
 
@@ -610,5 +610,5 @@ src/
 
 ---
 
-*Generated for AgriNova Smart Agriculture & Farm-to-Market Platform*
+*Generated for FarmPath Smart Agriculture & Farm-to-Market Platform*
 *Deployment Date: 2026-10-04*
